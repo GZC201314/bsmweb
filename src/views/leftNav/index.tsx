@@ -1,16 +1,18 @@
 import {Popover} from 'antd'
-import {NavLink} from 'react-router-dom'
+import {NavLink, useHistory} from 'react-router-dom'
+// @ts-ignore
 import './index.scss'
+// import './index.css'
 import {getStorage, urlFormat} from '../../utils';
 import CScroll from "../../components/CScroll"
 import React, {FC, useEffect, useState, useRef} from 'react'
-import history from '../../routers'
-import {setBreadcrumb} from "../../redux/common/action";
+import {setBreadcrumb,collapsedToggle} from "../../redux/common/action";
 import * as Icons from '@ant-design/icons';
 
 import {useSelector} from "../../hooks/hooks";
 import {LocationDescriptor, Location} from 'history';
-
+import {useDispatch} from "react-redux";
+import config from '../../config';
 export interface LeftNavProps {
     collapsed?: boolean
 }
@@ -25,23 +27,24 @@ const LeftNav: FC<LeftNavProps> = (props) => {
     });
     const leftNavRef = useRef(null)
 
+    const dispatch = useDispatch()
+    const history = useHistory()
     /*获取登录时获取的授权的页面*/
     const [leftNavData, setLeftNavData] = useState<any>(menuList)
     const [currentOpenIds, setCurrentOpenIds] = useState([])
     const [currentActiveId, setCurrentActiveId] = useState('')
-    const [leftNavdefaultOpenAll, setLeftNavdefaultOpenAll] = useState(false)
-    const [CollapseModel, setCollapseModel] = useState(true)
-    const [collapsedState, setCollapsedState] = useState(collapse)
+    const [leftNavdefaultOpenAll, setLeftNavdefaultOpenAll] = useState(config.leftNavdefaultOpenAll)
+    const [CollapseModel, setCollapseModel] = useState(config.CollapseModel)
     /**effect  effect部分**/
     useEffect(() => {
-        setCollapsedState(props.collapsed)
-    }, [props.collapsed])
+        dispatch(collapsedToggle(props.collapsed))
+    }, [dispatch, props.collapsed])
     useEffect(() => {
         initOpenAll();
         initCurrentActive();
         // @ts-ignore
         getRouterAndSetBreadcrumb();
-    }, [])
+    })
     /**methods 方法部分**/
 
     /*展开收起事件*/
@@ -163,7 +166,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
                 }]);
             }
         }
-        setBreadcrumb(breadcrumb);
+        dispatch(setBreadcrumb(breadcrumb));
     }
 
     const renderIcon = (iconName: any) => {
@@ -180,6 +183,10 @@ const LeftNav: FC<LeftNavProps> = (props) => {
             getRouterAndSetBreadcrumb();
         })
     }
+
+    useEffect(()=>{
+        listenRouterChange();
+    })
 
     function popoverContentRender(item: any) {
         if (item.children && item.children.length) {
@@ -230,24 +237,24 @@ const LeftNav: FC<LeftNavProps> = (props) => {
     /**render**/
 
     return (
-        <div ref={leftNavRef} className={`left-nav ${collapsedState ? 'left-nav-open' : 'left-nav-close'}`}>
+        <div ref={leftNavRef} className={`left-nav ${collapse ? 'left-nav-open' : 'left-nav-close'}`}>
             <CScroll>
                 {
                     leftNavData.map((item: { id: never; children: any[]; iconType: string; icon: string | undefined; name: {} | null | undefined; path: LocationDescriptor<unknown> | ((location: Location<unknown>) => LocationDescriptor<unknown>); }, index: any) => {
                         return <div key={item.id}>
                             {
-                                props.collapsed ? <div className='ellipsis left-nav-item'>
+                                collapse ? <div className='ellipsis left-nav-item'>
                                     {
                                         item.children && item.children.length ?
                                             <div
                                                 className={`flex item-link ${currentOpenIds.includes(item.id) ? 'open' : ''}`}
                                                 onClick={() => changeToggle(item)}>
                         <span className='left'>
-                          {item.iconType === 'fa' ? <i className={`prefix-icon fa ${item.icon}`}/> :
+                          {item.iconType === 'fa' ? <i className={`prefix-icon fa`}/> :
                               renderIcon(item.icon)}
                         </span>
                                                 {
-                                                    props.collapsed && <span className='flex right'>
+                                                    collapse && <span className='flex right'>
                             {item.name}
                                                         {item.children && item.children.length &&
                                                         <i className='suffix-icon fa fa-angle-down'/>}
@@ -261,7 +268,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
                               renderIcon(item.icon)}
                         </span>
                                                 {
-                                                    props.collapsed && <span className='flex right'>
+                                                    collapse && <span className='flex right'>
                     {item.name}
                                                         {item.children && item.children.length &&
                                                         <i className='suffix-icon fa fa-angle-down'/>}</span>
@@ -269,7 +276,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
                                             </NavLink>
                                     }
                                     {
-                                        item.children && item.children.length && props.collapsed && <div
+                                        item.children && item.children.length && collapse && <div
                                             style={{height: currentOpenIds.includes(item.id) ? `calc(${item.children.length} * 40px)` : '0px'}}
                                             className={`left-nav-item-children`}>
                                             {

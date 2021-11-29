@@ -1,4 +1,5 @@
 import React, {FC, useEffect, useState } from 'react'
+import './style.scss'
 export interface HomeProps{
 
 }
@@ -15,7 +16,7 @@ const Home:FC<HomeProps> = (props) => {
     
     return(
         <div>
-            <h1>Home Page</h1>
+            <h1 className="style">Home Page</h1>
         </div>
     );
 }

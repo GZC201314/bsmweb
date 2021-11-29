@@ -1,6 +1,6 @@
 import React, {FC, useEffect, useState } from 'react'
 
-import { setUserInfo,collapsedToggle} from "../../redux/common/action";
+import {setUserInfo, collapsedToggle, setCurrentTheme} from "../../redux/common/action";
 import './App.scss'
 import Header from '../header'
 import LeftNav from '../leftNav'
@@ -11,6 +11,8 @@ import {useHistory} from "react-router-dom";
 import 'moment/locale/zh-cn';
 import { ConfigProvider } from 'antd';
 import { Location } from 'history';
+import {useSelector} from "../../hooks/hooks";
+import {useDispatch} from "react-redux";
 
 moment.locale('zh-cn');
 
@@ -21,9 +23,10 @@ export interface AppProps {
 const App: FC<AppProps> = (props) => {
 
   /**state  state部分**/
-  const [theme,setTheme] = useState(null)
+  let {currentTheme} = props;
   /**effect  effect部分**/
   const history = useHistory()
+  const dispatch = useDispatch()
   /**methods 方法部分**/
 
   const userIsLogin = (location: Location<unknown>)=>{
@@ -36,6 +39,13 @@ const App: FC<AppProps> = (props) => {
     }
     setUserInfo(userInfo);
   }
+
+  const collapsed = useSelector((state) => {
+    return state.CommonReducer.collapsed;
+  });
+  const theme = useSelector((state) => {
+    return state.CommonReducer.currentTheme;
+  });
 
   // 在全局监听数据变化
   const watchRouterChange= () =>{
@@ -51,14 +61,14 @@ const App: FC<AppProps> = (props) => {
     if(!getStorage('theme','')){
       setStorage('theme', currentTheme,'');
     }
-    // @ts-ignore
-    setTheme(getStorage('theme',''))
+    dispatch(setCurrentTheme(getStorage('theme','')))
   }
 
 
   useEffect(()=>{
+    currentTheme = getStorage('theme','')
     setThemeFile(props.currentTheme)
-  },[props.currentTheme])
+  })
 
   useEffect(()=>{
     watchRouterChange();
@@ -72,7 +82,7 @@ const App: FC<AppProps> = (props) => {
     return(
         <ConfigProvider locale={zhCN}>
           <div className='app' data-theme={theme}>
-            <Header userInfo={getStorage('userInfo','')} collapsedToggle={collapsedToggle} />
+            <Header userInfo={getStorage('userInfo','')} collapsedToggle={collapsedToggle} collapsed={collapsed}  />
 
             <div className='flex app-content'>
               <LeftNav/>

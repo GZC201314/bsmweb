@@ -1,4 +1,4 @@
-import React, {FC, useEffect } from 'react'
+import React, {FC, useEffect,useRef } from 'react'
 import { Card} from 'antd'
 import CBreadcrumb from '../../components/CBreadcrumb'
 import CButton from '../../components/CButton'
@@ -19,16 +19,16 @@ const MainContent:FC<MainContentProps> = (props) => {
     const reload = () =>{
     setReload(true);
   }
-
+    const mainContentRef = useRef(null)
   // 监听window高宽变化
   const listenWindowInfo = () =>{
     window.addEventListener('resize', function (e) {
       let height = window.innerHeight || document.body.clientHeight || document.documentElement.clientHeight;
       let width = window.innerWidth || document.body.clientWidth || document.documentElement.clientWidth;
       // @ts-ignore
-      let mainContentHeight = document.getElementById('mainContent').offsetHeight;
+      let mainContentHeight = mainContentRef.current?mainContentRef.current.offsetHeight:0;
       // @ts-ignore
-      let mainContentWidth = document.getElementById('mainContent').offsetWidth;
+      let mainContentWidth = mainContentRef.current?mainContentRef.current.offsetWidth:0;
       let value = {
         ...props.windowInfo,
         screenHeight: height,
@@ -52,7 +52,7 @@ const MainContent:FC<MainContentProps> = (props) => {
     /**render**/
     
     return(
-        <div className='main-content' id='mainContent'>
+        <div className='main-content' ref={mainContentRef} id ='mainContent'>
           <CScroll>
             <div className='main-content-scroll'>
               <div className='flex main-breadcrumb'>
