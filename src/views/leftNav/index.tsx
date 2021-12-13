@@ -51,6 +51,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
     function changeToggle(data: any) {
         if (!data || !data.id) return;
         // 手风琴模式
+        let currentOpenIdsVal :never[]= [];
         if (CollapseModel) {
             // 如果当前点击项在数组中存在表明是关闭操作
             // @ts-ignore
@@ -58,7 +59,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
                 setCurrentOpenIds([]);
             } else {
                 // @ts-ignore
-                setCurrentOpenIds([data.id])
+                currentOpenIdsVal.push(data.id)
             }
             // currentOpenIds = currentOpenIds.length ? [] : [data.id];
         } else {
@@ -68,13 +69,16 @@ const LeftNav: FC<LeftNavProps> = (props) => {
                 // @ts-ignore
                 let index = currentOpenIds.indexOf(data.id);
                 currentOpenIds.splice(index, 1);
-                setCurrentOpenIds(currentOpenIds)
+                currentOpenIdsVal = currentOpenIds
+                // setCurrentOpenIds(currentOpenIds)
             } else {
+                currentOpenIdsVal = currentOpenIds;
                 // @ts-ignore
-                setCurrentOpenIds([...currentOpenIds, data.id])
+                currentOpenIdsVal.push(data.id)
+                // @ts-ignore
             }
         }
-        setCurrentOpenIds(currentOpenIds)
+        setCurrentOpenIds(currentOpenIdsVal)
     }
 
     /*初始化展开项的id列表  针对于配置默认全部展开和默认打开某个路由时需要展开项*/
@@ -287,7 +291,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
                                                                  onClick={() => getRouterAndSetBreadcrumb(children_item)}
                                                                  className={`flex item-link ${currentActiveId === children_item.id ? 'selected' : ''}`}
                                                                  to={children_item.path}>
-                                                            {/*<i className='prefix-icon fa fa-circle'></i>*/}
+                                                            {/*<i className='prefix-icon fa fa-circle'/>*/}
                                                             {children_item.name}
                                                         </NavLink>
                                                     </div>
