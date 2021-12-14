@@ -5,7 +5,33 @@ import App from '../views/app/App';
 import LoginComponent from "../views/login/loginComponent";
 import MainContent from '../views/mainContent';
 import homeRouter from "./homeRouter";
-
+/*数据管理*/
+import sjypzRouter from "./sjgl/sjypzRouter";
+import sjkbfRouter from "./sjgl/sjkbfRouter";
+import sjcqRouter from "./sjgl/sjcqRouter";
+/*任务管理*/
+import pcrwRouter from "./rwgl/pcrwRouter";
+import dsrwRouter from "./rwgl/dsrwRouter";
+/*智能专区*/
+import rlkglRouter from "./znzq/rlkglRouter";
+import txzqRouter from "./znzq/txzqRouter";
+import tpsbRouter from "./znzq/tpsbRouter";
+import wzsbRouter from "./znzq/wzsbRouter"
+/*运维管理*/
+import pzxglRouter from "./ywgl/pzxglRouter";
+import rzjkRouter from "./ywgl/rzjkRouter";
+/*图书专区*/
+import tsglRouter from "./tszq/tsglRouter";
+import tzsfwRouter from "./tszq/dzsfwRouter";
+import tslbRouter from "./tszq/tslbRouter";
+/*用户中心*/
+import xxxgRouter from "./yhzx/xxxgRouter";
+import grzxRouter from "./yhzx/grzxRouter";
+/*后台管理*/
+import cdglRouter from "./htgl/cdglRouter";
+import yhglRouter from "./htgl/yhglRouter";
+import jsglRouter from "./htgl/jsglRouter";
+import qxglRouter from "./htgl/qxglRouter";
 export interface RouteConfigProps {
 
 }
@@ -19,7 +45,27 @@ const RouteConfig: FC<RouteConfigProps> = (props) => {
 
 
     const routers = [
+        qxglRouter,
+        cdglRouter,
+        yhglRouter,
+        jsglRouter,
         homeRouter,
+        tsglRouter,
+        sjypzRouter,
+        sjkbfRouter,
+        sjcqRouter,
+        pcrwRouter,
+        dsrwRouter,
+        rlkglRouter,
+        txzqRouter,
+        tpsbRouter,
+        wzsbRouter,
+        pzxglRouter,
+        rzjkRouter,
+        tzsfwRouter,
+        tslbRouter,
+        xxxgRouter,
+        grzxRouter,
         // userManageRouter,
         // storeManageRouter,
         // authManageRouter,
