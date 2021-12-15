@@ -15,7 +15,6 @@ import {useDispatch} from 'react-redux'
 import Webcam from "react-webcam";
 import {RLSB_LOGIN, USER_LOGIN_ACTION} from "../../actionTypes";
 import loginDao from "../../dao/loginDao"
-import { createBrowserHistory } from 'history';
 import {setStorage} from "../../utils";
 import {useHistory} from "react-router-dom";
 import {setBreadcrumb} from "../../redux/common/action";
@@ -280,6 +279,7 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
                 onOk={handleRlsbOk}
                 onCancel={handleRlsbCancel}
                 footer={null}
+                destroyOnClose
             >
                 <Webcam audio={false}
                         height={500}

@@ -12,7 +12,7 @@ export const menuList = [
   },
   {
     id: 'loginOut',
-    path: '/loginOut',
+    path: '/logout',
     name: '退出',
   }
 ];

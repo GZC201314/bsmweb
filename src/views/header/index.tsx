@@ -1,6 +1,6 @@
-import React, {FC, useEffect, useState, useRef, ReactNode} from 'react'
+import React, {FC, useEffect, useState, useRef} from 'react'
 import CButton from '../../components/CButton';
-import {Menu, Dropdown} from 'antd';
+import {Menu, Dropdown, message} from 'antd';
 import {menuList} from './data'
 import {getStorage, setStorage} from "../../utils";
 import './index.scss'
@@ -10,6 +10,7 @@ import * as Icons from '@ant-design/icons';
 import {useHistory} from "react-router-dom";
 import defaultAvatarUrl from '../../img/china.svg'
 import {useDispatch} from "react-redux";
+import loginDao from "../../dao/loginDao";
 
 export interface HeaderProps {
     collapsed?: boolean,
@@ -83,6 +84,12 @@ const Header: FC<HeaderProps> = (props) => {
             setStorage('userInfo', "", "");
             setUserInfo(null);
             history.push('/login')
+
+            /*发送到后台，清空session*/
+            loginDao.userLogOut({},(res:any)=>{
+                message.success(res.msg)
+            })
+
         } else if (data.id === 'personal') {
             history.push('/personal')
         }

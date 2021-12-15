@@ -16,3 +16,8 @@ export const CHECK_EMAILADDRESS = 'check_emailAddress'
 export const CREATE_VALIDATECODE_ACTION = 'create_validateCode_action'
 
 export const USER_LOGIN_ACTION = 'user_login_action'
+
+
+/*xxxg reducer*/
+// 修改用户页面初始化
+export const XXXG_GET_USERINFO_HANDLE = 'xxxg_get_userInfo_handle'

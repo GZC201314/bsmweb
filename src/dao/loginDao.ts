@@ -4,6 +4,7 @@ import {message} from "antd";
 class LoginDao {
     private validEmailAddressUrl: string = '/valid/userinfo';
     private sendRegisterEmailUrl: string = '/user/sendRegisterEmail';
+    private userLogOutUrl: string = '/logout';
     private registerUserUrl: string = '/user/register';
     private userLoginUrl: string = '/login';
     private rlsbLoginUrl: string = '/ai/faceLogin';
@@ -83,6 +84,19 @@ class LoginDao {
     registerUser(paramter:any, successCallback: Function, errorCallback?: Function, url?: string) {
 
         axios.post(this.registerUserUrl,paramter).then(
+            (res) => {
+                successCallback(res.data);
+            }
+        )
+    }
+
+    /*用户退出*/
+    userLogOut(paramter: object, successCallback: Function, errorCallback?: Function, url?: string) {
+        axios({
+            url: url || this.userLogOutUrl,
+            method: 'GET',
+            params: paramter
+        }).then(
             (res) => {
                 successCallback(res.data);
             }

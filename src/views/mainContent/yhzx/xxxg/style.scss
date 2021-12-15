@@ -1,3 +1,10 @@
-.style{
-  color: #2bf8ee;
+.title-xxxg{
+  align-content: center;
+}
+.video-camera-outlined{
+  font-size:32px;
+  &:hover{
+    color: #08c;
+    cursor: pointer;
+  }
 }

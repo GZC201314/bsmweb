@@ -155,6 +155,7 @@
       }
     }
 
+
     .popover-container {
       line-height: 30px;
 
@@ -177,6 +178,7 @@
           }
         }
       }
+
       .ant-popover-arrow {
         border-top-color: transparent;
         border-right-color: transparent;
@@ -189,6 +191,16 @@
       }
     }
   }
+
+  .popover-container-span {
+    color: #ffffff !important;
+    font-size: 12px !important;
+
+    &:hover {
+      color: #1E9FFF !important;
+    }
+  }
+
 
 }
 

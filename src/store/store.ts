@@ -2,6 +2,7 @@ import {createStore, combineReducers, compose} from 'redux';
 import reducer from '../reducer/menureducer';
 import loginReducer from "../reducer/loginReducer";
 import CommonReducer from "../redux/common/reducer";
+import xxxgreducer from "../reducer/xxxgreducer";
 
 declare global {
     interface Window {
@@ -13,7 +14,8 @@ declare global {
 const allReducer = combineReducers({
     menuReducer: reducer,
     loginReducer: loginReducer,
-    CommonReducer: CommonReducer
+    CommonReducer: CommonReducer,
+    Xxxgreducer:xxxgreducer
 });
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

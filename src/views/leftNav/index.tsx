@@ -6,13 +6,14 @@ import './index.scss'
 import {getStorage, urlFormat} from '../../utils';
 import CScroll from "../../components/CScroll"
 import React, {FC, useEffect, useState, useRef} from 'react'
-import {setBreadcrumb,collapsedToggle} from "../../redux/common/action";
+import {setBreadcrumb, collapsedToggle} from "../../redux/common/action";
 import * as Icons from '@ant-design/icons';
 
 import {useSelector} from "../../hooks/hooks";
 import {LocationDescriptor, Location} from 'history';
 import {useDispatch} from "react-redux";
 import config from '../../config';
+
 export interface LeftNavProps {
     collapsed?: boolean
 }
@@ -51,7 +52,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
     function changeToggle(data: any) {
         if (!data || !data.id) return;
         // 手风琴模式
-        let currentOpenIdsVal :never[]= [];
+        let currentOpenIdsVal: never[] = [];
         if (CollapseModel) {
             // 如果当前点击项在数组中存在表明是关闭操作
             // @ts-ignore
@@ -188,7 +189,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
         })
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         listenRouterChange();
     })
 
@@ -202,7 +203,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
                                 <NavLink exact onClick={() => getRouterAndSetBreadcrumb(children_item)}
                                          className={`flex item-link ${currentActiveId === children_item.id ? 'selected' : ''}`}
                                          to={children_item.path}>
-                                    {children_item.name}
+                                    <span className='popover-container-span' style={{color:'#ffffff',fontSize:'12px'}}>{children_item.name}</span>
                                 </NavLink>
                             </div>
                         })
@@ -299,9 +300,10 @@ const LeftNav: FC<LeftNavProps> = (props) => {
                                             }
                                         </div>
                                     }
-                                </div> : <div>{/*getPopupContainer={()=>leftNavRef}*/}
+                                </div> : <div>{/*TODO getPopupContainer={()=>leftNavRef}*/}
                                     {item.children && item.children.length ?
-                                        <Popover content={popoverContentRender(item)} placement='right' overlayClassName='popover-content-render'>
+                                        <Popover content={popoverContentRender(item)} placement='right'
+                                                 color={'#000000bf'} overlayClassName='popover-content-render'>
                                             {childrenRender(item)}
                                         </Popover> : childrenRender(item)}
                                 </div>
