@@ -10,7 +10,7 @@ let defaultState = {
   collapsed: config.collapsedDefaultOpen || true,//左侧导航状态
   breadcrumbData: [] as breadcrumbDataType[],//面包屑导航数据
   reload: false,
-  userInfo: null,//登录用户信息
+  userInfo: {},//登录用户信息
   windowInfo: {
     screenHeight: window.innerHeight || document.body.clientHeight || document.documentElement.clientHeight,//浏览器高度
     screenWidth: window.innerWidth || document.body.clientWidth || document.documentElement.clientWidth,//浏览器宽度

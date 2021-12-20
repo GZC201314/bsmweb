@@ -1,6 +1,6 @@
-import React, {FC, useEffect } from 'react'
+import React, {FC, useEffect, useState} from 'react'
 
-import {setUserInfo, collapsedToggle, setCurrentTheme} from "../../redux/common/action";
+import {collapsedToggle, setCurrentTheme, setUserInfo} from "../../redux/common/action";
 import './App.scss'
 import Header from '../header'
 import LeftNav from '../leftNav'
@@ -23,10 +23,10 @@ export interface AppProps {
 const App: FC<AppProps> = (props) => {
 
   /**state  state部分**/
-  let {currentTheme} = props;
   /**effect  effect部分**/
   const history = useHistory()
   const dispatch = useDispatch()
+  const userInfo = getStorage('userInfo','');
   /**methods 方法部分**/
 
   const userIsLogin = (location: Location<unknown>)=>{
@@ -37,8 +37,17 @@ const App: FC<AppProps> = (props) => {
         pathname: '/login'
       });
     }
-    setUserInfo(userInfo);
   }
+
+  useEffect(() => {
+
+  },[])
+
+  useEffect(
+      () =>{
+        setUserInfo(getStorage('userInfo',''))
+      }
+  ,[])
 
   const collapsed = useSelector((state) => {
     return state.CommonReducer.collapsed;
@@ -66,15 +75,14 @@ const App: FC<AppProps> = (props) => {
 
 
   useEffect(()=>{
-    currentTheme = getStorage('theme','')
     setThemeFile(props.currentTheme)
-  })
+  },[])
 
   useEffect(()=>{
     watchRouterChange();
     userIsLogin(history.location);
     setThemeFile(props.currentTheme);
-  })
+  },[])
     /**styles 样式部分**/
     
     /**render**/
@@ -82,7 +90,7 @@ const App: FC<AppProps> = (props) => {
     return(
         <ConfigProvider locale={zhCN}>
           <div className='app' data-theme={theme}>
-            <Header userInfo={getStorage('userInfo','')} collapsedToggle={collapsedToggle} collapsed={collapsed}  />
+            <Header userInfo={userInfo} collapsedToggle={collapsedToggle} collapsed={collapsed}  />
 
             <div className='flex app-content'>
               <LeftNav/>

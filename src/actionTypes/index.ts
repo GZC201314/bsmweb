@@ -1,5 +1,3 @@
-// 登录用户信息
-export const USERINFO = 'USERINFO';
 // 左侧导航切换
 export const RLSB_LOGIN = 'rlsb_login';
 // 设置面包屑导航数据
@@ -16,6 +14,7 @@ export const CHECK_EMAILADDRESS = 'check_emailAddress'
 export const CREATE_VALIDATECODE_ACTION = 'create_validateCode_action'
 
 export const USER_LOGIN_ACTION = 'user_login_action'
+export const USER_SET_USERINFO_ACTION = 'user_set_userinfo_action'
 
 
 /*xxxg reducer*/

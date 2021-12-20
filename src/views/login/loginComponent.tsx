@@ -15,7 +15,7 @@ import {useDispatch} from 'react-redux'
 import Webcam from "react-webcam";
 import {RLSB_LOGIN, USER_LOGIN_ACTION} from "../../actionTypes";
 import loginDao from "../../dao/loginDao"
-import {setStorage} from "../../utils";
+import {convertImgDataToBlob, setStorage, validateUserName} from "../../utils";
 import {useHistory} from "react-router-dom";
 import {setBreadcrumb} from "../../redux/common/action";
 import {breadcrumbDataType} from "../../redux/common/reducer";
@@ -82,39 +82,10 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
         height: 720,
         facingMode: "user"
     };
-    /*使用state*/
-    // const currentState = useSelector((state) => {
-    //     return state
-    // })
-    // const changeCurrent = () => {
-    //     dispatch({
-    //         type: 'SWITCH_CURRENT',
-    //         current: '修改后的current'
-    //     })
-    // }
 
     /**effect  effect部分**/
 
     /**methods 方法部分**/
-
-    function convertImgDataToBlob(base64Data: String) {
-        let format = "image/jpeg";
-        let code = window.atob(base64Data.split(",")[1]);
-        let aBuffer = new window.ArrayBuffer(code.length);
-        let uBuffer = new window.Uint8Array(aBuffer);
-        for (let i = 0; i < code.length; i++) {
-            uBuffer[i] = code.charCodeAt(i) & 0xff;
-        }
-
-        let blob = null;
-        try {
-            blob = new Blob([uBuffer], {type: format});
-        } catch (e) {
-            console.error(e)
-        }
-        return blob;
-
-    }
 
     const handleValidateCodeSelect = (item: any) => {
         setValidateCode(`/code/image?${new Date().getTime()}`)
@@ -150,10 +121,6 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
             history.push({
                 pathname: '/home',
             });
-
-
-            // history.
-            // history.
         })
     }
 
@@ -316,21 +283,7 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
                         validateFirst={true}
                         hasFeedback
                         rules={[{required: true}, {
-                            validator: (async (rule, value) => {
-                                let params = {username: value};
-                                let promise = new Promise(((resolve) => {
-                                    loginDao.validUsername(params, async (res: any) => {
-                                        resolve(res.data)
-                                    })
-                                }))
-                                /*当 Promise resolve一个之后才会执行，否则会已知阻塞在这里*/
-                                let result = await promise;
-                                if (result) {
-                                    return Promise.resolve()
-                                } else {
-                                    return Promise.reject()
-                                }
-                            }), message: "用户名校验失败"
+                            validator: validateUserName, message: "用户名校验失败"
                         }]}
                         label="用户名">
                         <Input/>

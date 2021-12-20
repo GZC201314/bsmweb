@@ -40,12 +40,15 @@ const LeftNav: FC<LeftNavProps> = (props) => {
     useEffect(() => {
         dispatch(collapsedToggle(props.collapsed))
     }, [dispatch, props.collapsed])
+
+
     useEffect(() => {
+        console.log("initOpenAll")
         initOpenAll();
         initCurrentActive();
         // @ts-ignore
         getRouterAndSetBreadcrumb();
-    })
+    },[getRouterAndSetBreadcrumb, initCurrentActive, initOpenAll])
     /**methods 方法部分**/
 
     /*展开收起事件*/
@@ -181,6 +184,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
 
     // 监听路由变换
     function listenRouterChange() {
+        console.log("listenRouterChange")
         // @ts-ignore
         history.listen(() => {
             initCurrentActive();
@@ -191,7 +195,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
 
     useEffect(() => {
         listenRouterChange();
-    })
+    },[])
 
     function popoverContentRender(item: any) {
         if (item.children && item.children.length) {

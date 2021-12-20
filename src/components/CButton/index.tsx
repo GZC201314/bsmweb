@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import {Button} from 'antd'
 import './index.scss'
 import * as Icons from "@ant-design/icons";
-import { SizeType } from 'antd/lib/config-provider/SizeContext';
 
 
 export interface CButtonProps {
@@ -15,7 +14,7 @@ export interface CButtonProps {
     className?: string,
     authId?: string,
     onClick?: Function,
-    block?: boolean|undefined
+    block?: boolean | undefined
 }
 
 
@@ -32,7 +31,7 @@ const CButton: FC<CButtonProps> = (props) => {
         props.onClick && props.onClick();
     }
 
-    const renderIcon =(iconName:any) =>{
+    const renderIcon = (iconName: any) => {
         // @ts-ignore
         return React.createElement(Icons[iconName]);
     }
@@ -61,7 +60,7 @@ const CButton: FC<CButtonProps> = (props) => {
 CButton.defaultProps = {
     type: 'default',
     size: 'default',
-    icon: '',
+    icon: 'fa',
     disabled: false,
     loading: false,
 };

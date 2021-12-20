@@ -3,6 +3,7 @@ import Qs from 'qs'
 import {message} from "antd";
 class LoginDao {
     private validEmailAddressUrl: string = '/valid/userinfo';
+    private validPasswordUrl: string = '/valid/password';
     private sendRegisterEmailUrl: string = '/user/sendRegisterEmail';
     private userLogOutUrl: string = '/logout';
     private registerUserUrl: string = '/user/register';
@@ -16,7 +17,7 @@ class LoginDao {
                 'Content-Type': 'multipart/form-data'
             },
             method: 'post',
-            url: '/ai/faceLogin',
+            url: this.rlsbLoginUrl,
             data:paramter
         }).then(res => {
             successCallback(res);
@@ -36,6 +37,8 @@ class LoginDao {
             }
         }).then(
             (res) => {
+                console.log("res")
+                console.log(res)
                 successCallback(res);
             }
         ).catch((err) => {
@@ -59,6 +62,17 @@ class LoginDao {
     validUsername(paramter: object, successCallback: Function, errorCallback?: Function, url?: string) {
         axios({
             url: url || this.validEmailAddressUrl,
+            method: 'GET',
+            params: paramter
+        }).then(
+            (res) => {
+                successCallback(res.data);
+            }
+        )
+    }
+    validPassword(paramter: object, successCallback: Function, errorCallback?: Function, url?: string) {
+        axios({
+            url: url || this.validPasswordUrl,
             method: 'GET',
             params: paramter
         }).then(

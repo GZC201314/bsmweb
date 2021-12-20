@@ -2,7 +2,7 @@ import React, {FC, useEffect, useState, useRef} from 'react'
 import CButton from '../../components/CButton';
 import {Menu, Dropdown, message} from 'antd';
 import {menuList} from './data'
-import {getStorage, setStorage} from "../../utils";
+import {getStorage, removeStorage, setStorage} from "../../utils";
 import './index.scss'
 import {collapsedToggle, setWindowInfo, setUserInfo, setCurrentTheme} from "../../redux/common/action";
 import config from '../../config'
@@ -81,7 +81,7 @@ const Header: FC<HeaderProps> = (props) => {
     const menuClick = (data: { id: string }) => {
         if (data.id === 'loginOut') {
             // 退出
-            setStorage('userInfo', "", "");
+            removeStorage('userInfo','')
             setUserInfo(null);
             history.push('/login')
 
@@ -108,10 +108,13 @@ const Header: FC<HeaderProps> = (props) => {
             console.log("clearTimeout time=" + timeState)
             clearTimeout(timeState);
         }
-    })
+    },[timeState])
+
+
+
     /**render**/
-    const {username, avatar} = props.userInfo || {};
-    const url = avatar ? avatar : defaultAvatarUrl;
+    const {username, usericon} = props.userInfo || {};
+    const url = usericon ? usericon : defaultAvatarUrl;
 
     const menu = (
         <Menu>

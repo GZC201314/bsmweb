@@ -1,6 +1,5 @@
 import axios from "axios";
-import {RLSB_LOGIN, CHECK_EMAILADDRESS, USER_LOGIN_ACTION} from "../actionTypes";
-import {getStorage, setStorage} from "../utils";
+import {RLSB_LOGIN, CHECK_EMAILADDRESS, USER_LOGIN_ACTION, USER_SET_USERINFO_ACTION} from "../actionTypes";
 const defaultState = {
     userInfo:{},
     menulist:[]
@@ -11,6 +10,9 @@ export default (state = defaultState,action) =>{
         case USER_LOGIN_ACTION:
             newState.userInfo = action.data.data.userinfo
             newState.menulist = JSON.parse(action.data.data.menulist)
+            break;
+        case USER_SET_USERINFO_ACTION:
+            newState.userInfo = action.data.userinfo
             break;
         case RLSB_LOGIN:
             newState.userInfo = action.data.userinfo

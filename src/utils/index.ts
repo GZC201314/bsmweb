@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import loginDao from "../dao/loginDao";
 
 /**
  * @param url 完整路径
@@ -309,4 +310,63 @@ export const setStorage = (key: string, value: string, type: string) => {
 export const removeStorage = (key: string, type: string) => {
   let storage = type === 'session' ? sessionStorage : localStorage;
   storage.removeItem(key);
+};
+
+export const convertImgDataToBlob = (base64Data: String) => {
+  if(base64Data.length === 0){
+    return null;
+  }
+  let format = "image/jpeg";
+  let files = base64Data.split(",")
+  /*获取图片的格式*/
+  format = files[0].substring(files[0].indexOf(':')+1,files[0].indexOf(';')) !== ''?files[0].substring(files[0].indexOf(':')+1,files[0].indexOf(';')):format;
+  let code = window.atob(files[1]);
+  let aBuffer = new window.ArrayBuffer(code.length);
+  let uBuffer = new window.Uint8Array(aBuffer);
+  for (let i = 0; i < code.length; i++) {
+    uBuffer[i] = code.charCodeAt(i) & 0xff;
+  }
+
+  let blob = null;
+  try {
+    blob = new Blob([uBuffer], {type: format});
+  } catch (e) {
+    console.error(e)
+  }
+  return blob;
+
+};
+
+/*用户名校验*/
+export const validateUserName = async (rule: any, value: any) => {
+  let params = {username: value};
+  let promise = new Promise(((resolve) => {
+    loginDao.validUsername(params, async (res: any) => {
+      resolve(res.data)
+    })
+  }))
+  /*当 Promise resolve一个之后才会执行，否则会已知阻塞在这里*/
+  let result = await promise;
+  if (result) {
+    return Promise.resolve()
+  } else {
+    return Promise.reject()
+  }
+};
+/*用户密码校验,用于修改密码时，原密码的校验*/
+export const validatePassword = async (rule: any, value: any) => {
+  debugger
+  let params = {password: value};
+  let promise = new Promise(((resolve) => {
+    loginDao.validUsername(params, async (res: any) => {
+      resolve(res.data)
+    })
+  }))
+  /*当 Promise resolve一个之后才会执行，否则会已知阻塞在这里*/
+  let result = await promise;
+  if (result) {
+    return Promise.resolve()
+  } else {
+    return Promise.reject()
+  }
 };
