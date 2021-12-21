@@ -5,6 +5,7 @@ class XxxgDao {
     private getUserInfoUrl: string = '/user/getUserInfoBySession';
     private editAvatarUrl: string = '/user/editAvatar';
     private editUserNameUrl: string = '/user/updateUserName';
+    private editUserPasswordUrl: string = '/user/updateUserPassword';
 
 
     /*用户详细信息查询*/
@@ -32,16 +33,14 @@ class XxxgDao {
             console.error(err)
         })
     }
-    /*修改用户名*/
+    /*修改用户密码*/
     editUserPassword(paramter:any, successCallback: Function, errorCallback?: Function, url?: string) {
-        axios.post(this.editUserNameUrl,Qs.stringify(paramter),{
+        axios.post(this.editUserPasswordUrl,Qs.stringify(paramter),{
             headers:{
                 "Content-Type": 'application/x-www-form-urlencoded'
             }
         }).then(
             (res) => {
-                console.log("res")
-                console.log(res)
                 successCallback(res);
             }
         ).catch((err) => {

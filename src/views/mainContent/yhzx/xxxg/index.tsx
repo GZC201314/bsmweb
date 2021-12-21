@@ -1,4 +1,4 @@
-import {Button, Collapse, Divider, Form, Input, Modal, Space, Tooltip, Typography, Upload} from 'antd';
+import {Button, Collapse, Divider, Form, Input, message, Modal, Space, Tooltip, Typography, Upload} from 'antd';
 import React, {FC, useState} from 'react'
 import './style.scss'
 import ImgCrop from 'antd-img-crop'
@@ -39,18 +39,18 @@ const Xxxg: FC<XxxgProps> = (props) => {
     const headerUserInfo = getStorage("userInfo", "") as any
 
     const [fileList, setFileList] = useState([] as UploadFile[]);
-    const [rlsbModelvisible, setRlsbModelvisible] = useState(false)
-    const [rlsbModelLoading, setRlsbModelLoading] = useState(false)
+    const [rlzcModelvisible, setRlzcModelvisible] = useState(false)
+    const [rlzcModelLoading, setRlzcModelLoading] = useState(false)
     const dispatch = useDispatch()
     /**effect  effect部分**/
     React.useEffect(
         () => {
-            if (!rlsbModelvisible && webcamRef.current) {
+            if (!rlzcModelvisible && webcamRef.current) {
                 // @ts-ignore
                 webcamRef.current.stream.getTracks()[0].stop();
             }
         },
-        [rlsbModelvisible]
+        [rlzcModelvisible]
     );
 
     React.useEffect(() => {
@@ -71,7 +71,8 @@ const Xxxg: FC<XxxgProps> = (props) => {
         })
     }, [])
     const capture = React.useCallback(
-        () => {
+        async () => {
+            setRlzcModelLoading(true)
             // @ts-ignore
             const imageSrc = webcamRef.current.getScreenshot();
             let blob = convertImgDataToBlob(imageSrc);
@@ -79,19 +80,21 @@ const Xxxg: FC<XxxgProps> = (props) => {
             if (blob) {
                 formData.append('file', blob);
             }
-            loginDao.rlsbLogin(formData, (res: any) => {
-                if (res.data.code === 200) {
-                    const action = {
-                        type: RLSB_LOGIN,
-                        data: res.data.data
+            let promise = new Promise(((resolve) => {
+                loginDao.faceRegister(formData, (res: any) => {
+                    if (res.data.code === 200) {
+
+                        setRlzcModelLoading(false)
+                        setRlzcModelvisible(false)
+                        resolve(true)
                     }
-                    dispatch(action);
-                    setRlsbModelLoading(false)
-                    setRlsbModelvisible(false)
-                    // @ts-ignore
-                    webcamRef.current.stream.getTracks()[0].stop();
-                }
-            })
+                })
+            }))
+            let res = await promise
+            if(res){
+                // @ts-ignore
+                webcamRef.current.stream.getTracks()[0].stop();
+            }
 
         },
         [dispatch]
@@ -122,19 +125,20 @@ const Xxxg: FC<XxxgProps> = (props) => {
     };
 
     function openRlsbModal() {
-        setRlsbModelvisible(true);
+        setRlzcModelvisible(true);
+        setRlzcModelLoading(true);
     }
 
-    const handleRlsbOk = () => {
+    const handleRlZCOk = () => {
         setTimeout(() => {
-            setRlsbModelvisible(false);
+            setRlzcModelvisible(false);
         }, 300);
     };
 
 
-    const handleRlsbCancel = () => {
+    const handleRlZCCancel = () => {
         /* 关闭摄像头*/
-        setRlsbModelvisible(false);
+        setRlzcModelvisible(false);
     };
 
 
@@ -173,8 +177,17 @@ const Xxxg: FC<XxxgProps> = (props) => {
     const editUserName = async () => {
         try {
             const values = await editUserNameForm.validateFields();
-            xxxgDao.editUserName(values,(res:any)=>{
-                console.log(res)
+            xxxgDao.editUserName(values, (res: any) => {
+                if(res.data.code === 200){
+                    headerUserInfo.username = res.data.data;
+                    setStorage("userInfo", headerUserInfo, "")
+                    message.success(res.data.msg);
+                    history.push({
+                        pathname: '/xxxg',
+                    })
+                }else {
+                    message.error(res.data.msg);
+                }
             })
         } catch (errorInfo) {
             console.log('Failed:', errorInfo);
@@ -184,13 +197,23 @@ const Xxxg: FC<XxxgProps> = (props) => {
     const editUserPassWord = async () => {
         try {
             const values = await editPasswordForm.validateFields();
-            xxxgDao.editUserPassword(values,(res:any)=>{
-                console.log(res)
+            xxxgDao.editUserPassword(values, (res: any) => {
+                if(res.data.code === 200){
+                    message.success(res.data.msg);
+                }else {
+                    message.error(res.data.msg);
+                }
             })
         } catch (errorInfo) {
             console.log('Failed:', errorInfo);
         }
     }
+    let time: NodeJS.Timeout;
+    const editUserPassworddebounce = async () => {
+        clearTimeout(time);
+        time = setTimeout(editUserPassWord,500)
+    }
+
 
     return (
         <div>
@@ -241,45 +264,53 @@ const Xxxg: FC<XxxgProps> = (props) => {
 
                 <Collapse.Panel header="用户密码修改" key="3">
                     <Form form={editPasswordForm}
-                          onFinish={editUserPassWord}
+                          onFinish={editUserPassworddebounce}
                     >
 
                         <Space>
                             <Form.Item label="原密码" name={'oldPassword'}
                                        validateTrigger={"onBlur"}
                                        hasFeedback
-                                       rules={[{required: true}, {
-                                           validator:validatePassword,
+                                       rules={[{
+                                           validator: validatePassword,
                                            message: '密码错误'
                                        }]}
                             >
-                                <Input.Password />
+                                <Input.Password/>
                             </Form.Item>
                             <Form.Item label="新密码" name={'password'}
                                        validateTrigger={"onBlur"}
                                        hasFeedback
-                                       rules={[{required: true}, {
+                                       rules={[{
                                            pattern: /^.*(?=.{6,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*? ]).*$/,
                                            message: '密码过于简单'
                                        }]}
                             >
-                                <Input.Password />
+                                <Input.Password/>
                             </Form.Item>
-                            <Tooltip className={'tooltip-class'} title={"最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符"}>
-                                <Typography.Link><QuestionCircleOutlined/></Typography.Link>
-                            </Tooltip>
+                            <Form.Item>
+                                <Tooltip className={'tooltip-class'} title={"最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符"}>
+                                    <Typography.Link><QuestionCircleOutlined/></Typography.Link>
+                                </Tooltip>
+                            </Form.Item>
                             <Form.Item label="重复密码" name={'rePassword'}
                                        validateTrigger={"onBlur"}
                                        hasFeedback
-                                       rules={[{required: true}, {
-                                           pattern: /^.*(?=.{6,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*? ]).*$/,
-                                           message: '密码过于简单'
-                                       }]}
+                                       rules={[({getFieldValue}) => ({
+                                           validator(_, value) {
+                                               if (!value || getFieldValue('password') === value) {
+                                                   return Promise.resolve();
+                                               }
+                                               return Promise.reject(new Error('密码不匹配'));
+                                           },
+                                       }),]}
                             >
-                                <Input.Password />
+                                <Input.Password/>
+                            </Form.Item>
+                            <Form.Item>
+                                <Button type="primary" htmlType={"submit"}>修改密码</Button>
                             </Form.Item>
                         </Space>
-                            <Button type="primary" htmlType={"submit"}>修改密码</Button>
 
                     </Form>
 
@@ -298,12 +329,13 @@ const Xxxg: FC<XxxgProps> = (props) => {
 
             </Collapse>
 
-            {/*人脸识别弹窗*/}
+            {/*人脸识别弹窗 destroyOnClose 打开时重新加载子组件*/}
             <Modal
-                visible={rlsbModelvisible}
-                title="人脸识别"
-                onOk={handleRlsbOk}
-                onCancel={handleRlsbCancel}
+                visible={rlzcModelvisible}
+                title="人脸注册"
+                onOk={handleRlZCOk}
+                onCancel={handleRlZCCancel}
+                destroyOnClose
                 footer={null}
             >
                 <Webcam audio={false}
@@ -316,7 +348,7 @@ const Xxxg: FC<XxxgProps> = (props) => {
                 >
                 </Webcam>
                 <div className={"capture"}>
-                    <Button type="primary" onClick={capture} loading={rlsbModelLoading}>拍摄照片</Button>
+                    <Button type="primary" onClick={capture} loading={rlzcModelLoading}>人脸注册</Button>
                 </div>
             </Modal>
 

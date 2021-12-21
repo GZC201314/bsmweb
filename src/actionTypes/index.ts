@@ -20,3 +20,6 @@ export const USER_SET_USERINFO_ACTION = 'user_set_userinfo_action'
 /*xxxg reducer*/
 // 修改用户页面初始化
 export const XXXG_GET_USERINFO_HANDLE = 'xxxg_get_userInfo_handle'
+
+
+export const GRZX_GET_USERINFO_HANDLE = 'grzx_get_userinfo_handle'

@@ -355,10 +355,9 @@ export const validateUserName = async (rule: any, value: any) => {
 };
 /*用户密码校验,用于修改密码时，原密码的校验*/
 export const validatePassword = async (rule: any, value: any) => {
-  debugger
   let params = {password: value};
   let promise = new Promise(((resolve) => {
-    loginDao.validUsername(params, async (res: any) => {
+    loginDao.validPassword(params, async (res: any) => {
       resolve(res.data)
     })
   }))

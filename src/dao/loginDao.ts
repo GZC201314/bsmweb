@@ -3,14 +3,15 @@ import Qs from 'qs'
 import {message} from "antd";
 class LoginDao {
     private validEmailAddressUrl: string = '/valid/userinfo';
-    private validPasswordUrl: string = '/valid/password';
+    private validPasswordUrl: string = '/valid/userinfo';
     private sendRegisterEmailUrl: string = '/user/sendRegisterEmail';
     private userLogOutUrl: string = '/logout';
     private registerUserUrl: string = '/user/register';
     private userLoginUrl: string = '/login';
     private rlsbLoginUrl: string = '/ai/faceLogin';
+    private faceRegisterUrl: string = '/ai/faceRegister';
 
-    /*用户登录*/
+    /*用户人脸识别登录*/
     rlsbLogin(paramter: object, successCallback: Function, errorCallback?: Function, url?: string) {
         axios({
             headers:{
@@ -18,6 +19,22 @@ class LoginDao {
             },
             method: 'post',
             url: this.rlsbLoginUrl,
+            data:paramter
+        }).then(res => {
+            successCallback(res);
+        }).catch(err => {
+            console.error(err)
+        });
+
+    }
+    /*用户人脸注册*/
+    faceRegister(paramter: object, successCallback: Function, errorCallback?: Function, url?: string) {
+        axios({
+            headers:{
+                'Content-Type': 'multipart/form-data'
+            },
+            method: 'post',
+            url: this.faceRegisterUrl,
             data:paramter
         }).then(res => {
             successCallback(res);
