@@ -1,5 +1,5 @@
 import { Modal } from 'antd';
-import React, {FC, useState,useRef } from 'react'
+import React, {FC, useState } from 'react'
 import CSwiper from '../CSwiper';
 import _ from "lodash";
 import './index.scss'

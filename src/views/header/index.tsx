@@ -91,7 +91,17 @@ const Header: FC<HeaderProps> = (props) => {
             })
 
         } else if (data.id === 'personal') {
-            history.push('/personal')
+            history.push('/grzx')
+        }else {
+            // 退出
+            removeStorage('userInfo','')
+            setUserInfo(null);
+            history.push('/login')
+
+            /*发送到后台，清空session*/
+            loginDao.userLogOut({},(res:any)=>{
+                message.success(res.msg)
+            })
         }
     }
 

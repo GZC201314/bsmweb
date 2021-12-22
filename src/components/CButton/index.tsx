@@ -8,7 +8,7 @@ import * as Icons from "@ant-design/icons";
 export interface CButtonProps {
     loading?: boolean,
     icon?: string,
-    type?: "link" | "text" | "default" | "ghost" | "primary" | "dashed" | undefined,
+    type?: "link" | "text" | "default" | "ghost" | "primary" | "dashed"|"danger" | undefined,
     size?: string,
     disabled?: boolean,
     className?: string,

@@ -23,3 +23,7 @@ export const XXXG_GET_USERINFO_HANDLE = 'xxxg_get_userInfo_handle'
 
 
 export const GRZX_GET_USERINFO_HANDLE = 'grzx_get_userinfo_handle'
+
+/*角色管理页面*/
+export const JSGL_GET_ALLROLEINFO_HANDLE = 'jsgl_get_allroleinfo_handle'
+export const JSGL_GET_ALLROLEINFO_PAGE_HANDLE = 'jsgl_get_allroleinfo_page_handle'
