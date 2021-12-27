@@ -28,7 +28,7 @@ const baseData = {
 };
 
 /*必填项*/
-const required = (value) => {
+const required = (value:any) => {
   if(!value || (value instanceof Array && !value.length)){
     return { ...baseData, validateStatus: validateStatus.error, validate: false, info: baseInfo.required}
   }
@@ -36,7 +36,7 @@ const required = (value) => {
 };
 
 /*邮箱验证*/
-const email = (value) => {
+const email = (value:any) => {
   if(!baseReg.email.test(value)){
     return { ...baseData, validateStatus: validateStatus.error, validate: false, info: baseInfo.email}
   }
@@ -44,7 +44,7 @@ const email = (value) => {
 };
 
 /*身份证号验证*/
-const card = (value) => {
+const card = (value:any) => {
   if(!baseReg.card.test(value)){
     return { ...baseData, validateStatus: validateStatus.error, validate: false, info: baseInfo.card}
   }
@@ -52,7 +52,7 @@ const card = (value) => {
 };
 
 /*手机号码验证*/
-const phone = (value) => {
+const phone = (value:any) => {
   if(!baseReg.phone.test(value)){
     return { ...baseData, validateStatus: validateStatus.error, validate: false, info: baseInfo.phone}
   }
@@ -60,7 +60,7 @@ const phone = (value) => {
 };
 
 /*字符最大长度验证*/
-const maxLength = (value, checkArg) => {
+const maxLength = (value:any, checkArg:any) => {
   if(value.length > Number(checkArg)){
     return { ...baseData, validateStatus: validateStatus.error, validate: false, info: `${baseInfo.maxLength}${checkArg}`}
   }
@@ -68,7 +68,7 @@ const maxLength = (value, checkArg) => {
 };
 
 /*字符最小长度验证*/
-const minLength = (value, checkArg) => {
+const minLength = (value:any, checkArg:any) => {
   if(value.length < Number(checkArg)){
     return { ...baseData, validateStatus: validateStatus.error, validate: false, info: `${baseInfo.minLength}${checkArg}`}
   }

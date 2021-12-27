@@ -11,9 +11,10 @@ export type Item = {
 export interface CSelectProps {
     value: any;
     type:any;
-    style:object;
-    options: Item[];
-    disabled:boolean;
+    style?:object;
+    options?: Item[];
+    disabled?:boolean;
+    placeholder?:string;
     onSearch?:Function;
     onChange?: Function;
 }
@@ -49,7 +50,7 @@ const CSelect: FC<CSelectProps> = (props) => {
                    onSearch={(value:any) => searchHandler(value)}
                    onChange={(value:any) => changeHandler(value)}>
             {
-                type === 'select' && options.map((item, index)=>{
+                type === 'select' && options && options.map((item, index)=>{
                     return <Option key={index} value={item.value} disabled={item.disabled}>{item.name}</Option>
                 })
             }

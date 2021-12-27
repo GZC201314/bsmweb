@@ -3,10 +3,10 @@ import {List} from 'antd'
 import CCheckbox from '../CForm/CCheckbox'
 import CButton from '../CButton'
 import CDatePicker from '../CForm/CDatePicker'
-import './index.scss'
+import './style.scss'
 
 // 自定义单选筛选项菜单
-export const renderTableFilter = (data, headItem, filterConfirm) => {
+export const renderTableFilter = (data:any, headItem:any, filterConfirm:any) => {
 
   let filterMultiple = headItem.filterMultiple;//多选true单选false
 
@@ -23,7 +23,7 @@ export const renderTableFilter = (data, headItem, filterConfirm) => {
     dateType = ['date', 'mouth', 'range', 'week'].includes(headItem['filterDate']) ? headItem['filterDate'] : 'range';
   }
 
-  let datePickerChange = (dateString) => {
+  let datePickerChange = (dateString: any) => {
     headItem.dateValue = dateString;
     filterConfirm({key: key, title: title, type: 'date', data: {dateString}});
     data.confirm();
@@ -31,23 +31,25 @@ export const renderTableFilter = (data, headItem, filterConfirm) => {
 
 
 
-  let filterItemClick = (type, itemData, data) => {
+  let filterItemClick = (type: string, itemData: { value: string }, data: { confirm: () => void }) => {
     // 筛选选中项
     let filterSelectData = null;
     // checkbox模式下选中项的value数组
     let checkboxSelectData = [];
 
-    let value = '';
+    let value: string | any[] = '';
 
-    checkboxSelectData = filterData.filter(item=>{
+    checkboxSelectData = filterData.filter((item: { checked: any })=>{
       return item.checked
     });
 
     filterSelectData = type === 'single' ? [itemData] : checkboxSelectData;
     value = type === 'single' ? itemData.value : [];
     if(type === 'checkbox'){
-      filterSelectData.forEach(item=>{
-        value.push(item.value);
+      filterSelectData.forEach((item: { value: any })=>{
+        if (typeof value !== "string") {
+          value.push(item.value);
+        }
       });
     }
     filterConfirm({key: key, title: title, value: value
@@ -55,15 +57,15 @@ export const renderTableFilter = (data, headItem, filterConfirm) => {
     data.confirm();
   };
 
-  let checkboxFilterChange = (value, itemData) => {
+  let checkboxFilterChange = (value: any, itemData: { checked: any }) => {
     itemData.checked = value;
   };
 
-  let render_item = (itemData)=>{
+  let render_item = (itemData: any)=>{
     if(filterMultiple){
       return(
         <List.Item className='table-filter-item'>
-          <CCheckbox value={itemData.checked} onChange={(value) => checkboxFilterChange(value, itemData)}>{itemData.text || '--'}</CCheckbox>
+          <CCheckbox value={itemData.checked} onChange={(value: any) => checkboxFilterChange(value, itemData)}>{itemData.text || '--'}</CCheckbox>
         </List.Item>
       )
     }else{
@@ -85,7 +87,7 @@ export const renderTableFilter = (data, headItem, filterConfirm) => {
 
   return(
     <>
-      {dateType ? <CDatePicker type={dateType} value={headItem.dateValue} onChange={(dateString) => datePickerChange(dateString)} /> : <List
+      {dateType ? <CDatePicker type={dateType} value={headItem.dateValue} onChange={(dateString: any) => datePickerChange(dateString)} /> : <List
         className='table-filter-dropdown-list'
         bordered
         size="small"

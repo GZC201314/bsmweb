@@ -1,17 +1,19 @@
-import {DownOutlined} from '@ant-design/icons';
-import {Button, Col, Form, Input, Row, Select} from 'antd';
+import {message, Modal} from 'antd';
 import React, {FC, useEffect, useState} from 'react'
 import CButton from '../../../../components/CButton';
 import CInput from '../../../../components/CForm/CInput';
 import CTable from '../../../../components/CTable';
 import CSwitch from "../../../../components/CForm/CSwitch";
-import {tableData} from './data'
+import {tableData, roleManageListNewData} from './data'
 import {setReload} from "../../../../redux/common/action";
-import _ from 'lodash'
 import './style.scss'
 import {useSelector} from "../../../../hooks/hooks";
 import jsglDao from "../../../../dao/jsglDao";
 import {useDispatch} from "react-redux";
+import {useHistory} from "react-router-dom";
+import CPageNew from '../../../../components/CPageNew';
+import {setPageNewItem, urlFormat, setPageNewValue} from "../../../../utils";
+import _ from "lodash";
 
 export interface JsglProps {
 
@@ -21,16 +23,21 @@ export interface JsglProps {
 const Jsgl: FC<JsglProps> = (props) => {
 
     const dispatch = useDispatch()
+    const history = useHistory()
     /**state  state部分**/
     const [colums] = useState(tableData.tHead)
+    const [data, setData] = useState(roleManageListNewData)
+    const [editFlag, setEditFlag] = useState(false)
     const [dataSource, setDataSource] = useState(tableData.tBody)
     const [page, setPage] = useState(tableData.tPage)
+    const [filterData, setFilterData] = useState([])
     const [loading, setLoading] = useState(true)
+    const [modalVisible, setModalVisible] = useState(false)
     const [searchData, setSearchData] = useState({
         value: '',//搜索框筛选
         placeholder: '请输入角色名'
     })
-    const [selectionDataIds, setSelectionDataIds] = useState([])
+    const [selectionDataIds, setSelectionDataIds] = useState([] as Array<any>)
 
     /**effect  effect部分**/
 
@@ -38,39 +45,72 @@ const Jsgl: FC<JsglProps> = (props) => {
         return state.CommonReducer.reload;
     });
 
-    useEffect(() => {
-        if (reload) {
-            getUserListData();
-        }
-    }, [reload])
-
-    useEffect(() => {
-        getUserListData();
-    }, [page,searchData])
-
-    useEffect(() => {
-        removeHandler();
-    }, [selectionDataIds])
-    /**methods 方法部分**/
-
-        // 获取用户角色列表数据
+    // 获取用户角色列表数据
     const getUserListData = () => {
-            let getData = {
+        let getData = {
+            page: {
                 page: page.page,
                 pageSize: page.pageSize,
                 search: searchData.value,
-            };
-            setLoading(true)
+            }
+        };
+        setLoading(true)
 
-            jsglDao.getRoleListInfo(getData, (res: any) => {
-                let data = res.data.list;
-                let total = res.data.pagination.total;
+        jsglDao.getRoleListInfo(getData, (res: any) => {
+
+            if (res.code === 200) {
+                let data = res.data.records;
+                let total = res.data.total;
                 setDataSource(data)
                 setPage({...page, total: total})
                 setLoading(false)
                 dispatch(setReload(false));
-            })
+                return;
+            }
+            message.error("登录信息已过期。请重新登录。")
+            history.push({
+                pathname: '/login'
+            });
+
+        })
+    }
+
+    /*单独删除或者批量删除*/
+    const removeHandler = () => {
+        if (selectionDataIds.length === 0) {
+            message.warning("请选择一条记录删除！")
+            return;
         }
+        let delData = {
+            delIds: selectionDataIds.join(",")
+        };
+
+        jsglDao.delRole(delData, (res: any) => {
+            if (res.code === 200) {
+                getUserListData();
+            }
+        })
+    }
+
+    useEffect(() => {
+        if (reload) {
+            getUserListData();
+        }
+    }, [getUserListData, reload])
+    useEffect(() => {
+        getUserListData();
+    }, [])
+
+    // useEffect(() => {
+    //     getUserListData();
+    // }, [getUserListData, page, searchData])
+    //
+    // useEffect(() => {
+    //     removeHandler();
+    // }, [removeHandler, selectionDataIds])
+    /**methods 方法部分**/
+
+
 
     const onTableChange = (data: any) => {
         if (data.type === 'page' || data.type === 'pageSize') {
@@ -79,60 +119,99 @@ const Jsgl: FC<JsglProps> = (props) => {
             setSelectionDataIds(data.data.ids)
         }
     }
+    const onStateChange = (type: string, value: any) => {
+        if (type === 'selectedRowKeys') {
+            setSelectionDataIds(value)
+        } else if (type === 'filterData') {
+            setFilterData(value)
+        }
+    }
 
     /*搜索*/
-    const searchHandler = (value:any) =>{
-        setSearchData({...searchData,value:value})
+    const searchHandler = (value: any) => {
+        setSearchData({...searchData, value: value})
     }
 
     /*新增角色*/
     const addHandler = () => {
         /*TODO 这边的实现是打开一个模式窗口*/
-        console.log("addHandler")
+        setModalVisible(true)
     }
 
-    /*单独删除或者批量删除*/
-    const removeHandler = () =>{
-        let delData = {
-            ids: selectionDataIds
-        };
-        jsglDao.delRole(delData,(res:any)=>{
-            getUserListData();
-        })
-    }
 
     // 重置筛选项
-    const resetHandler = () =>{
+    const resetHandler = (e: any) => {
+        history.push({
+            pathname: "/jsgl"
+        })
         setSearchData({...searchData, value: ''})
         setPage(tableData.tPage)
         // userManageList.clearFilterData();
     }
-
-    // 查看详情
-    const detailHandler=(data:any) =>{
-        console.log("detailHandler")
-    }
-
     // 编辑当前行
-    const editHandler = (data:any) =>{
+    const editHandler = (data: any) => {
         console.log("editHandler")
     }
 
     // 删除当前行
-    const delHandler=(data:any)=>{
+    const delHandler = (data: any) => {
         // @ts-ignore
         setSelectionDataIds([data.id])
     }
 
     // 激活or停用用户
-    const editActiveChange= (value: any, record: { isActive?: any; id?: any })=>{
+    const editActiveChange = (value: any, record: { disabled?: any; roleid?: any }) => {
         let data = {
-            id: record.id,
-            isActive: value
+            roleid: record.roleid,
+            disabled: !value
         };
-        jsglDao.editActiveRoleList(data,(res:any)=>{
-            getUserListData();
+        jsglDao.editActiveRoleList(data, (res: any) => {
+            if (res.code === 200) {
+                message.success(res.msg)
+            } else {
+                message.error(res.msg)
+            }
+            // getUserListData();
         })
+    }
+
+    const onChange = (type: string, data1: any) => {
+        if(type === "data"){
+            if(_.isObject(data1)){
+                // @ts-ignore
+                setData(data1)
+            }
+        }
+
+    }
+
+    const onSubmit = (data: any) => {
+        let method = null;
+        if (editFlag) {
+            /*TODO 获取修改的RoleId*/
+            // data.data.id = urlFormat(props.history.location.search).query.id;
+            method = jsglDao.updateRole;
+        } else {
+            method = jsglDao.insertRole;
+        }
+        method(data.data, (res: any) => {
+            if (res.code === 200) {
+                message.success(res.msg)
+                /*关闭弹窗*/
+                setModalVisible(false)
+                return;
+            }
+            message.error("登录过期，请重新登录。")
+            setModalVisible(false)
+            history.push({
+                pathname: "/login"
+            })
+        }, () => {
+        }, "/role/addRole")
+    }
+
+    function onCancel(data: any) {
+        setModalVisible(false)
     }
 
     /**styles 样式部分**/
@@ -149,32 +228,33 @@ const Jsgl: FC<JsglProps> = (props) => {
                              onClick={removeHandler}>批量删除</CButton>
                 </div>
                 <div className='flex filter-right'>
-                    <CInput value={searchData.value}
-                            className='search-input'
-                            type='search'
-                            placeholder={searchData.placeholder} onEnter={searchHandler}/>
+                    <CInput
+                        className='search-input'
+                        type='search'
+                        placeholder={searchData.placeholder} onEnter={searchHandler}/>
                     <CButton type='primary' onClick={resetHandler}>重置</CButton>
                 </div>
             </div>
 
-            {/*ref='userManageList'*/}
-            <CTable loading={loading} columns={colums}
-                    dataSource={dataSource} page={page} onTableChange={onTableChange}>
+            <CTable size={'middle'} scroll={true} loading={loading} columns={colums}
+                    selectedRowKeys={selectionDataIds}
+                    dataSource={dataSource} page={page} onTableChange={onTableChange} onStateChange={onStateChange}
+                    checked={true} rowKey={"roleid"}>
                 <div
                     slot='isActive'
                     // @ts-ignore
-                    render={(text: any, record: { isActive?: any; id?: any; }, index: any) => (
-                        <div className='isActive'>
-                            <CSwitch value={record.isActive}
+                    render={(text: any, record: { disabled?: any; roleid?: any; }, index: any) => {
+                        return <div className='isActive'>
+                            <CSwitch value={!text}
                                      onChange={(value: any) => editActiveChange(value, record)}/>
                         </div>
-                    )}/>
+
+                    }}/>
                 <div
                     slot='operate'
                     // @ts-ignore
                     render={(text: any, record: any, index: any) => (
                         <div className='operate'>
-                            <CButton type='text' onClick={() => detailHandler(record)}>查看</CButton>
                             <CButton type='text' authId='userManageListEdit'
                                      onClick={() => editHandler(record)}>编辑</CButton>
                             <CButton type='text' authId='userManageListDelete'
@@ -182,6 +262,15 @@ const Jsgl: FC<JsglProps> = (props) => {
                         </div>
                     )}/>
             </CTable>
+
+            {/*角色新增模式框*/}
+            <Modal destroyOnClose visible={modalVisible} footer={null}>
+                <div className='user-manage-list-new'>
+                    <CPageNew data={data} onChange={onChange} onSubmit={onSubmit} onCancel={onCancel}
+                              updateType={'insert'} footerShow={true}/>
+                </div>
+            </Modal>
+
         </div>
     );
 }

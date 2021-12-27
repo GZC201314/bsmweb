@@ -3,13 +3,15 @@ import {Input, InputNumber} from 'antd'
 import './index.scss'
 
 export interface CInputProps {
+    ref?:any
     type: string,
-    showNumberStep?: false,//是否显示number类型的step
-    value: string | number,
+    showNumberStep?: boolean,//是否显示number类型的step
+    value?: string | number,
     onChange?: Function,
     onEnter?: Function,
     className?: string,
-    placeholder?: string
+    placeholder?: string,
+    disabled?: boolean,
 }
 
 const CInput: FC<CInputProps> = (props) => {
@@ -22,7 +24,6 @@ const CInput: FC<CInputProps> = (props) => {
         textarea: 'TextArea',
     })
 
-    const [valueState, setValueState] = useState('')
     // @ts-ignore
     const InputDom = inputTypeOver[type] ? Input[inputTypeOver[type]] : (type === 'input' && Input);
     const onSearch = (value: any) => searchHandler(value);
@@ -35,16 +36,16 @@ const CInput: FC<CInputProps> = (props) => {
 
 
     /**effect  effect部分**/
-    useEffect(() => {
-        let defaultValue: any = type === 'number' ? undefined : '';
-        setValueState(value || defaultValue)
-    }, [type, value, valueState])
+    // useEffect(() => {
+    //     let defaultValue: any = type === 'number' ? undefined : '';
+    //     setValueState(value || defaultValue)
+    // }, [type, value, valueState])
 
     /**methods 方法部分**/
     const changeHandler = (e: any) => {
+
         let value = type === 'number' ? e : e.target.value;
 
-        setValueState(value)
         onChange && onChange(value);
     }
 
@@ -64,13 +65,12 @@ const CInput: FC<CInputProps> = (props) => {
         <>
             {!!InputDom && <InputDom {...restProps}
                                      {...propsObj}
-                                     value={valueState}
                                      className={`c-input ${className}`}
                                      onChange={(e: any) => changeHandler(e)}
                                      onPressEnter={(e: any) => enterHandler(e)}/>}
             {type === 'number'
             && <InputNumber {...restProps}
-                            value={valueState}
+                            // value={value}
                             onChange={(value) => changeHandler(value)}
                             className={`c-input-number ${className} ${!showNumberStep ? 'no-show-number-step' : ''}`}/>}
         </>

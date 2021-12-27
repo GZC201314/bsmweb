@@ -123,6 +123,7 @@ export const setObjectValue = function(obj:object, text:string, values?:string) 
  * @param value
  */
 export const setPageNewItem = (data:any, id:any, field:any, value:any) => {
+  debugger
   let newData = _.cloneDeep(data);
   newData.forEach((item: { data: any[]; })=>{
     item.data && item.data.forEach(dataItem => {

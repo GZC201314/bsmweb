@@ -1,7 +1,5 @@
-
-import React, {FC, ReactElement, ReactNode, useState} from 'react'
+import React, {FC, useState} from 'react'
 import {Table, Spin} from 'antd'
-import PropTypes from 'prop-types'
 import {renderTableFilter} from './tableFilter'
 import FilterHead from './filterHead'
 import CPage from '../CPage'
@@ -12,76 +10,75 @@ export interface CTableProps {
     columns: any[],
     dataSource: never[],
     children: any[],
+    rowKey: string,
     page: {
         page: number,
         total: number,
         pageSize: number
     },
     checked?: boolean,
-    bordered?: boolean,
+    // bordered?: boolean,
     size?: SizeType,
     showFilter?: boolean,//是否显示过滤项
     loading: boolean,
     scroll?: boolean,//默认展示scroll
-    onTableChange?:Function,
+    onTableChange?: Function,
+    onStateChange?: Function,
+    selectedRowKeys: any[],
+    filterData?: any[]
 }
 
 const CTable: FC<CTableProps> = (props) => {
-    const {bordered, size, scroll, page} = props;
-    const scrollConfig:any = scroll ? {x: 'max-content'} : {x: false};
+    const { size, scroll, page, columns, dataSource, selectedRowKeys, filterData, loading} = props;
+    const scrollConfig: any = scroll ? {x: 'max-content'} : {x: false};
     /**state  state部分**/
-    const [columns, setColumns] = useState([])
-    const [dataSource, setDataSource] = useState([])
-    const [selectedRowKeys, setSelectedRowKeys] = useState([])
-    const [filterData, setFilterData] = useState([])
-    const [loading, setLoading] = useState<boolean>(false)
 
     /**methods 方法部分**/
-    // 过滤项发生变化时向上传递事件
+        // 过滤项发生变化时向上传递事件
     const filterChangeToParent = (filterData: any) => {
-        let data = {
-            type: 'filter',
-            data: filterData
-        };
-        props.onTableChange && props.onTableChange(data);
-    }
-        // 初始化tableHead数据
+            let data = {
+                type: 'filter',
+                data: filterData
+            };
+            props.onTableChange && props.onTableChange(data);
+        }
+    // 初始化tableHead数据
     const columnsInit = (columnsData?: any, nextProps?: { columns: any }) => {
-            let columns = null;
-            if (columnsData) {
-                columns = _.cloneDeep(columnsData);
-            } else {
-                columns = _.cloneDeep(props.columns);
-                if (nextProps) {
-                    columns = _.cloneDeep(nextProps.columns);
-                }
+        let columns = null;
+        if (columnsData) {
+            columns = _.cloneDeep(columnsData);
+        } else {
+            columns = _.cloneDeep(props.columns);
+            if (nextProps) {
+                columns = _.cloneDeep(nextProps.columns);
             }
-
-            columns.forEach((item: any, index: number) => {
-                if (item.hasOwnProperty('filterMultiple')) {
-                    if (item.filters) {
-                        item.filters.forEach((filterItem: { hasOwnProperty: (arg0: string) => any; checked: boolean }) => {
-                            if (!filterItem.hasOwnProperty('checked')) {
-                                filterItem.checked = false;
-                            }
-                        })
-                    }
-                    // 如果是日期筛选
-                    if (item.hasOwnProperty('filterDate') && !item.hasOwnProperty('dateValue')) {
-                        item.dateValue = null;//添加日期value，为了可控的日期组件
-                    }
-                    item.filterDropdown = (data: any) => {
-                        return renderTableFilter(data, item, filterConfirm)
-                    };
-                }
-            });
-            setColumns(columns)
         }
 
+        columns.forEach((item: any, index: number) => {
+            if (item.hasOwnProperty('filterMultiple')) {
+                if (item.filters) {
+                    item.filters.forEach((filterItem: { hasOwnProperty: (arg0: string) => any; checked: boolean }) => {
+                        if (!filterItem.hasOwnProperty('checked')) {
+                            filterItem.checked = false;
+                        }
+                    })
+                }
+                // 如果是日期筛选
+                if (item.hasOwnProperty('filterDate') && !item.hasOwnProperty('dateValue')) {
+                    item.dateValue = null;//添加日期value，为了可控的日期组件
+                }
+                item.filterDropdown = (data: any) => {
+                    return renderTableFilter(data, item, filterConfirm)
+                };
+            }
+        });
+        // setColumns(columns)
+    }
+
     // 初始化tableHead数据
-    const dataSourceInit = (nextProps:any) => {
+    const dataSourceInit = (nextProps: any) => {
         let dataSource = _.cloneDeep(nextProps.dataSource);
-        setDataSource(dataSource)
+        // setDataSource(dataSource)
     }
 
     // 根据tagClose改变columns中filter的checked
@@ -126,42 +123,52 @@ const CTable: FC<CTableProps> = (props) => {
 
     // 清空过滤项数据
     const clearFilterData = () => {
-        setFilterData([])
-        columnsInit();
+        // setFilterData([])
+        if (props.onStateChange) {
+            props.onStateChange("filterData", [])
+            columnsInit();
+        }
     }
 
     // filter过滤确认
-    const filterConfirm = (data:any) =>{
+    const filterConfirm = (data: any) => {
         let filterData1 = _.cloneDeep(filterData);
-        let currentIndex = filterData1.findIndex((item: { key: any })=>{
+        // @ts-ignore
+        let currentIndex = filterData1.findIndex((item: { key: any }) => {
             return item.key === data.key
         });
         let currentFilter = {
             data,
         };
-        if(currentIndex > -1){
+        if (currentIndex > -1) {
             // 存在则修改
-            currentFilter = filterData1[currentIndex];
+            if (filterData1) {
+                currentFilter = filterData1[currentIndex];
+            }
             currentFilter.data = data.data;
             // 判断如果在close的时候data.data可能是空，这时候需要删除当前项
-            if(data.type === 'filter' && !currentFilter.data.length){
+            if (data.type === 'filter' && !currentFilter.data.length) {
+                // @ts-ignore
                 filterData1.splice(currentIndex, 1);
-            }else if(data.type === 'date'){
+            } else if (data.type === 'date') {
                 let isHave = _.isArray(currentFilter.data.dateString) ? !!currentFilter.data.dateString.length : !!currentFilter.data.dateString;
-                if(!isHave){
+                if (!isHave) {
+                    // @ts-ignore
                     filterData1.splice(currentIndex, 1);
                 }
-            }else{
+            } else {
                 // @ts-ignore
                 filterData1.splice(currentIndex, 1, currentFilter);
             }
-        }else{
+        } else {
             //不存在则新添加
             // @ts-ignore
             filterData1.push(data);
         }
 
-        setFilterData(filterData1)
+        if (props.onStateChange) {
+            props.onStateChange("filterData", filterData1)
+        }
         filterChangeToParent(data);
     }
 
@@ -174,14 +181,15 @@ const CTable: FC<CTableProps> = (props) => {
             type: 'checkbox',
             fixed: 'left',
             columnWidth: 40,
-            selectedRowKeys: selectedRowKeys,
+            selectedRowKeys: props.selectedRowKeys,
             onChange: (selectedRowKeys: any, selectedRows: any) => {
-                setSelectedRowKeys(selectedRowKeys)
+                if (props.onStateChange) {
+                    props.onStateChange("selectedRowKeys", selectedRowKeys)
+                }
                 tableSelectionChange(selectedRowKeys, selectedRows);
             },
             // 选择框的默认属性配置
             getCheckboxProps: (record: { disabled: any; checked: any }) => ({
-                disabled: record.disabled, // Column configuration not to be checked
                 selected: record.checked,
             }),
         } as any
@@ -190,16 +198,18 @@ const CTable: FC<CTableProps> = (props) => {
 
     // 初始化selected
     const selectedRowKeysInit = () => {
-        let selectedRowKeys: any[] = [];
+        let selectedRowKeys = props.selectedRowKeys
         dataSource.forEach(item => {
             // @ts-ignore
             if (item.checked) {
                 // @ts-ignore
-                selectedRowKeys.push(item.key);
+                selectedRowKeys.push(item.id);
             }
         });
         // @ts-ignore
-        setSelectedRowKeys(selectedRowKeys)
+        if (props.onStateChange) {
+            props.onStateChange("selectedRowKeys", selectedRowKeys);
+        }
     }
 
     // 选择项发生变化
@@ -221,7 +231,7 @@ const CTable: FC<CTableProps> = (props) => {
     }
 
     // 渲染tableColumn
-    const renderColumn = (item:any) => {
+    const renderColumn = (item: any) => {
         if (!item.slot) {
             return <Table.Column
                 {...item}
@@ -231,7 +241,7 @@ const CTable: FC<CTableProps> = (props) => {
         } else if (props.children) {
             if (_.isArray(props.children)) {
                 // @ts-ignore
-                let childrenItem = props.children.filter((childrenItem: { props:any}, childrenIndex: any) => {
+                let childrenItem = props.children.filter((childrenItem: { props: any }, childrenIndex: any) => {
                     return childrenItem.props.slot === item.slot;
                 });
                 if (childrenItem.length) {
@@ -246,27 +256,24 @@ const CTable: FC<CTableProps> = (props) => {
                 // @ts-ignore
                 if (props.children.props.slot === item.slot) {
                     return <Table.Column
-                                    {...item}
-                                    render={(text, record, index) => (
-                                        <div className='c-table-column'>{
-                                            // @ts-ignore
-                                            props.children.props.render(text, record, index)
-                                        }</div>
-                                    )}/>
-                            } else {
-                                return null;
-                            }
+                        {...item}
+                        render={(text, record, index) => (
+                            <div className='c-table-column'>{
+                                // @ts-ignore
+                                props.children.props.render(text, record, index)
+                            }</div>
+                        )}/>
+                } else {
+                    return null;
+                }
             }
         }
     }
 
-    React.useEffect(()=>{
-        // @ts-ignore
-        setLoading(props.loading)
+    React.useEffect(() => {
         columnsInit();
         selectedRowKeysInit();
-    },[columnsInit, props.loading, selectedRowKeysInit])
-
+    }, [columnsInit, props.loading, selectedRowKeysInit])
 
 
     /**styles 样式部分**/
@@ -275,14 +282,15 @@ const CTable: FC<CTableProps> = (props) => {
 
     /**render**/
 
+
     return (
         <div>
             <div className='c-table'>
                 <Spin spinning={loading}>
-                    <FilterHead data={filterData} onTagClose={tagClose}/>
+                    <FilterHead data={filterData ? filterData : []} onTagClose={tagClose}/>
                     <Table
-                        rowKey='id'
-                        bordered={bordered}
+                        rowKey={props.rowKey}
+                        // bordered={bordered !== undefined ? bordered : false}
                         size={size}
                         scroll={scrollConfig}
                         pagination={false}
