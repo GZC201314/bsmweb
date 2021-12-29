@@ -89,6 +89,7 @@ export const getObjectValue = function(obj:object, text:string) {
  * @param {设置的值} value
  */
 export const setObjectValue = function(obj:object, text:string, values?:string) {
+  // debugger
   try {
     if (text === '')
       return obj;
@@ -103,7 +104,7 @@ export const setObjectValue = function(obj:object, text:string, values?:string) 
         }
       if (textArray.length === 0) {
         // @ts-ignore
-        temp_obj[key] = value;
+        temp_obj[key] = values;
         return obj;
       }
       // @ts-ignore
@@ -123,7 +124,7 @@ export const setObjectValue = function(obj:object, text:string, values?:string) 
  * @param value
  */
 export const setPageNewItem = (data:any, id:any, field:any, value:any) => {
-  debugger
+  // debugger
   let newData = _.cloneDeep(data);
   newData.forEach((item: { data: any[]; })=>{
     item.data && item.data.forEach(dataItem => {

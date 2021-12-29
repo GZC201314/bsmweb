@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react'
+import React, {FC, useState} from 'react'
 import {Input, InputNumber} from 'antd'
 import './index.scss'
 
@@ -17,7 +17,7 @@ export interface CInputProps {
 const CInput: FC<CInputProps> = (props) => {
 
     /**state  state部分**/
-    const {type, showNumberStep, className, onChange, onEnter, value, ...restProps} = props;
+    const {type, showNumberStep, className, onChange, onEnter, ...restProps} = props;
     const [inputTypeOver] = useState({
         password: 'Password',
         search: 'Search',
@@ -46,7 +46,7 @@ const CInput: FC<CInputProps> = (props) => {
 
         let value = type === 'number' ? e : e.target.value;
 
-        onChange && onChange(value);
+        onChange && onChange("value",value);
     }
 
     const enterHandler = (e: any) => {
@@ -70,7 +70,6 @@ const CInput: FC<CInputProps> = (props) => {
                                      onPressEnter={(e: any) => enterHandler(e)}/>}
             {type === 'number'
             && <InputNumber {...restProps}
-                            // value={value}
                             onChange={(value) => changeHandler(value)}
                             className={`c-input-number ${className} ${!showNumberStep ? 'no-show-number-step' : ''}`}/>}
         </>

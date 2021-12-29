@@ -1,57 +1,59 @@
 import axios from "axios";
-class JsglDao {
-    private getRoleInfoUrl: string = '/role/getPageRole';
-    private editActiveRoleListUrl: string = '/role/updateRoleStatus';
-    private delRoleUrl: string = '/role/deleteRoles';
-    private insertRoleUrl: string = '/role/addRole';
-    private updateRoleUrl: string = '/role/uploadRoleRole';
-    /*角色列表信息查询*/
-    getRoleListInfo(paramter: any, successCallback: Function, errorCallback?: Function, url?: string) {
+const getRoleInfoUrl: string = '/role/getPageRole';
+const editActiveRoleListUrl: string = '/role/updateRoleStatus';
+const delRoleUrl: string = '/role/deleteRoles';
+const insertRoleUrl: string = '/role/addRole';
+const updateRoleUrl: string = '/role/updateRole';
+/*角色列表信息查询*/
+const getRoleListInfo = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
 
-        axios.post(this.getRoleInfoUrl,paramter).then(
-            (res)=>{
-                successCallback(res.data);
-            }
-        )
-    }
-    /*用户详细信息查询*/
-    delRole(paramter: any, successCallback: Function, errorCallback?: Function, url?: string) {
+    axios.post(url ? url : getRoleInfoUrl, paramter).then(
+        (res) => {
+            successCallback(res.data);
+        }
+    )
+}
+/*用户详细信息查询*/
+const delRole = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
 
-        axios.post(this.delRoleUrl, paramter).then(
-            (res) => {
-                successCallback(res.data);
-            }
-        )
-    }
-    /*启用or停用角色*/
-    editActiveRoleList(paramter: any, successCallback: Function, errorCallback?: Function, url?: string) {
+    axios.post(url ? url : delRoleUrl, paramter).then(
+        (res) => {
+            successCallback(res.data);
+        }
+    )
+}
+/*启用or停用角色*/
+const editActiveRoleList = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
 
-        axios.post(this.editActiveRoleListUrl, paramter).then(
-            (res) => {
-                successCallback(res.data);
-            }
-        )
-    }
-
-    /*新增角色*/
-    insertRole(paramter: any, successCallback: Function, errorCallback?: Function, url?: string) {
-        debugger
-        axios.post(url?url:this.insertRoleUrl, paramter).then(
-            (res) => {
-                successCallback(res.data);
-            }
-        )
-    }
-    /*新增角色*/
-    updateRole(paramter: any, successCallback: Function, errorCallback?: Function, url?: string) {
-
-        axios.post(url?url:this.updateRoleUrl, paramter).then(
-            (res) => {
-                successCallback(res.data);
-            }
-        )
-    }
+    axios.post(url ? url : editActiveRoleListUrl, paramter).then(
+        (res) => {
+            successCallback(res.data);
+        }
+    )
 }
 
-const jsglDao = new JsglDao();
-export default jsglDao;
+/*新增角色*/
+const insertRole = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
+    axios.post(url ? url : insertRoleUrl, paramter).then(
+        (res) => {
+            successCallback(res.data);
+        }
+    )
+}
+/*更新角色*/
+const updateRole = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
+
+    axios.post(url ? url : updateRoleUrl, paramter).then(
+        (res) => {
+            successCallback(res.data);
+        }
+    )
+}
+
+export default {
+    getRoleListInfo,
+    updateRole,
+    insertRole,
+    editActiveRoleList,
+    delRole,
+};

@@ -4,6 +4,8 @@ import CForm from '../CForm/CForm'
 import CButton from '../CButton'
 import {setObjectValue} from "../../utils"
 import './index.scss'
+import validateAll from "../CForm/validate";
+import {message} from "antd";
 
 export interface CPageNewProps {
     onChange: Function,
@@ -22,9 +24,12 @@ const CPageNew: FC<CPageNewProps> = (props) => {
 
     /**methods 方法部分**/
 
-    const onChange = (data: any, value: any) => {
-        setDataByKeyForValue(data, value);
-        props.onChange && props.onChange({data, value});
+    const onChange = (data: any, type: any, value: any) => {
+        if (type === 'value') {
+            setDataByKeyForValue(data, type, value);
+        }
+
+        // props.onChange && props.onChange({data, value});
     }
 
     const onSearch = (data: any, value: any) => {
@@ -32,7 +37,8 @@ const CPageNew: FC<CPageNewProps> = (props) => {
     }
 
     /*设置data某一项的value*/
-    const setDataByKeyForValue = (itemData: any, value: any) => {
+    const setDataByKeyForValue = (itemData: any, type: any, value: any) => {
+        // debugger
         let newData = _.cloneDeep(props.data);
         // @ts-ignore
         newData.forEach(item => {
@@ -40,21 +46,21 @@ const CPageNew: FC<CPageNewProps> = (props) => {
                 if (_.isArray(formItem)) {
                     formItem.forEach(form => {
                         if (itemData.id === form.id) {
-                            form.value = value;
+                            Object.assign(form, value)
                         }
                     })
                 } else {
                     if (itemData.id === formItem.id) {
-                        formItem.value = value;
+                        Object.assign(formItem, value)
                     }
                 }
             })
         });
-        props.onChange && props.onChange("data",newData)
+        props.onChange && props.onChange("data", newData)
     }
-
     /*获取所有项的value*/
     const getValueAll = (data: any) => {
+        // debugger
         let values = {} as any;
         data.forEach((item: any) => {
             item.data && item.data.forEach((formItem: any) => {
@@ -74,10 +80,40 @@ const CPageNew: FC<CPageNewProps> = (props) => {
         return values;
     }
 
+
     const validateFormAll = (values: any) => {
-        let validateAllArr: boolean[] = [];
-        /*TODO 查找所有的输入项，校验*/
-        return validateAllArr.includes(false) ? false : true;
+        const newData = _.cloneDeep(props.data);
+
+        let result:boolean[] = [];
+        for (let key in values) {
+            let value = values[key];
+            newData?.forEach((item1) => {
+                item1.data.forEach((item2: any) => {
+                    if (key === item2.id) {
+
+                        if (!item2.checkType) {
+                            return true
+                        }
+                        let checkTypeArr = item2.checkType.split('|');
+                        let validateStatus = null;
+
+                        for (let i = 0; i < checkTypeArr.length; i++) {
+                            let checkData = checkTypeArr[i] as any;
+                            let checkArg = '' as any;
+                            if (checkData.includes(':')) {
+                                checkArg = checkData.split(':');
+                                checkData = checkArg[0];
+                                checkArg = checkArg[1];
+                            }
+                            // @ts-ignore
+                            validateStatus = validateAll[checkData](value, checkArg);
+                            result.push(validateStatus.validate)
+                        }
+                    }
+                })
+            })
+        }
+        return !result.includes(false);
     }
 
     /*处理需要返回的data数据*/
@@ -86,6 +122,7 @@ const CPageNew: FC<CPageNewProps> = (props) => {
         // @ts-ignore
         props.data.forEach((item: any) => {
             item.data && item.data.forEach((formItem: any) => {
+                // debugger
                 if (_.isArray(formItem)) {
                     formItem.forEach((form: any) => {
                         // @ts-ignore
@@ -113,6 +150,8 @@ const CPageNew: FC<CPageNewProps> = (props) => {
             props.onSubmit && props.onSubmit(data1);
             return data1;
         }
+        /*校验不通过，拒绝提交，提示用户检查输入*/
+        message.error("参数校验不通过，请检查输入。")
         return null;
     }
 
@@ -144,9 +183,8 @@ const CPageNew: FC<CPageNewProps> = (props) => {
                 }
             })
         });
-        if(!_.isEqual(newData,data)){
-            debugger
-            props.onChange && props.onChange("data",newData)
+        if (!_.isEqual(newData, data)) {
+            props.onChange && props.onChange("data", newData)
         }
     }
 
@@ -161,8 +199,8 @@ const CPageNew: FC<CPageNewProps> = (props) => {
 
     useEffect(() => {
         initFormatData(props.data);
-        let values = getValueAll(props.data);
-        validateFormAll(values);
+        // let values = getValueAll(props.data);
+        // validateFormAll(values);
     }, [])
     /**render**/
 
@@ -176,29 +214,30 @@ const CPageNew: FC<CPageNewProps> = (props) => {
                         {!!pageItem.data.length && pageItem.data.map((formItem: any, formIndex: number) => {
                             return <div className='flex c-page-form' key={formItem.id}>
                                 {
-                                    _.isArray(formItem) && formItem.map((item:any, index:number) => {
-                                    return <React.Fragment key={item.id}>
-                                        {
-                                            item.show && <div className='c-page-form-item'>
-                                                <CForm {...item}
-                                                    // ref={item.id}
-                                                       label={item.name}
-                                                       onChange={(value: any) => onChange(item, value)}
-                                                       onSearch={(value: any) => onSearch(item, value)}/>
-                                            </div>
-                                        }
-                                    </React.Fragment>
-                                })}
+                                    _.isArray(formItem) && formItem.map((item: any, index: number) => {
+                                        return <React.Fragment key={item.id}>
+                                            {
+                                                item.show && <div className='c-page-form-item'>
+                                                    <CForm {...item}
+                                                        // ref={item.id}
+                                                           label={item.name}
+                                                           onChange={(type: any, value: any) => onChange(formItem, type, value)}
+                                                           onSearch={(value: any) => onSearch(item, value)}/>
+                                                </div>
+                                            }
+                                        </React.Fragment>
+                                    })}
                                 {
                                     // @ts-ignore
                                     _.isObject(formItem) && formItem.show && <div className='c-page-form-item'>
-                                        <CForm validateStatus={undefined} validate={false} info={''} type={''}
-                                               value={undefined} {...formItem}
+                                        {/*// @ts-ignore*/}
+                                        <CForm
+                                            {...formItem}
                                             // ref={formItem.id}
                                             // @ts-ignore
-                                               label={formItem.name}
-                                               onChange={(value: any) => onChange(formItem, value)}
-                                               onSearch={(value: any) => onSearch(formItem, value)}/>
+                                            label={formItem.name}
+                                            onChange={(type: any, value: any) => onChange(formItem, type, value)}
+                                            onSearch={(type: any, value: any) => onSearch(formItem, value)}/>
                                     </div>
                                 }
                             </div>

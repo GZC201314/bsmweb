@@ -1,10 +1,10 @@
-import React, {FC, useEffect, useState, useRef} from 'react'
+import React, {FC, useEffect, useRef, useState} from 'react'
 import CButton from '../../components/CButton';
-import {Menu, Dropdown, message} from 'antd';
+import {Dropdown, Menu, message} from 'antd';
 import {menuList} from './data'
-import {getStorage, removeStorage, setStorage} from "../../utils";
+import {removeStorage, setStorage} from "../../utils";
 import './index.scss'
-import {collapsedToggle, setWindowInfo, setUserInfo, setCurrentTheme} from "../../redux/common/action";
+import {setCurrentTheme, setUserInfo, setWindowInfo} from "../../redux/common/action";
 import config from '../../config'
 import * as Icons from '@ant-design/icons';
 import {useHistory} from "react-router-dom";

@@ -11,10 +11,10 @@ import validateAll from "./validate";
 import _ from 'lodash'
 
 export interface CFormProps {
-    validateStatus: "" | "success" | "error" | "warning" | "validating" | undefined,
-    validate: boolean,
+    validateStatus?: "" | "success" | "error" | "warning" | "validating" | undefined,
+    validate?: boolean,
     disabled?: boolean,
-    info: string,
+    info?: string,
     type:string,
     value: any,
     checkType?: string,
@@ -54,17 +54,14 @@ const CForm: FC<CFormProps> = (props) => {
                 break
             }
         }
-        props.onChange && props.onChange("validateStatus", validateStatus.validateStatus)
-        props.onChange && props.onChange("validate", validateStatus.validate)
-        props.onChange && props.onChange("info", validateStatus.info)
-
-        return validateStatus.validate;
+        return validateStatus;
     }
 
 
-    const onChange = (value: any) => {
-        props.onChange && props.onChange("value", value)
-        validateHandler(value);
+    const onChange = (type:any,value: any) => {
+        // debugger
+        let validateResult= validateHandler(value);
+        props.onChange && props.onChange("value", {...validateResult,value:value})
     }
 
     const onSearch = (value: any) => {
@@ -75,13 +72,13 @@ const CForm: FC<CFormProps> = (props) => {
 
     /**effect  effect部分**/
 
-    useEffect(() => {
-        props.onChange && props.onChange("value", props.value)
-    }, [props])
+    // useEffect(() => {
+    //     props.onChange && props.onChange("value", props.value)
+    // }, [props])
 
-    useEffect(() => {
-        props.onChange && props.onChange("value", props.value)
-    }, [])
+    // useEffect(() => {
+    //     props.onChange && props.onChange("value", props.value)
+    // }, [])
 
     /**render**/
     const isInput = ['input', 'number', 'search', 'password', 'textarea'].includes(props.type);
@@ -110,15 +107,16 @@ const CForm: FC<CFormProps> = (props) => {
                     <Form>
                         <Form.Item className='c-form-item' validateStatus={props.validateStatus}>
                             {
-                                isInput && <CInput {...newExpand} type={props.type} value={props.value}
+                                isInput && <CInput {...newExpand} type={props.type}
                                                    placeholder={props.placeholder}
+                                                   value={props.value}
                                                    disabled={props.disabled} onChange={onChange}/>
                             }
                             {
                                 isSelect && <CSelect {...newExpand} type={props.type}
-                                                     value={props.value}
                                                      options={props.options}
                                                      placeholder={props.placeholder}
+                                                     value={props.value}
                                                      disabled={props.disabled} onChange={onChange}
                                                      onSearch={onSearch}/>
                             }

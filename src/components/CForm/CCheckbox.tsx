@@ -18,7 +18,7 @@ const CCheckbox: FC<CCheckboxProps> = (props) => {
 
     const changeHandler = (e: { target: { checked: any; }; }) => {
         let value = e.target.checked;
-        onChange && onChange(value);
+        onChange && onChange("value",value);
     }
 
     /**styles 样式部分**/

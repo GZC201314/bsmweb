@@ -12,8 +12,8 @@ import jsglDao from "../../../../dao/jsglDao";
 import {useDispatch} from "react-redux";
 import {useHistory} from "react-router-dom";
 import CPageNew from '../../../../components/CPageNew';
-import {setPageNewItem, urlFormat, setPageNewValue} from "../../../../utils";
 import _ from "lodash";
+import {setPageNewItem, setPageNewValue} from '../../../../utils';
 
 export interface JsglProps {
 
@@ -31,7 +31,9 @@ const Jsgl: FC<JsglProps> = (props) => {
     const [dataSource, setDataSource] = useState(tableData.tBody)
     const [page, setPage] = useState(tableData.tPage)
     const [filterData, setFilterData] = useState([])
+    const [searchValue, setSearchValue] = useState('')
     const [loading, setLoading] = useState(true)
+    const [updateType, setUpdateType] = useState<"insert"|"edit">("insert")
     const [modalVisible, setModalVisible] = useState(false)
     const [searchData, setSearchData] = useState({
         value: '',//搜索框筛选
@@ -46,7 +48,7 @@ const Jsgl: FC<JsglProps> = (props) => {
     });
 
     // 获取用户角色列表数据
-    const getUserListData = () => {
+    let getUserListData = () => {
         let getData = {
             page: {
                 page: page.page,
@@ -62,9 +64,10 @@ const Jsgl: FC<JsglProps> = (props) => {
                 let data = res.data.records;
                 let total = res.data.total;
                 setDataSource(data)
-                setPage({...page, total: total})
+                if(!_.isEqual(page.total,total)){
+                    setPage({...page, total: total})
+                }
                 setLoading(false)
-                dispatch(setReload(false));
                 return;
             }
             message.error("登录信息已过期。请重新登录。")
@@ -93,17 +96,11 @@ const Jsgl: FC<JsglProps> = (props) => {
     }
 
     useEffect(() => {
-        if (reload) {
             getUserListData();
-        }
-    }, [getUserListData, reload])
+    }, [reload])
     useEffect(() => {
         getUserListData();
-    }, [])
-
-    // useEffect(() => {
-    //     getUserListData();
-    // }, [getUserListData, page, searchData])
+    }, [searchData,page])
     //
     // useEffect(() => {
     //     removeHandler();
@@ -124,17 +121,21 @@ const Jsgl: FC<JsglProps> = (props) => {
             setSelectionDataIds(value)
         } else if (type === 'filterData') {
             setFilterData(value)
+        }else if(type === 'value'){
+            setSearchValue(value)
         }
     }
 
     /*搜索*/
     const searchHandler = (value: any) => {
+        console.log(value)
         setSearchData({...searchData, value: value})
     }
 
     /*新增角色*/
     const addHandler = () => {
         /*TODO 这边的实现是打开一个模式窗口*/
+        setData(roleManageListNewData)
         setModalVisible(true)
     }
 
@@ -145,28 +146,50 @@ const Jsgl: FC<JsglProps> = (props) => {
             pathname: "/jsgl"
         })
         setSearchData({...searchData, value: ''})
+        setSearchValue('')
         setPage(tableData.tPage)
         // userManageList.clearFilterData();
     }
     // 编辑当前行
-    const editHandler = (data: any) => {
-        console.log("editHandler")
+    const editHandler = (formData: any) => {
+        setUpdateType('edit')
+        setEditFlag(true)
+        setModalVisible(true)
+
+        /*给每个Item的value赋值*/
+        setData(setPageNewValue(data,formData))
+        // setPageNewItem
     }
 
     // 删除当前行
     const delHandler = (data: any) => {
-        // @ts-ignore
-        setSelectionDataIds([data.id])
+
+        let delData = {
+            delIds: [data.roleid].join(",")
+        };
+
+        jsglDao.delRole(delData, (res: any) => {
+            if (res.code === 200) {
+                getUserListData();
+            }
+        })
     }
 
     // 激活or停用用户
-    const editActiveChange = (value: any, record: { disabled?: any; roleid?: any }) => {
+    const editActiveChange = (type:any,value: any, record: { disabled?: any; roleid?: any }) => {
         let data = {
             roleid: record.roleid,
             disabled: !value
         };
+
         jsglDao.editActiveRoleList(data, (res: any) => {
             if (res.code === 200) {
+                dataSource.forEach((item:any) =>{
+                    if(item.roleid === record.roleid){
+                        item.disabled = !value
+                    }
+                })
+                setSearchData({...searchData, value: ''})
                 message.success(res.msg)
             } else {
                 message.error(res.msg)
@@ -188,17 +211,18 @@ const Jsgl: FC<JsglProps> = (props) => {
     const onSubmit = (data: any) => {
         let method = null;
         if (editFlag) {
-            /*TODO 获取修改的RoleId*/
-            // data.data.id = urlFormat(props.history.location.search).query.id;
             method = jsglDao.updateRole;
         } else {
             method = jsglDao.insertRole;
         }
+        debugger
         method(data.data, (res: any) => {
             if (res.code === 200) {
                 message.success(res.msg)
                 /*关闭弹窗*/
                 setModalVisible(false)
+
+                getUserListData();
                 return;
             }
             message.error("登录过期，请重新登录。")
@@ -206,8 +230,7 @@ const Jsgl: FC<JsglProps> = (props) => {
             history.push({
                 pathname: "/login"
             })
-        }, () => {
-        }, "/role/addRole")
+        })
     }
 
     function onCancel(data: any) {
@@ -231,7 +254,8 @@ const Jsgl: FC<JsglProps> = (props) => {
                     <CInput
                         className='search-input'
                         type='search'
-                        placeholder={searchData.placeholder} onEnter={searchHandler}/>
+                        value={searchValue}
+                        placeholder={searchData.placeholder} onEnter={searchHandler} onChange={onStateChange}/>
                     <CButton type='primary' onClick={resetHandler}>重置</CButton>
                 </div>
             </div>
@@ -246,7 +270,7 @@ const Jsgl: FC<JsglProps> = (props) => {
                     render={(text: any, record: { disabled?: any; roleid?: any; }, index: any) => {
                         return <div className='isActive'>
                             <CSwitch value={!text}
-                                     onChange={(value: any) => editActiveChange(value, record)}/>
+                                     onChange={(type:any,value: any) => editActiveChange(type,value, record)}/>
                         </div>
 
                     }}/>
@@ -255,19 +279,19 @@ const Jsgl: FC<JsglProps> = (props) => {
                     // @ts-ignore
                     render={(text: any, record: any, index: any) => (
                         <div className='operate'>
-                            <CButton type='text' authId='userManageListEdit'
+                            <CButton type='text'
                                      onClick={() => editHandler(record)}>编辑</CButton>
-                            <CButton type='text' authId='userManageListDelete'
+                            <CButton type='text'
                                      onClick={() => delHandler(record)}>删除</CButton>
                         </div>
                     )}/>
             </CTable>
 
             {/*角色新增模式框*/}
-            <Modal destroyOnClose visible={modalVisible} footer={null}>
+            <Modal destroyOnClose visible={modalVisible}  footer={null} onCancel={onCancel}>
                 <div className='user-manage-list-new'>
                     <CPageNew data={data} onChange={onChange} onSubmit={onSubmit} onCancel={onCancel}
-                              updateType={'insert'} footerShow={true}/>
+                              updateType={updateType} footerShow={true}/>
                 </div>
             </Modal>
 

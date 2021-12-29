@@ -46,21 +46,46 @@ export const tableData = {
   }
 };
 
-
+/*
+*
+*     validateStatus?: "" | "success" | "error" | "warning" | "validating" | undefined,
+    validate?: boolean,
+* */
 /*新增角色的配置信息*/
 export const roleManageListNewData = [
   {
     id: 'baseInfo',
-    title: '基本信息',
+    title: '角色基本信息',
     data: [
+      {
+        id: 'roleid',
+        name: '角色id',
+        placeholder: '请输入角色名',
+        type: 'input',
+        checkType: 'required',
+        validateStatus:'',
+        validate:false,
+        info:'',
+        newDisabled: true,
+        editDisabled: true,
+        newShow: false,
+        editShow: true,
+        value: '',
+        options: [],
+        expand: {},
+        jpath: 'roleid'
+      },
       {
         id: 'rolename',
         name: '角色名',
         placeholder: '请输入角色名',
         type: 'input',
         checkType: 'required',
+        validateStatus:'',
+        validate:false,
+        info:'',
         newDisabled: false,
-        editDisabled: false,
+        editDisabled: true,
         newShow: true,
         editShow: true,
         value: '',
@@ -74,6 +99,9 @@ export const roleManageListNewData = [
         placeholder: '请输入角色中文名',
         type: 'input',
         checkType: 'required',
+        validateStatus:'',
+        validate:false,
+        info:'',
         newDisabled: false,
         editDisabled: false,
         newShow: true,
@@ -85,25 +113,29 @@ export const roleManageListNewData = [
       },
       {
         id: 'disabled',
-        name: '是否启用',
+        name: '是否禁用',
         placeholder: '',
-        type: 'radio',
+        // type: 'radio',
+        type: 'switch',
         checkType: 'required',
+        validateStatus:'',
+        validate:false,
+        info:'',
         newDisabled: false,
         editDisabled: false,
         newShow: true,
         editShow: true,
-        value: '0',
-        options: [
-          {
-            value: '1',
-            name: '禁用'
-          },
-          {
-            value: '0',
-            name: '启用'
-          }
-        ],
+        value: true,
+        // options: [
+        //   {
+        //     value: true,
+        //     name: '禁用'
+        //   },
+        //   {
+        //     value: false,
+        //     name: '启用'
+        //   }
+        // ],
         expand: {},
         jpath: 'disabled'
       },
@@ -113,6 +145,9 @@ export const roleManageListNewData = [
         placeholder: '请选择角色备注',
         type: 'textarea',
         checkType: '',
+        validateStatus:'',
+        validate:false,
+        info:'',
         newDisabled: false,
         editDisabled: false,
         newShow: true,

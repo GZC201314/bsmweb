@@ -6,6 +6,7 @@ import CScroll from '../../components/CScroll'
 import { setReload, setWindowInfo} from "../../redux/common/action";
 import './index.scss'
 import {useSelector} from "../../hooks/hooks";
+import {useDispatch} from "react-redux";
 export interface MainContentProps{
     windowInfo?:object,
     reload?:any,
@@ -13,11 +14,16 @@ export interface MainContentProps{
 }
 const MainContent:FC<MainContentProps> = (props) => {
 
+    const dispatch = useDispatch()
     /**state  state部分**/
     /**effect  effect部分**/
+    const reload = useSelector((state) => {
+        return state.CommonReducer.reload;
+    });
     /**methods 方法部分**/
-    const reload = () =>{
-    setReload(true);
+    const reloadFunction = () =>{
+
+    dispatch(setReload(!reload));
   }
     const mainContentRef = useRef(null)
   // 监听window高宽变化
@@ -57,7 +63,7 @@ const MainContent:FC<MainContentProps> = (props) => {
             <div className='main-content-scroll'>
               <div className='flex main-breadcrumb'>
                 <CBreadcrumb>
-                  <CButton icon='ReloadOutlined' disabled={props.reload} type='primary' onClick={reload}/>
+                  <CButton icon='ReloadOutlined' disabled={props.reload} type='primary' onClick={reloadFunction}/>
                 </CBreadcrumb>
               </div>
               <div className='main-content-body'>

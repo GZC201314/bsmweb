@@ -23,12 +23,10 @@ const CSelect: FC<CSelectProps> = (props) => {
 
     /**state  state部分**/
     /**effect  effect部分**/
-    const [valueState, setValueState] = useState(props.value)
     /**methods 方法部分**/
 
     const changeHandler = (value:any)=>{
-        setValueState(value)
-        onChange && onChange(value);
+        onChange && onChange("value",value);
     }
 
     const searchHandler = (value:any)=>{
@@ -44,7 +42,7 @@ const CSelect: FC<CSelectProps> = (props) => {
     return (
         // @ts-ignore
         <SelectDom {...restProps}
-                   value={valueState}
+                   value={props.value}
                    className='c-select'
                    style={{...style}}
                    onSearch={(value:any) => searchHandler(value)}

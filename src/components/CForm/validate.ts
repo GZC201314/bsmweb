@@ -29,7 +29,7 @@ const baseData = {
 
 /*必填项*/
 const required = (value:any) => {
-  if(!value || (value instanceof Array && !value.length)){
+  if(value ===null||value === undefined || value ==='' || (value instanceof Array && !value.length)){
     return { ...baseData, validateStatus: validateStatus.error, validate: false, info: baseInfo.required}
   }
   return { ...baseData, validateStatus: '', validate: true, info: ''};
