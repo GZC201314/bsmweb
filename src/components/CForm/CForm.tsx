@@ -9,6 +9,8 @@ import CUpload from './CUpload'
 import {Form} from 'antd'
 import validateAll from "./validate";
 import _ from 'lodash'
+import * as util from "util";
+import cdglDao from "../../dao/cdglDao";
 
 export interface CFormProps {
     validateStatus?: "" | "success" | "error" | "warning" | "validating" | undefined,
@@ -33,10 +35,11 @@ const CForm: FC<CFormProps> = (props) => {
 
     /**methods 方法部分**/
 
-    const validateHandler = (value: any) => {
+    const validateHandler = async (value: any) => {
         if (!props.checkType) {
             return true
         }
+
         let checkTypeArr = props.checkType.split('|');
         let validateStatus = null;
 
@@ -48,8 +51,20 @@ const CForm: FC<CFormProps> = (props) => {
                 checkData = checkArg[0];
                 checkArg = checkArg[1];
             }
+            /*在这边判断一下，是不是异步函数，如果是需要阻塞*/
+
             // @ts-ignore
-            validateStatus = validateAll[checkData](value, checkArg);
+            if (validateAll[checkData].constructor.name === 'AsyncFunction') {
+                let promise = new Promise(((resolve) => {
+                    // @ts-ignore
+                    resolve(validateAll[checkData](value, checkArg))
+
+                }))
+                validateStatus = await promise
+            } else {
+                // @ts-ignore
+                validateStatus = validateAll[checkData](value, checkArg);
+            }
             if (!validateStatus.validate) {
                 break
             }
@@ -58,14 +73,14 @@ const CForm: FC<CFormProps> = (props) => {
     }
 
 
-    const onChange = (type:any,value: any) => {
-        // debugger
-        let validateResult= validateHandler(value);
-        props.onChange && props.onChange("value", {...validateResult,value:value})
+    const onChange = async (type: any, value: any) => {
+        let validateResult = await validateHandler(value);
+        props.onChange && props.onChange("value", {...validateResult, value: value})
     }
 
-    const onSearch = (value: any) => {
-        props.onSearch && props.onSearch(value);
+    const onSearch = async (value: any) => {
+        let validateResult = await validateHandler(value);
+        props.onSearch && props.onSearch("value", {...validateResult, value: value})
     }
 
     /**styles 样式部分**/
@@ -114,9 +129,9 @@ const CForm: FC<CFormProps> = (props) => {
                             }
                             {
                                 isSelect && <CSelect {...newExpand} type={props.type}
-                                                     options={props.options}
                                                      placeholder={props.placeholder}
                                                      value={props.value}
+                                                     options={props.options}
                                                      disabled={props.disabled} onChange={onChange}
                                                      onSearch={onSearch}/>
                             }

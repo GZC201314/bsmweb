@@ -347,7 +347,7 @@ export const validateUserName = async (rule: any, value: any) => {
       resolve(res.data)
     })
   }))
-  /*当 Promise resolve一个之后才会执行，否则会已知阻塞在这里*/
+  /*当 Promise resolve一个之后才会执行，否则会一直阻塞在这里*/
   let result = await promise;
   if (result) {
     return Promise.resolve()

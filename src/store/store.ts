@@ -4,6 +4,7 @@ import loginReducer from "../reducer/loginReducer";
 import CommonReducer from "../redux/common/reducer";
 import xxxgreducer from "../reducer/xxxgreducer";
 import grzxreducer from "../reducer/grzxreducer";
+import cdglreducer from "../reducer/cdglreducer";
 
 declare global {
     interface Window {
@@ -18,6 +19,7 @@ const allReducer = combineReducers({
     CommonReducer: CommonReducer,
     Xxxgreducer:xxxgreducer,
     Grzxreducer:grzxreducer,
+    Cdglreducer:cdglreducer,
 });
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

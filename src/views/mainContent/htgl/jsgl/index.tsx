@@ -33,7 +33,7 @@ const Jsgl: FC<JsglProps> = (props) => {
     const [filterData, setFilterData] = useState([])
     const [searchValue, setSearchValue] = useState('')
     const [loading, setLoading] = useState(true)
-    const [updateType, setUpdateType] = useState<"insert"|"edit">("insert")
+    const [updateType, setUpdateType] = useState<"insert" | "edit">("insert")
     const [modalVisible, setModalVisible] = useState(false)
     const [searchData, setSearchData] = useState({
         value: '',//搜索框筛选
@@ -48,7 +48,7 @@ const Jsgl: FC<JsglProps> = (props) => {
     });
 
     // 获取用户角色列表数据
-    let getUserListData = () => {
+    let getUserListData = (page1?: any) => {
         let getData = {
             page: {
                 page: page.page,
@@ -56,6 +56,16 @@ const Jsgl: FC<JsglProps> = (props) => {
                 search: searchData.value,
             }
         };
+
+        if (page1) {
+            getData = {
+                page: {
+                    page: page1.page,
+                    pageSize: page1.pageSize,
+                    search: searchData.value,
+                }
+            }
+        }
         setLoading(true)
 
         jsglDao.getRoleListInfo(getData, (res: any) => {
@@ -64,7 +74,7 @@ const Jsgl: FC<JsglProps> = (props) => {
                 let data = res.data.records;
                 let total = res.data.total;
                 setDataSource(data)
-                if(!_.isEqual(page.total,total)){
+                if (!_.isEqual(page.total, total)) {
                     setPage({...page, total: total})
                 }
                 setLoading(false)
@@ -96,15 +106,8 @@ const Jsgl: FC<JsglProps> = (props) => {
     }
 
     useEffect(() => {
-            getUserListData();
-    }, [reload])
-    useEffect(() => {
         getUserListData();
-    }, [searchData,page])
-    //
-    // useEffect(() => {
-    //     removeHandler();
-    // }, [removeHandler, selectionDataIds])
+    }, [reload])
     /**methods 方法部分**/
 
 
@@ -112,6 +115,7 @@ const Jsgl: FC<JsglProps> = (props) => {
     const onTableChange = (data: any) => {
         if (data.type === 'page' || data.type === 'pageSize') {
             setPage({...page, ...data.data})
+            getUserListData({...page, ...data.data})
         } else if (data.type === 'selection') {
             setSelectionDataIds(data.data.ids)
         }
@@ -121,7 +125,7 @@ const Jsgl: FC<JsglProps> = (props) => {
             setSelectionDataIds(value)
         } else if (type === 'filterData') {
             setFilterData(value)
-        }else if(type === 'value'){
+        } else if (type === 'value') {
             setSearchValue(value)
         }
     }
@@ -157,7 +161,7 @@ const Jsgl: FC<JsglProps> = (props) => {
         setModalVisible(true)
 
         /*给每个Item的value赋值*/
-        setData(setPageNewValue(data,formData))
+        setData(setPageNewValue(data, formData))
         // setPageNewItem
     }
 
@@ -176,7 +180,7 @@ const Jsgl: FC<JsglProps> = (props) => {
     }
 
     // 激活or停用用户
-    const editActiveChange = (type:any,value: any, record: { disabled?: any; roleid?: any }) => {
+    const editActiveChange = (type: any, value: any, record: { disabled?: any; roleid?: any }) => {
         let data = {
             roleid: record.roleid,
             disabled: !value
@@ -184,8 +188,8 @@ const Jsgl: FC<JsglProps> = (props) => {
 
         jsglDao.editActiveRoleList(data, (res: any) => {
             if (res.code === 200) {
-                dataSource.forEach((item:any) =>{
-                    if(item.roleid === record.roleid){
+                dataSource.forEach((item: any) => {
+                    if (item.roleid === record.roleid) {
                         item.disabled = !value
                     }
                 })
@@ -199,8 +203,8 @@ const Jsgl: FC<JsglProps> = (props) => {
     }
 
     const onChange = (type: string, data1: any) => {
-        if(type === "data"){
-            if(_.isObject(data1)){
+        if (type === "data") {
+            if (_.isObject(data1)) {
                 // @ts-ignore
                 setData(data1)
             }
@@ -215,7 +219,6 @@ const Jsgl: FC<JsglProps> = (props) => {
         } else {
             method = jsglDao.insertRole;
         }
-        debugger
         method(data.data, (res: any) => {
             if (res.code === 200) {
                 message.success(res.msg)
@@ -270,7 +273,7 @@ const Jsgl: FC<JsglProps> = (props) => {
                     render={(text: any, record: { disabled?: any; roleid?: any; }, index: any) => {
                         return <div className='isActive'>
                             <CSwitch value={!text}
-                                     onChange={(type:any,value: any) => editActiveChange(type,value, record)}/>
+                                     onChange={(type: any, value: any) => editActiveChange(type, value, record)}/>
                         </div>
 
                     }}/>
@@ -288,7 +291,7 @@ const Jsgl: FC<JsglProps> = (props) => {
             </CTable>
 
             {/*角色新增模式框*/}
-            <Modal destroyOnClose visible={modalVisible}  footer={null} onCancel={onCancel}>
+            <Modal destroyOnClose visible={modalVisible} footer={null} onCancel={onCancel}>
                 <div className='user-manage-list-new'>
                     <CPageNew data={data} onChange={onChange} onSubmit={onSubmit} onCancel={onCancel}
                               updateType={updateType} footerShow={true}/>

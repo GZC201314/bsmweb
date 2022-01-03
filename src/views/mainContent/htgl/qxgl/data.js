@@ -21,13 +21,6 @@ export const tableData = {
       title: '角色中文名',
     },
     {
-      key: 'disabled',
-      dataIndex: 'disabled',
-      title: '启用',
-      fixed: 'right',
-      slot: 'isActive',
-    },
-    {
       key: 'remark',
       dataIndex: 'remark',
       fixed: 'right',
@@ -62,24 +55,6 @@ export const roleManageListNewData = [
     title: '角色基本信息',
     data: [
       {
-        id: 'roleid',
-        name: '角色id',
-        placeholder: '请输入角色名',
-        type: 'input',
-        checkType: 'required',
-        validateStatus:'',
-        validate:false,
-        info:'',
-        newDisabled: true,
-        editDisabled: true,
-        newShow: false,
-        editShow: true,
-        value: '',
-        options: [],
-        expand: {},
-        jpath: 'roleid'
-      },
-      {
         id: 'rolename',
         name: '角色名',
         placeholder: '请输入角色名',
@@ -109,7 +84,7 @@ export const roleManageListNewData = [
         newDisabled: false,
         editDisabled: false,
         newShow: true,
-        editShow: true,
+        editShow: false,
         value: '',
         options: [],
         expand: {},
@@ -128,18 +103,8 @@ export const roleManageListNewData = [
         newDisabled: false,
         editDisabled: false,
         newShow: true,
-        editShow: true,
+        editShow: false,
         value: true,
-        // options: [
-        //   {
-        //     value: true,
-        //     name: '禁用'
-        //   },
-        //   {
-        //     value: false,
-        //     name: '启用'
-        //   }
-        // ],
         expand: {},
         jpath: 'disabled'
       },
@@ -155,11 +120,29 @@ export const roleManageListNewData = [
         newDisabled: false,
         editDisabled: false,
         newShow: true,
-        editShow: true,
+        editShow: false,
         value: '',
         options: [],
         expand: {},
         jpath: 'remark'
+      },
+      {
+        id: 'authorizeids',
+        name: '授权页面',
+        placeholder: '',
+        type: 'treeSelect',
+        checkType: '',
+        validateStatus:'',
+        validate:false,
+        info:'',
+        newDisabled: true,
+        editDisabled: false,
+        newShow: false,
+        editShow: true,
+        value: [],
+        options: [],
+        expand: {},
+        jpath: 'authorizeids'
       }
     ]
   }

@@ -3,6 +3,7 @@ import {Select, TreeSelect} from 'antd'
 import './index.scss'
 const { Option} = Select
 export type Item = {
+    key: any;
     name: string;
     value: string;
     disabled:boolean;
@@ -49,7 +50,7 @@ const CSelect: FC<CSelectProps> = (props) => {
                    onChange={(value:any) => changeHandler(value)}>
             {
                 type === 'select' && options && options.map((item, index)=>{
-                    return <Option key={index} value={item.value} disabled={item.disabled}>{item.name}</Option>
+                    return <Option key={item.key} value={item.value} disabled={item.disabled}>{item.name}</Option>
                 })
             }
         </SelectDom>

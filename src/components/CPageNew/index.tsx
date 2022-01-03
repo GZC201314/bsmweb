@@ -33,7 +33,7 @@ const CPageNew: FC<CPageNewProps> = (props) => {
     }
 
     const onSearch = (data: any, value: any) => {
-        props.onSearch && props.onSearch({data, value});
+        setDataByKeyForValue(data, "searchValue", value);
     }
 
     /*设置data某一项的value*/
@@ -56,7 +56,11 @@ const CPageNew: FC<CPageNewProps> = (props) => {
                 }
             })
         });
-        props.onChange && props.onChange("data", newData)
+        if(type === 'searchValue'){
+            props.onSearch && props.onSearch("data", newData,value.value)
+        }else {
+            props.onChange && props.onChange("data", newData)
+        }
     }
     /*获取所有项的value*/
     const getValueAll = (data: any) => {
@@ -84,7 +88,7 @@ const CPageNew: FC<CPageNewProps> = (props) => {
     const validateFormAll = (values: any) => {
         const newData = _.cloneDeep(props.data);
 
-        let result:boolean[] = [];
+        let result: boolean[] = [];
         for (let key in values) {
             let value = values[key];
             newData?.forEach((item1) => {

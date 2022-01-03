@@ -107,6 +107,9 @@ const LeftNav: FC<LeftNavProps> = (props) => {
         // 过滤出选中的一级导航或者展开的一级导航
         // @ts-ignore
         let openOrSelectData = leftNavData.filter(item => {
+            if(item.path === ''){
+                return false;
+            }
             return hash.includes(item.path)
         });
         if (!openOrSelectData.length) {
@@ -126,6 +129,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
         changeToggle(openOrSelectData[0]);
 
         // 找到选中的一个菜单或者二级菜单
+        debugger
         let is_children = openOrSelectData[0].children && openOrSelectData[0].children.length;
         let currentActiveId = '';
         if (is_children) {
@@ -133,7 +137,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
             let selectedChildrenData = openOrSelectData[0].children.filter(item => {
                 return hash.includes(item.path)
             });
-            currentActiveId = selectedChildrenData[0].id;
+            currentActiveId = selectedChildrenData[0] && selectedChildrenData[0].id;
         } else {
             currentActiveId = openOrSelectData[0].id;
         }
