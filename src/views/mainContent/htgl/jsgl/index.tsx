@@ -4,16 +4,14 @@ import CButton from '../../../../components/CButton';
 import CInput from '../../../../components/CForm/CInput';
 import CTable from '../../../../components/CTable';
 import CSwitch from "../../../../components/CForm/CSwitch";
-import {tableData, roleManageListNewData} from './data'
-import {setReload} from "../../../../redux/common/action";
+import {roleManageListNewData, tableData} from './data'
 import './style.scss'
 import {useSelector} from "../../../../hooks/hooks";
 import jsglDao from "../../../../dao/jsglDao";
-import {useDispatch} from "react-redux";
 import {useHistory} from "react-router-dom";
 import CPageNew from '../../../../components/CPageNew';
 import _ from "lodash";
-import {setPageNewItem, setPageNewValue} from '../../../../utils';
+import {setPageNewValue} from '../../../../utils';
 
 export interface JsglProps {
 
@@ -22,7 +20,6 @@ export interface JsglProps {
 
 const Jsgl: FC<JsglProps> = (props) => {
 
-    const dispatch = useDispatch()
     const history = useHistory()
     /**state  state部分**/
     const [colums] = useState(tableData.tHead)
@@ -48,7 +45,7 @@ const Jsgl: FC<JsglProps> = (props) => {
     });
 
     // 获取用户角色列表数据
-    let getUserListData = (page1?: any) => {
+    let getRoleListData = (page1?: any) => {
         let getData = {
             page: {
                 page: page.page,
@@ -100,14 +97,14 @@ const Jsgl: FC<JsglProps> = (props) => {
 
         jsglDao.delRole(delData, (res: any) => {
             if (res.code === 200) {
-                getUserListData();
+                getRoleListData();
             }
         })
     }
 
     useEffect(() => {
-        getUserListData();
-    }, [reload])
+        getRoleListData();
+    }, [reload,searchData.value])
     /**methods 方法部分**/
 
 
@@ -115,7 +112,7 @@ const Jsgl: FC<JsglProps> = (props) => {
     const onTableChange = (data: any) => {
         if (data.type === 'page' || data.type === 'pageSize') {
             setPage({...page, ...data.data})
-            getUserListData({...page, ...data.data})
+            getRoleListData({...page, ...data.data})
         } else if (data.type === 'selection') {
             setSelectionDataIds(data.data.ids)
         }
@@ -126,7 +123,7 @@ const Jsgl: FC<JsglProps> = (props) => {
         } else if (type === 'filterData') {
             setFilterData(value)
         } else if (type === 'value') {
-            setSearchValue(value)
+            setSearchData({...searchData,value: value})
         }
     }
 
@@ -174,7 +171,7 @@ const Jsgl: FC<JsglProps> = (props) => {
 
         jsglDao.delRole(delData, (res: any) => {
             if (res.code === 200) {
-                getUserListData();
+                getRoleListData();
             }
         })
     }
@@ -225,7 +222,7 @@ const Jsgl: FC<JsglProps> = (props) => {
                 /*关闭弹窗*/
                 setModalVisible(false)
 
-                getUserListData();
+                getRoleListData();
                 return;
             }
             message.error("登录过期，请重新登录。")
@@ -240,9 +237,12 @@ const Jsgl: FC<JsglProps> = (props) => {
         setModalVisible(false)
     }
 
+
     /**styles 样式部分**/
 
     /**render**/
+
+
 
 
     return (
@@ -257,7 +257,7 @@ const Jsgl: FC<JsglProps> = (props) => {
                     <CInput
                         className='search-input'
                         type='search'
-                        value={searchValue}
+                        value={searchData.value}
                         placeholder={searchData.placeholder} onEnter={searchHandler} onChange={onStateChange}/>
                     <CButton type='primary' onClick={resetHandler}>重置</CButton>
                 </div>

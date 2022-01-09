@@ -9,8 +9,6 @@ import CUpload from './CUpload'
 import {Form} from 'antd'
 import validateAll from "./validate";
 import _ from 'lodash'
-import * as util from "util";
-import cdglDao from "../../dao/cdglDao";
 
 export interface CFormProps {
     validateStatus?: "" | "success" | "error" | "warning" | "validating" | undefined,
