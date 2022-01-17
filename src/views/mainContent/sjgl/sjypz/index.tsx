@@ -18,7 +18,7 @@ import {
     Row,
     Select,
     Slider,
-    Switch,
+    Switch, Tag,
     Upload,
 } from "antd";
 import {setPageNewValue} from "../../../../utils";
@@ -181,8 +181,9 @@ const Sjypz: FC<SjypzProps> = (props) => {
     // 删除当前行
     const delHandler = (data: any) => {
 
+        debugger
         let delData = {
-            delIds: [data.roleid].join(",")
+            delIds: [data.datasourceid].join(",")
         };
 
         sjypzDao.delDataSource(delData, (res: any) => {
@@ -199,7 +200,10 @@ const Sjypz: FC<SjypzProps> = (props) => {
         } else {
             method = sjypzDao.insertDataSource;
         }
-        method(data.data, (res: any) => {
+        if (_.isString(driveUrl)) {
+            data.driveurl = driveUrl;
+        }
+        method(data, (res: any) => {
             if (res.code === 200) {
                 message.success(res.msg)
                 /*关闭弹窗*/
@@ -290,6 +294,42 @@ const Sjypz: FC<SjypzProps> = (props) => {
                                      onClick={() => delHandler(record)}>删除</CButton>
                         </div>
                     )}/>
+                <div
+                    slot='datasourceType'
+                    // @ts-ignore
+                    render={(text: any, record: any, index: any) => {
+
+                        if (text === 0) {
+                            return "JDBC";
+                        } else if (text === 1) {
+                            return "SCV"
+                        } else {
+                            return ""
+                        }
+                    }
+                    }/>
+                <div
+                    slot='driveUrlrender'
+                    // @ts-ignore
+                    render={(text: any, record: any, index: any) => {
+
+                        if (_.isString(text) &&text.length>40) {
+                            return <span title={text}>{text.substring(0, 40) + "..."}</span>;
+                        }
+                    }
+                    }/>
+                <div
+                    slot='isPass'
+                    // @ts-ignore
+                    render={(text: any, record: any, index: any) => {
+                        if (text) {
+                            return <Tag color={'green'}>通过</Tag>
+                        } else {
+                            return <Tag color={'red'}>不通过</Tag>;
+
+                        }
+                    }
+                    }/>
             </CTable>
 
             {/*角色新增模式框*/}
@@ -364,7 +404,6 @@ const Sjypz: FC<SjypzProps> = (props) => {
                                                         }
                                                         /*这边需要先把驱动包上传到FTP服务器上，返回url。根据url来装载类*/
                                                         sjypzDao.uploadDrive(formData, (res: any) => {
-                                                            debugger
                                                             if (res.code === 200) {
                                                                 setDriveUrl(res.data)
                                                             }

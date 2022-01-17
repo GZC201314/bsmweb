@@ -39,7 +39,6 @@ const updateDataSource = (paramter:any, successCallback: Function, errorCallback
 /*新增数据源*/
 const insertDataSource = (paramter:any, successCallback: Function, errorCallback?: Function, url?: string) => {
 
-    debugger
     axios.post(url||insertDataSourceUrl,paramter).then(
         (res) => {
             successCallback(res.data);

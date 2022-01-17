@@ -13,6 +13,7 @@ export const tableData = {
       dataIndex: 'sourcetype',
       fixed: 'right',
       title: '数据源类型',
+      slot:'datasourceType'
     },
     {
       key: 'username',
@@ -25,6 +26,7 @@ export const tableData = {
       dataIndex: 'driveurl',
       title: '驱动地址',
       fixed: 'right',
+      slot: "driveUrlrender"
     },
     {
       key: 'sourceurl',
@@ -43,6 +45,7 @@ export const tableData = {
       dataIndex: 'pass',
       fixed: 'right',
       title: '测试通过',
+      slot: "isPass"
     },
     {
       key: 'driveclass',

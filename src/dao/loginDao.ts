@@ -23,7 +23,7 @@ const rlsbLogin = (paramter: object, successCallback: Function, errorCallback?: 
     }).then(res => {
         successCallback(res);
     }).catch(err => {
-        console.error(err)
+        errorCallback && errorCallback(err)
     });
 
 }
