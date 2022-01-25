@@ -1,13 +1,13 @@
 import axios from "axios";
 import Qs from "qs";
 
-const getMenuListUrl: string = '/pages/getPagePages';
-const updatePageUrl: string = '/pages/updatePages';
-const delPageUrl: string = '/pages/deletePages';
-const insertPageUrl: string = '/pages/addPages';
-const getparentNodeUrl: string = '/pages/getparentNode';
+const getMenuListUrl: string = '/bsmservice/pages/getPagePages';
+const updatePageUrl: string = '/bsmservice/pages/updatePages';
+const delPageUrl: string = '/bsmservice/pages/deletePages';
+const insertPageUrl: string = '/bsmservice/pages/addPages';
+const getparentNodeUrl: string = '/bsmservice/pages/getparentNode';
 const getIconTypesUrl: string = '/icontype.json';
-const pageKeyUniqueUrl: string = '/pages/pageKeyUnique';
+const pageKeyUniqueUrl: string = '/bsmservice/pages/pageKeyUnique';
 
 
 /*用户详细信息查询*/

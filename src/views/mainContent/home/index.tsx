@@ -43,7 +43,7 @@ const Home:FC<HomeProps> = (props) => {
 
         //判断当前浏览器是否支持WebSocket, 主要此处要更换为自己的地址
         if ('WebSocket' in window) {
-            websocket = new WebSocket("ws://localhost:8080/system/monitor");
+            websocket = new WebSocket("ws://localhost:8888/system/monitor");
         } else {
             alert('Not support websocket')
         }

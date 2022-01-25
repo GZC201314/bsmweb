@@ -1,12 +1,12 @@
 import axios from "axios";
 
 
-const getDataSourceListUrl: string = '/datasource/getDataSourceList';
-const delDataSourceUrl: string = '/datasource/deleteDataSource';
-const updateSourceUrl: string = '/datasource/updateDataSource';
-const insertDataSourceUrl: string = '/datasource/insertDataSource';
-const uploadDriveUrl: string = '/datasource/uploadDrive';
-const testDataSourceUrl: string = '/datasource/testDataSource';
+const getDataSourceListUrl: string = '/bsmservice/datasource/getDataSourceList';
+const delDataSourceUrl: string = '/bsmservice/datasource/deleteDataSource';
+const updateSourceUrl: string = '/bsmservice/datasource/updateDataSource';
+const insertDataSourceUrl: string = '/bsmservice/datasource/insertDataSource';
+const uploadDriveUrl: string = '/bsmservice/datasource/uploadDrive';
+const testDataSourceUrl: string = '/bsmservice/datasource/testDataSource';
 
 
 /*数据源列表查询*/

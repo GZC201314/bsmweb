@@ -2,14 +2,14 @@ import axios from "axios";
 import Qs from 'qs'
 
 
-const validEmailAddressUrl: string = '/valid/userinfo';
-const validPasswordUrl: string = '/valid/userinfo';
-const sendRegisterEmailUrl: string = '/user/sendRegisterEmail';
+const validEmailAddressUrl: string = '/bsmservice/valid/userinfo';
+const validPasswordUrl: string = '/bsmservice/valid/userinfo';
+const sendRegisterEmailUrl: string = '/bsmservice/user/sendRegisterEmail';
 const userLogOutUrl: string = '/logout';
-const registerUserUrl: string = '/user/register';
+const registerUserUrl: string = '/bsmservice/user/register';
 const userLoginUrl: string = '/login';
-const rlsbLoginUrl: string = '/ai/faceLogin';
-const faceRegisterUrl: string = '/ai/faceRegister';
+const rlsbLoginUrl: string = '/bsmservice/ai/faceLogin';
+const faceRegisterUrl: string = '/bsmservice/ai/faceRegister';
 
 /*用户人脸识别登录*/
 const rlsbLogin = (paramter: object, successCallback: Function, errorCallback?: Function, url?: string) => {

@@ -1,8 +1,8 @@
 import axios from "axios";
 
 
-const getGrandPagesUrl: string = '/authorize/getAllAuthorizePagesByRoleName';
-const updateGrandPagesUrl: string = '/authorize/updateAuthorizePagesByRoleName';
+const getGrandPagesUrl: string = '/bsmservice/authorize/getAllAuthorizePagesByRoleName';
+const updateGrandPagesUrl: string = '/bsmservice/authorize/updateAuthorizePagesByRoleName';
 
 
 /*获取角色的授权页面信息*/

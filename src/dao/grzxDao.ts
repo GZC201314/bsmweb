@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const getUserInfoUrl: string = '/user/getUserDetailInfo';
+const getUserInfoUrl: string = '/bsmservice/user/getUserDetailInfo';
 
 
 /*用户详细信息查询*/

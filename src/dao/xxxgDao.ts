@@ -2,10 +2,10 @@ import axios from "axios";
 import Qs from 'qs'
 
 
-const getUserInfoUrl: string = '/user/getUserInfoBySession';
-const editAvatarUrl: string = '/user/editAvatar';
-const editUserNameUrl: string = '/user/updateUserName';
-const editUserPasswordUrl: string = '/user/updateUserPassword';
+const getUserInfoUrl: string = '/bsmservice/user/getUserInfoBySession';
+const editAvatarUrl: string = '/bsmservice/user/editAvatar';
+const editUserNameUrl: string = '/bsmservice/user/updateUserName';
+const editUserPasswordUrl: string = '/bsmservice/user/updateUserPassword';
 
 
 /*用户详细信息查询*/

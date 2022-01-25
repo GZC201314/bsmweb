@@ -27,7 +27,7 @@ export interface loginComponentProps {
 const LoginComponent: FC<loginComponentProps> = (props) => {
 
     /**state  state部分**/
-    const [validateCode, setValidateCode] = useState("/code/image")
+    const [validateCode, setValidateCode] = useState("/bsmservice/code/image")
     const [rlsbModelvisible, setRlsbModelvisible] = useState(false)
     const [yhzcModelvisible, setYhzcModelvisible] = useState(false)
     const [rlsbModelLoading, setRlsbModelLoading] = useState(false)
@@ -88,7 +88,7 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
     /**methods 方法部分**/
 
     const handleValidateCodeSelect = (item: any) => {
-        setValidateCode(`/code/image?${new Date().getTime()}`)
+        setValidateCode(`/bsmservice/code/image?${new Date().getTime()}`)
     }
 
 

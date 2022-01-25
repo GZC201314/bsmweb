@@ -1,9 +1,9 @@
 import axios from "axios";
-const getRoleInfoUrl: string = '/role/getPageRole';
-const editActiveRoleListUrl: string = '/role/updateRoleStatus';
-const delRoleUrl: string = '/role/deleteRoles';
-const insertRoleUrl: string = '/role/addRole';
-const updateRoleUrl: string = '/role/updateRole';
+const getRoleInfoUrl: string = '/bsmservice/role/getPageRole';
+const editActiveRoleListUrl: string = '/bsmservice/role/updateRoleStatus';
+const delRoleUrl: string = '/bsmservice/role/deleteRoles';
+const insertRoleUrl: string = '/bsmservice/role/addRole';
+const updateRoleUrl: string = '/bsmservice/role/updateRole';
 /*角色列表信息查询*/
 const getRoleListInfo = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
 
