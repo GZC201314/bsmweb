@@ -17,82 +17,81 @@ const Home:FC<HomeProps> = (props) => {
     /**effect  effect部分**/
 
     useEffect(()=>{
-        getSysTemDetailInfo();
-        // homeDao.getSystemDetailInfo({},(res:any) =>{
-        //     if(res.code === 200){
-        //         if(_.isEqual(data,res.data)){
-        //             return;
-        //         }
-        //         setData(res.data);
-        //         return;
-        //     }
-        //     message.error("登录信息已过期,请重新登录。")
-        //     history.push({
-        //         pathname: '/login'
-        //     });
-        // },(res:any) =>{
-        //     console.log(res)
-        // })
+        homeDao.getSystemDetailInfo({},(res:any) =>{
+            if(res.code === 200){
+                if(_.isEqual(data,res.data)){
+                    return;
+                }
+                setData(res.data);
+                return;
+            }
+            message.error("登录信息已过期,请重新登录。")
+            history.push({
+                pathname: '/login'
+            });
+        },(res:any) =>{
+            console.log(res)
+        })
 
     },[])
     /**methods 方法部分**/
 
-    const getSysTemDetailInfo = () =>{
-        debugger
-
-
-        //判断当前浏览器是否支持WebSocket, 主要此处要更换为自己的地址
-        if ('WebSocket' in window) {
-            websocket = new WebSocket("ws://localhost:8888/system/monitor");
-        } else {
-            alert('Not support websocket')
-        }
-
-        //连接发生错误的回调方法
-        websocket.onerror = function() {
-            console.log("error")
-        };
-
-        //连接成功建立的回调方法
-        websocket.onopen = function(event) {
-            console.log("open")
-            //setMessageInnerHTML("open");
-        }
-
-        //接收到消息的回调方法
-        websocket.onmessage = function(event) {
-            debugger
-            const parse = JSON.parse(event.data);
-            if(_.isEqual(data,parse)){
-               return;
-            }
-            setData(parse)
-        }
-
-        //连接关闭的回调方法
-        websocket.onclose = function() {
-            console.log("close");
-        }
-
-        //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
-        window.onbeforeunload = function() {
-            websocket.close();
-        }
-
-
-
-        //关闭连接
-        function closeWebSocket() {
-            if(!_.isEmpty(websocket)){
-                websocket.close();
-            }
-        }
-
-        //发送消息
-        function send() {
-            // websocket.send(message);
-        }
-    }
+    // const getSysTemDetailInfo = () =>{
+    //     debugger
+    //
+    //
+    //     //判断当前浏览器是否支持WebSocket, 主要此处要更换为自己的地址
+    //     if ('WebSocket' in window) {
+    //         websocket = new WebSocket("ws://localhost:8888/system/monitor");
+    //     } else {
+    //         alert('Not support websocket')
+    //     }
+    //
+    //     //连接发生错误的回调方法
+    //     websocket.onerror = function() {
+    //         console.log("error")
+    //     };
+    //
+    //     //连接成功建立的回调方法
+    //     websocket.onopen = function(event) {
+    //         console.log("open")
+    //         //setMessageInnerHTML("open");
+    //     }
+    //
+    //     //接收到消息的回调方法
+    //     websocket.onmessage = function(event) {
+    //         debugger
+    //         const parse = JSON.parse(event.data);
+    //         if(_.isEqual(data,parse)){
+    //            return;
+    //         }
+    //         setData(parse)
+    //     }
+    //
+    //     //连接关闭的回调方法
+    //     websocket.onclose = function() {
+    //         console.log("close");
+    //     }
+    //
+    //     //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+    //     window.onbeforeunload = function() {
+    //         websocket.close();
+    //     }
+    //
+    //
+    //
+    //     //关闭连接
+    //     function closeWebSocket() {
+    //         if(!_.isEmpty(websocket)){
+    //             websocket.close();
+    //         }
+    //     }
+    //
+    //     //发送消息
+    //     function send() {
+    //         // websocket.send(message);
+    //     }
+    // }
     /**styles 样式部分**/
 
     /**render**/

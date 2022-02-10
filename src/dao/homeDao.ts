@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const getMethodUrl: string = '/system/getSystemDetailInfo';
+const getMethodUrl: string = '/bsmservice/system/getSystemDetailInfo';
 
 
 /*get 方法模版*/

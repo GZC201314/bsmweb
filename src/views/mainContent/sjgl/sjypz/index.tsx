@@ -5,28 +5,12 @@ import {sjypzManageListNewData, tableData} from "./data";
 import {useSelector} from "../../../../hooks/hooks";
 import sjypzDao from "../../../../dao/sjypzDao";
 import _ from "lodash";
-import {
-    Button,
-    Checkbox,
-    Col,
-    Form,
-    Input,
-    message,
-    Modal,
-    Radio,
-    Rate,
-    Row,
-    Select,
-    Slider,
-    Switch, Tag,
-    Upload,
-} from "antd";
+import {Button, Form, Input, message, Modal, Select, Tag, Upload,} from "antd";
 import {setPageNewValue} from "../../../../utils";
 import CButton from "../../../../components/CButton";
 import CInput from "../../../../components/CForm/CInput";
 import CTable from "../../../../components/CTable";
 import {UploadOutlined} from '@ant-design/icons';
-import {UploadFile} from "antd/lib/upload/interface";
 
 export interface SjypzProps {
 
@@ -150,7 +134,7 @@ const Sjypz: FC<SjypzProps> = (props) => {
         setSearchData({...searchData, value: value})
     }
 
-    /*新增角色*/
+    /*新增数据源*/
     const addHandler = () => {
         /*TODO 这边的实现是打开一个模式窗口*/
         setData(sjypzManageListNewData)
@@ -173,7 +157,7 @@ const Sjypz: FC<SjypzProps> = (props) => {
         setEditFlag(true)
         setModalVisible(true)
 
-        /*给每个Item的value赋值*/
+        /*给每个Item的value赋值 如果不使用框架，则需要*/
         setData(setPageNewValue(data, formData))
         // setPageNewItem
     }
@@ -181,7 +165,6 @@ const Sjypz: FC<SjypzProps> = (props) => {
     // 删除当前行
     const delHandler = (data: any) => {
 
-        debugger
         let delData = {
             delIds: [data.datasourceid].join(",")
         };
@@ -203,6 +186,9 @@ const Sjypz: FC<SjypzProps> = (props) => {
         if (_.isString(driveUrl)) {
             data.driveurl = driveUrl;
         }
+        data.pass = pass;
+        /*提交以后，清空form表单*/
+        // dataSourceForm.resetFields()
         method(data, (res: any) => {
             if (res.code === 200) {
                 message.success(res.msg)
@@ -220,11 +206,12 @@ const Sjypz: FC<SjypzProps> = (props) => {
         })
     }
 
-    function onCancel(data: any) {
+    const onCancel = (data: any) => {
+        dataSourceForm.resetFields()
         setModalVisible(false)
     }
 
-    function sourceTypeChange(value: any) {
+    const sourceTypeChange = (value: any) => {
         setSourceType(value)
     }
 
@@ -246,7 +233,11 @@ const Sjypz: FC<SjypzProps> = (props) => {
                     setPass(true)
                 } else {
                     message.error("数据源测试连接失败！")
+                    setPass(false)
                 }
+            }else {
+                message.error("数据源测试连接失败！")
+                setPass(false)
             }
         })
     }
@@ -315,9 +306,25 @@ const Sjypz: FC<SjypzProps> = (props) => {
 
                         if (_.isString(text) &&text.length>40) {
                             return <span title={text}>{text.substring(0, 40) + "..."}</span>;
+                        }else {
+                            return <span title={text}>{text}</span>;
                         }
                     }
                     }/>
+
+                <div
+                    slot='dataSourceUrlrender'
+                    // @ts-ignore
+                    render={(text: any, record: any, index: any) => {
+
+                        if (_.isString(text) &&text.length>40) {
+                            return <span title={text}>{text.substring(0, 40) + "..."}</span>;
+                        }else {
+                            return <span title={text}>{text}</span>;
+                        }
+                    }
+                    }/>
+
                 <div
                     slot='isPass'
                     // @ts-ignore
@@ -332,7 +339,7 @@ const Sjypz: FC<SjypzProps> = (props) => {
                     }/>
             </CTable>
 
-            {/*角色新增模式框*/}
+            {/*数据源新增模式框*/}
             <Modal destroyOnClose visible={modalVisible} footer={null} onCancel={onCancel}>
                 <div className='user-manage-list-new'>
                     <div className='c-page-new'>
