@@ -33,6 +33,7 @@ export const tableData = {
       dataIndex: 'sourceurl',
       fixed: 'right',
       title: '数据源地址',
+      slot: "dataSourceUrlrender",
     },
     {
       key: 'description',
