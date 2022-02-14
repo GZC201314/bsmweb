@@ -1,16 +1,16 @@
 import React, {FC, useEffect, useState} from 'react'
 import './style.scss'
 import {useHistory} from "react-router-dom";
-import {sjypzManageListNewData, tableData} from "./data";
+import {bookManageListNewData, tableData} from "./data";
 import {useSelector} from "../../../../hooks/hooks";
-import sjypzDao from "../../../../dao/sjypzDao";
+import tsglDao from "../../../../dao/tsglDao";
 import _ from "lodash";
-import {Button, Form, Input, message, Modal, Select, Tag, Upload,} from "antd";
-import {setPageNewValue} from "../../../../utils";
+import {Button, Form, Image, Input, message, Modal, Rate, Select, Upload,} from "antd";
+import {setPageNewValue, setStorage, validateISBN, validateUserName} from "../../../../utils";
 import CButton from "../../../../components/CButton";
 import CInput from "../../../../components/CForm/CInput";
 import CTable from "../../../../components/CTable";
-import {UploadOutlined} from '@ant-design/icons';
+import xxxgDao from "../../../../dao/xxxgDao";
 
 export interface TsglProps {
 
@@ -23,7 +23,7 @@ const Tsgl: FC<TsglProps> = (props) => {
     const [dataSourceForm] = Form.useForm();
     /**state  state部分**/
     const [colums] = useState(tableData.tHead)
-    const [data, setData] = useState<any>(sjypzManageListNewData)
+    const [data, setData] = useState<any>(bookManageListNewData)
     const [editFlag, setEditFlag] = useState(false)
     const [dataSource, setDataSource] = useState(tableData.tBody)
     const [page, setPage] = useState(tableData.tPage)
@@ -47,7 +47,7 @@ const Tsgl: FC<TsglProps> = (props) => {
     });
 
     // 获取用户角色列表数据
-    let getDataSourceListData = (page1?: any) => {
+    let getDouBanBookList = (page1?: any) => {
         let getData = {
             page: {
                 page: page.page,
@@ -67,7 +67,7 @@ const Tsgl: FC<TsglProps> = (props) => {
         }
         setLoading(true)
 
-        sjypzDao.getDataSourceList(getData, (res: any) => {
+        tsglDao.getPageDouBanBook(getData, (res: any) => {
             if (res.code === 200) {
                 let data = res.data.records;
                 let total = res.data.total;
@@ -95,15 +95,15 @@ const Tsgl: FC<TsglProps> = (props) => {
             delIds: selectionDataIds.join(",")
         };
 
-        sjypzDao.delDataSource(delData, (res: any) => {
+        tsglDao.deleteDouBanBook(delData, (res: any) => {
             if (res.code === 200) {
-                getDataSourceListData();
+                getDouBanBookList();
             }
         })
     }
 
     useEffect(() => {
-        getDataSourceListData();
+        getDouBanBookList();
     }, [reload, searchData.value])
     /**methods 方法部分**/
 
@@ -112,7 +112,7 @@ const Tsgl: FC<TsglProps> = (props) => {
     const onTableChange = (data: any) => {
         if (data.type === 'page' || data.type === 'pageSize') {
             setPage({...page, ...data.data})
-            getDataSourceListData({...page, ...data.data})
+            getDouBanBookList({...page, ...data.data})
         } else if (data.type === 'selection') {
             setSelectionDataIds(data.data.ids)
         }
@@ -137,7 +137,7 @@ const Tsgl: FC<TsglProps> = (props) => {
     /*新增角色*/
     const addHandler = () => {
         /*TODO 这边的实现是打开一个模式窗口*/
-        setData(sjypzManageListNewData)
+        setData(bookManageListNewData)
         setModalVisible(true)
     }
 
@@ -170,9 +170,9 @@ const Tsgl: FC<TsglProps> = (props) => {
             delIds: [data.datasourceid].join(",")
         };
 
-        sjypzDao.delDataSource(delData, (res: any) => {
+        tsglDao.deleteDouBanBook(delData, (res: any) => {
             if (res.code === 200) {
-                getDataSourceListData();
+                getDouBanBookList();
             }
         })
     }
@@ -180,12 +180,9 @@ const Tsgl: FC<TsglProps> = (props) => {
     const onFinish = (data: any) => {
         let method = null;
         if (editFlag) {
-            method = sjypzDao.updateDataSource;
+            method = tsglDao.updateDoubanBook;
         } else {
-            method = sjypzDao.insertDataSource;
-        }
-        if (_.isString(driveUrl)) {
-            data.driveurl = driveUrl;
+            method = tsglDao.addDoubanBook
         }
         method(data, (res: any) => {
             if (res.code === 200) {
@@ -193,7 +190,7 @@ const Tsgl: FC<TsglProps> = (props) => {
                 /*关闭弹窗*/
                 setModalVisible(false)
 
-                getDataSourceListData();
+                getDouBanBookList();
                 return;
             }
             message.error("登录过期，请重新登录。")
@@ -204,35 +201,39 @@ const Tsgl: FC<TsglProps> = (props) => {
         })
     }
 
+
+    const beforeUpload = async (file: any) => {
+        let formData = new FormData();
+        if (file) {
+            formData.append('file', file);
+        }
+        let url: string = "";
+        url = await new Promise((resolve, reject) => {
+            tsglDao.editAvatar(formData, (res: any) => {
+                if (res.data.code === 200) {
+                    url = res.data.data;
+                    resolve(url)
+
+                    /*更新头像*/
+                }
+            })
+        })
+        if (url !== "") {
+            history.push({
+                pathname: '/xxxg',
+            })
+            return false;
+        }
+
+    }
+
+
     function onCancel(data: any) {
         setModalVisible(false)
     }
 
     function sourceTypeChange(value: any) {
         setSourceType(value)
-    }
-
-    async function testDataSource() {
-        /*检验数据源的信息是否完整，完整的话可以进行数据源校验，不完整需要给出提示，最后需要把校验的结果放到pass中，默认是false*/
-        await dataSourceForm.validateFields();
-
-        let fieldsValue = dataSourceForm.getFieldsValue();
-        if (_.isString(driveUrl)) {
-            fieldsValue.driveurl = driveUrl;
-        }
-        /*测试数据源，如果数据源*/
-        sjypzDao.testDataSource(fieldsValue, (res: any) => {
-
-            if (res.code === 200) {
-
-                if (res.data === true) {
-                    message.success("数据源测试连接成功。")
-                    setPass(true)
-                } else {
-                    message.error("数据源测试连接失败！")
-                }
-            }
-        })
     }
 
     /**styles 样式部分**/
@@ -266,7 +267,7 @@ const Tsgl: FC<TsglProps> = (props) => {
             <CTable size={'middle'} scroll={true} loading={loading} columns={colums}
                     selectedRowKeys={selectionDataIds}
                     dataSource={dataSource} page={page} onTableChange={onTableChange} onStateChange={onStateChange}
-                    checked={true} rowKey={"datasourceid"}>
+                    checked={true} rowKey={"isbn"}>
                 <div
                     slot='operate'
                     // @ts-ignore
@@ -279,44 +280,97 @@ const Tsgl: FC<TsglProps> = (props) => {
                         </div>
                     )}/>
                 <div
-                    slot='datasourceType'
+                    slot='bookImage'
+                    // @ts-ignore
+                    render={(text: any, record: any, index: any) => {
+                        return <Image
+                            width={50}
+                            src={text}
+                        />
+                    }
+                    }/>
+                <div
+                    slot='nameRender'
                     // @ts-ignore
                     render={(text: any, record: any, index: any) => {
 
-                        if (text === 0) {
-                            return "JDBC";
-                        } else if (text === 1) {
-                            return "SCV"
-                        } else {
-                            return ""
+                        if (_.isString(text) &&text.length>10) {
+                            return <span title={text}>{text.substring(0, 10) + "..."}</span>;
+                        }else {
+                            return <span title={text}>{text}</span>;
                         }
                     }
                     }/>
                 <div
-                    slot='driveUrlrender'
+                    slot='publisherRender'
                     // @ts-ignore
                     render={(text: any, record: any, index: any) => {
 
-                        if (_.isString(text) &&text.length>40) {
-                            return <span title={text}>{text.substring(0, 40) + "..."}</span>;
+                        if (_.isString(text) &&text.length>10) {
+                            return <span title={text}>{text.substring(0, 10) + "..."}</span>;
+                        }else {
+                            return <span title={text}>{text}</span>;
                         }
                     }
                     }/>
                 <div
-                    slot='isPass'
+                    slot='bookIntroduction'
                     // @ts-ignore
                     render={(text: any, record: any, index: any) => {
-                        if (text) {
-                            return <Tag color={'green'}>通过</Tag>
-                        } else {
-                            return <Tag color={'red'}>不通过</Tag>;
 
+                        if (_.isString(text) &&text.length>10) {
+                            return <span title={text}>{text.substring(0, 10) + "..."}</span>;
+                        }else {
+                            return <span title={text}>{text}</span>;
                         }
+                    }
+                    }/>
+                <div
+                    slot='translateRender'
+                    // @ts-ignore
+                    render={(text: any, record: any, index: any) => {
+
+                        if (_.isString(text) &&text.length>10) {
+                            return <span title={text}>{text.substring(0, 10) + "..."}</span>;
+                        }else {
+                            return <span title={text}>{text}</span>;
+                        }
+                    }
+                    }/>
+                <div
+                    slot='seriesnameRender'
+                    // @ts-ignore
+                    render={(text: any, record: any, index: any) => {
+
+                        if (_.isString(text) &&text.length>10) {
+                            return <span title={text}>{text.substring(0, 10) + "..."}</span>;
+                        }else {
+                            return <span title={text}>{text}</span>;
+                        }
+                    }
+                    }/>
+                <div
+                    slot='authorRender'
+                    // @ts-ignore
+                    render={(text: any, record: any, index: any) => {
+
+                        if (_.isString(text) &&text.length>10) {
+                            return <span title={text}>{text.substring(0, 10) + "..."}</span>;
+                        }else {
+                            return <span title={text}>{text}</span>;
+                        }
+                    }
+                    }/>
+                <div
+                    slot='scoreRender'
+                    // @ts-ignore
+                    render={(text: any, record: any, index: any) => {
+                         return <Rate disabled defaultValue={text/2.0}/>
                     }
                     }/>
             </CTable>
 
-            {/*角色新增模式框*/}
+            {/*图书新增模式框*/}
             <Modal destroyOnClose visible={modalVisible} footer={null} onCancel={onCancel}>
                 <div className='user-manage-list-new'>
                     <div className='c-page-new'>
@@ -330,103 +384,40 @@ const Tsgl: FC<TsglProps> = (props) => {
                                     onFinish={onFinish}
                                 >
                                     <Form.Item
-                                        name="sourcename"
-                                        label="数据源名"
-
-                                        rules={[{required: true, message: '数据源名不能为空!'}]}
+                                        name="isbn"
+                                        label="ISBN"
+                                        validateTrigger={"OnSubmit"}
+                                        validateFirst={true}
+                                        rules={[{required: true, message: 'ISBN号不能为空!'},{validator: validateISBN, message: "ISBN号校验失败"}]}
                                     >
-                                        <Input placeholder={'请输入数据源名'}/>
+                                        <Input placeholder={'请输入ISBN号'}/>
                                     </Form.Item>
 
                                     <Form.Item
-                                        name="sourcetype"
-                                        label="数据源类型"
-                                        rules={[{
-                                            required: true,
-                                            message: '请输入数据源类型!',
-                                        }]}
+                                        name="name"
+                                        label="图书名"
+                                        rules={[{required: true, message: '图书名不能为空!'}]}
                                     >
-                                        <Select placeholder="请输入数据源类型" onChange={sourceTypeChange}>
-                                            <Select.Option value="0">JDBC</Select.Option>
-                                            <Select.Option value="1">CSV</Select.Option>
-                                        </Select>
+                                        <Input placeholder={'请输入图书名'}/>
                                     </Form.Item>
-                                    {
-                                        sourceType === '0' &&
-                                        <Form.Item
-                                            name="username"
-                                            label="用户名"
-
-                                            rules={[{required: true, message: '数据源名不能为空!'}]}
-                                        >
-                                            <Input placeholder={'请输入数据源用户名'}/>
-                                        </Form.Item>
-                                    }
-                                    {
-                                        sourceType === '0' &&
-                                        <Form.Item
-                                            name="password"
-                                            label="密码"
-
-                                            rules={[{required: true, message: '数据源密码不能为空!'}]}
-                                        >
-                                            <Input.Password placeholder={'请输入数据源密码'}/>
-                                        </Form.Item>
-                                    }
-                                    {
-                                        sourceType === '0' &&
-                                        <Form.Item
-                                            name="driveurl"
-                                            label="驱动"
-                                            rules={[{required: true, message: 'JDBC驱动不能为空!'}]}
-                                        >
-                                            <Upload accept={'.jar'} maxCount={1} listType="text"
-                                                    beforeUpload={(file) => {
-                                                        let formData = new FormData();
-                                                        if (file) {
-                                                            formData.append('file', file);
-                                                        }
-                                                        /*这边需要先把驱动包上传到FTP服务器上，返回url。根据url来装载类*/
-                                                        sjypzDao.uploadDrive(formData, (res: any) => {
-                                                            if (res.code === 200) {
-                                                                setDriveUrl(res.data)
-                                                            }
-                                                        })
-                                                        return false;
-                                                    }
-                                                    }>
-                                                <Button icon={<UploadOutlined/>}>点击上传驱动</Button>
-                                            </Upload>
-                                        </Form.Item>
-                                    }
-                                    {
-                                        sourceType === '0' &&
-                                        <Form.Item
-                                            name="sourceurl"
-                                            label="数据源地址"
-                                            rules={[{required: true, message: '数据源地址不能为空!'}]}
-                                        >
-                                            <Input addonAfter={<span className={'clickTestclass'}
-                                                                     onClick={testDataSource}>点击测试</span>}/>
-                                        </Form.Item>
-                                    }
-                                    {
-                                        sourceType === '0' &&
-                                        <Form.Item
-                                            name="driveclass"
-                                            label="驱动类"
-                                            rules={[{required: true, message: '驱动类不能为空!'}]}
-                                        >
-                                            <Input/>
-                                        </Form.Item>
-                                    }
-
 
                                     <Form.Item
-                                        name="description"
-                                        label="描述"
+                                        name="name"
+                                        label="图书名"
+                                        rules={[{required: true, message: '图书名不能为空!'}]}
                                     >
-                                        <Input.TextArea placeholder={'请输入数据源描述'}/>
+                                        <Upload
+                                            name='file'
+                                            beforeUpload={beforeUpload}
+                                            listType="picture-card"
+                                            className="avatar-uploader"
+                                            accept="image/*"
+                                            fileList={fileList}
+                                            onChange={onChange}
+                                            onPreview={onPreview}
+                                        >
+                                            {fileList.length < 1 && '+ Upload'}
+                                        </Upload>
                                     </Form.Item>
 
                                     <Form.Item wrapperCol={{span: 12, offset: 6}}>
@@ -438,8 +429,6 @@ const Tsgl: FC<TsglProps> = (props) => {
                             </div>
                         </div>
                     </div>
-                    {/*<CPageNew data={data} onChange={onChange} onSubmit={onSubmit} onCancel={onCancel}*/}
-                    {/*          updateType={updateType} footerShow={true}/>*/}
                 </div>
             </Modal>
 

@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import loginDao from "../dao/loginDao";
+import tsglDao from "../dao/tsglDao";
 
 /**
  * @param url 完整路径
@@ -344,6 +345,22 @@ export const validateUserName = async (rule: any, value: any) => {
   let params = {username: value};
   let promise = new Promise(((resolve) => {
     loginDao.validUsername(params, async (res: any) => {
+      resolve(res.data)
+    })
+  }))
+  /*当 Promise resolve一个之后才会执行，否则会一直阻塞在这里*/
+  let result = await promise;
+  if (result) {
+    return Promise.resolve()
+  } else {
+    return Promise.reject()
+  }
+};
+/*ISBN号校验，判断isbn号是否重复*/
+export const validateISBN = async (rule: any, value: any) => {
+  let params = {isbn: value};
+  let promise = new Promise(((resolve) => {
+    tsglDao.validISBN(params, async (res: any) => {
       resolve(res.data)
     })
   }))

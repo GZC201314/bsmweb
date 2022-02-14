@@ -50,6 +50,8 @@ const updateRole = (paramter: any, successCallback: Function, errorCallback?: Fu
     )
 }
 
+
+
 export default {
     getRoleListInfo,
     updateRole,

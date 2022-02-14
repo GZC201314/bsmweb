@@ -3,54 +3,89 @@
 export const tableData = {
   tHead: [
     {
-      key: 'sourcename',
-      title: '数据源名',
+      key: 'isbn',
+      title: 'ISBN',
       fixed: 'right',
-      dataIndex: 'sourcename',
+      dataIndex: 'isbn',
     },
     {
-      key: 'sourcetype',
-      dataIndex: 'sourcetype',
+      key: 'name',
+      dataIndex: 'name',
       fixed: 'right',
-      title: '数据源类型',
-      slot:'datasourceType'
+      title: '图书名',
+      slot: 'nameRender'
     },
     {
-      key: 'username',
-      dataIndex: 'username',
+      key: 'image',
+      dataIndex: 'image',
       fixed: 'right',
-      title: '用户名',
+      title: '图书封面',
+      slot: 'bookImage'
     },
     {
-      key: 'driveurl',
-      dataIndex: 'driveurl',
-      title: '驱动地址',
+      key: 'seriesname',
+      dataIndex: 'seriesname',
       fixed: 'right',
-      slot: "driveUrlrender"
+      title: '丛书',
+      slot: 'seriesnameRender'
     },
     {
-      key: 'sourceurl',
-      dataIndex: 'sourceurl',
+      key: 'author',
+      dataIndex: 'author',
+      title: '作者',
       fixed: 'right',
-      title: '数据源地址',
+      slot: 'authorRender'
     },
     {
-      key: 'description',
-      dataIndex: 'description',
+      key: 'translate',
+      dataIndex: 'translate',
+      title: '翻译作者',
       fixed: 'right',
-      title: '描述',
+      slot: 'translateRender'
     },
     {
-      key: 'pass',
-      dataIndex: 'pass',
+      key: 'introduction',
+      dataIndex: 'introduction',
       fixed: 'right',
-      title: '测试通过',
-      slot: "isPass"
+      title: '介绍',
+      slot: "bookIntroduction",
     },
     {
-      key: 'driveclass',
-      dataIndex: 'driveclass',
-      title: '驱动类',
+      key: 'publisher',
+      dataIndex: 'publisher',
+      fixed: 'right',
+      title: '出版社',
+      slot: "publisherRender",
+    },
+    {
+      key: 'publishingtime',
+      dataIndex: 'publishingtime',
+      fixed: 'right',
+      title: '出版时间',
+    },
+    {
+      key: 'score',
+      dataIndex: 'score',
+      title: '评分',
+      fixed: 'right',
+      slot: "scoreRender",
+    },
+    {
+      key: 'folio',
+      dataIndex: 'folio',
+      title: '页数',
+      fixed: 'right',
+    },
+    {
+      key: 'size',
+      dataIndex: 'size',
+      title: '装订',
+      fixed: 'right',
+    },
+    {
+      key: 'price',
+      dataIndex: 'price',
+      title: '价格',
       fixed: 'right',
     },
     {
@@ -69,16 +104,10 @@ export const tableData = {
     pageSize: 10
   }
 };
-
-/*
-*
-*     validateStatus?: "" | "success" | "error" | "warning" | "validating" | undefined,
-    validate?: boolean,
-* */
 /*新增角色的配置信息*/
-export const sjypzManageListNewData =
+export const bookManageListNewData =
   {
     id: 'baseInfo',
-    title: '数据源基本信息',
+    title: '图书基本信息',
     data: []
   };

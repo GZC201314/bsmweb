@@ -50,6 +50,7 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
             }
             loginDao.rlsbLogin(formData,(res:any)=>{
                 if(res.data.code===200){
+                    debugger
                     const action = {
                         type: RLSB_LOGIN,
                         data: res.data.data
@@ -59,7 +60,14 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
                     setRlsbModelvisible(false)
                     // @ts-ignore
                     webcamRef.current.stream.getTracks()[0].stop();
-                    // history.go("")
+                    /*登录成功，进入首页*/
+                    setStorage("userInfo",res.data.data.userinfo,'');
+                    setStorage("menulist",JSON.parse(res.data.data.menulist),'');
+                    /*设置面包屑数据*/
+                    dispatch(setBreadcrumb([{icon:"HomeOutlined",name:"首页",href:"/yhzx"}] as breadcrumbDataType[]))
+                    history.push({
+                        pathname: '/home',
+                    });
                 }
             })
 
@@ -217,12 +225,6 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
                 <Form.Item wrapperCol={{offset: 6, span: 18}}>
                     <Button type="primary" onClick={() => {
                         setRlsbModelvisible(true)
-                        /*TODO 重新打开的时候摄像头不能捕获到流*/
-                        // if (webcamRef.current) {
-                        //     debugger
-                        //     // @ts-ignore
-                        //     webcamRef.current.stream.getTracks()[0].enabled = !webcamRef.current.stream.getTracks()[0]
-                        // }
                     }}>
                         人脸识别
                     </Button>
@@ -279,7 +281,7 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
                 >
                     <Form.Item
                         name={"username"}
-                        validateTrigger={"onSubmit"}
+                        validateTrigger={"OnSubmit"}
                         validateFirst={true}
                         hasFeedback
                         rules={[{required: true}, {
