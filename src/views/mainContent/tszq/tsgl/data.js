@@ -22,13 +22,13 @@ export const tableData = {
       title: '图书封面',
       slot: 'bookImage'
     },
-    {
-      key: 'seriesname',
-      dataIndex: 'seriesname',
-      fixed: 'right',
-      title: '丛书',
-      slot: 'seriesnameRender'
-    },
+    // {
+    //   key: 'seriesname',
+    //   dataIndex: 'seriesname',
+    //   fixed: 'right',
+    //   title: '丛书',
+    //   slot: 'seriesnameRender'
+    // },
     {
       key: 'author',
       dataIndex: 'author',
@@ -36,13 +36,13 @@ export const tableData = {
       fixed: 'right',
       slot: 'authorRender'
     },
-    {
-      key: 'translate',
-      dataIndex: 'translate',
-      title: '翻译作者',
-      fixed: 'right',
-      slot: 'translateRender'
-    },
+    // {
+    //   key: 'translate',
+    //   dataIndex: 'translate',
+    //   title: '翻译作者',
+    //   fixed: 'right',
+    //   slot: 'translateRender'
+    // },
     {
       key: 'introduction',
       dataIndex: 'introduction',

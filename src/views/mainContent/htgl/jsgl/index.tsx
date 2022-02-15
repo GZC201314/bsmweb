@@ -158,7 +158,9 @@ const Jsgl: FC<JsglProps> = (props) => {
         setModalVisible(true)
 
         /*给每个Item的value赋值*/
-        setData(setPageNewValue(data, formData))
+        let pageNewValue = setPageNewValue(data, formData);
+        console.log(pageNewValue)
+        setData(pageNewValue)
         // setPageNewItem
     }
 

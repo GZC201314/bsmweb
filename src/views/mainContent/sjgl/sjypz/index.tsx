@@ -10,7 +10,11 @@ import {setPageNewValue} from "../../../../utils";
 import CButton from "../../../../components/CButton";
 import CInput from "../../../../components/CForm/CInput";
 import CTable from "../../../../components/CTable";
-import {UploadOutlined} from '@ant-design/icons';
+import {PlusOutlined, UploadOutlined} from '@ant-design/icons';
+import Moment from "moment";
+import {UploadFile} from "antd/lib/upload/interface";
+import {FieldData} from "rc-field-form/es/interface";
+import tsglDao from "../../../../dao/tsglDao";
 
 export interface SjypzProps {
 
@@ -19,6 +23,10 @@ export interface SjypzProps {
 const Sjypz: FC<SjypzProps> = (props) => {
 
 
+    const [fileList, setFileList] = useState([] as UploadFile[]);
+    const [previewVisible, setPreviewVisible] = useState(false)
+    const [previewImage, setPreviewImage] = useState('' as string)
+    const [previewTitle, setPreviewTitle] = useState('')
     const history = useHistory()
     const [dataSourceForm] = Form.useForm();
     /**state  state部分**/
@@ -31,7 +39,6 @@ const Sjypz: FC<SjypzProps> = (props) => {
     const [loading, setLoading] = useState(true)
     /*记录数据源是否测试连接通过*/
     const [pass, setPass] = useState(false)
-    const [updateType, setUpdateType] = useState<"insert" | "edit">("insert")
     const [modalVisible, setModalVisible] = useState(false)
     const [sourceType, setSourceType] = useState("0")
     const [searchData, setSearchData] = useState({
@@ -153,12 +160,24 @@ const Sjypz: FC<SjypzProps> = (props) => {
     }
     // 编辑当前行
     const editHandler = (formData: any) => {
-        setUpdateType('edit')
         setEditFlag(true)
         setModalVisible(true)
-
-        /*给每个Item的value赋值 如果不使用框架，则需要*/
-        setData(setPageNewValue(data, formData))
+        let fieldDatas = [] as FieldData[]
+        /*给每个Item的value赋值 如果不使用框架，则需要手动赋值*/
+        for (const formDataKey in formData) {
+            if(formDataKey === 'driveurl'){
+                debugger
+                let file = {} as UploadFile
+                file.url = formData[formDataKey]
+                let split = formData[formDataKey].split('\\');
+                file.name =split[split.length - 1];
+                setDriveUrl(formData[formDataKey]);
+                setFileList([file])
+            }
+            fieldDatas.push({name:formDataKey,value:formData[formDataKey]+""})
+        }
+        debugger
+        dataSourceForm.setFields(fieldDatas)
         // setPageNewItem
     }
 
@@ -206,6 +225,25 @@ const Sjypz: FC<SjypzProps> = (props) => {
         })
     }
 
+    // @ts-ignore
+    const handleChange = ({fileList}) => {
+        setFileList(fileList)
+    };
+
+    const beforeUpload = async (file: any) => {
+        let formData = new FormData();
+        if (file) {
+            formData.append('file', file);
+        }
+        /*这边需要先把驱动包上传到FTP服务器上，返回url。根据url来装载类*/
+        sjypzDao.uploadDrive(formData, (res: any) => {
+            if (res.code === 200) {
+                setDriveUrl(res.data)
+            }
+        })
+        return false;
+    }
+
     const onCancel = (data: any) => {
         dataSourceForm.resetFields()
         setModalVisible(false)
@@ -251,6 +289,12 @@ const Sjypz: FC<SjypzProps> = (props) => {
         wrapperCol: {span: 14},
     };
 
+    const uploadButton = (
+        <div>
+            <PlusOutlined/>
+            <div style={{marginTop: 8}}>Upload</div>
+        </div>
+    );
 
     return (
         <div className='user-manage-list'>
@@ -403,22 +447,16 @@ const Sjypz: FC<SjypzProps> = (props) => {
                                             label="驱动"
                                             rules={[{required: true, message: 'JDBC驱动不能为空!'}]}
                                         >
-                                            <Upload accept={'.jar'} maxCount={1} listType="text"
-                                                    beforeUpload={(file) => {
-                                                        let formData = new FormData();
-                                                        if (file) {
-                                                            formData.append('file', file);
-                                                        }
-                                                        /*这边需要先把驱动包上传到FTP服务器上，返回url。根据url来装载类*/
-                                                        sjypzDao.uploadDrive(formData, (res: any) => {
-                                                            if (res.code === 200) {
-                                                                setDriveUrl(res.data)
-                                                            }
-                                                        })
-                                                        return false;
-                                                    }
-                                                    }>
-                                                <Button icon={<UploadOutlined/>}>点击上传驱动</Button>
+
+
+                                            <Upload
+                                                listType="text"
+                                                fileList={fileList}
+                                                accept={'.jar'}
+                                                onChange={handleChange}
+                                                beforeUpload={beforeUpload}
+                                            >
+                                                {fileList.length >= 1 ? null : uploadButton}
                                             </Upload>
                                         </Form.Item>
                                     }

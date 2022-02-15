@@ -2,12 +2,11 @@ import {Button, Collapse, Divider, Form, Input, message, Modal, Space, Tooltip, 
 import React, {FC, useState} from 'react'
 import './style.scss'
 import ImgCrop from 'antd-img-crop'
-import cookie from 'react-cookies'
 import {QuestionCircleOutlined, VideoCameraOutlined} from '@ant-design/icons';
 import Webcam from "react-webcam";
 import {useDispatch} from 'react-redux'
 import loginDao from "../../../../dao/loginDao";
-import {RLSB_LOGIN, XXXG_GET_USERINFO_HANDLE} from "../../../../actionTypes";
+import {XXXG_GET_USERINFO_HANDLE} from "../../../../actionTypes";
 import xxxgDao from "../../../../dao/xxxgDao";
 import {useSelector} from "../../../../hooks/hooks";
 import {convertImgDataToBlob, getStorage, setStorage, validatePassword, validateUserName} from "../../../../utils";

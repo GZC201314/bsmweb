@@ -7,6 +7,7 @@ const addDoubanBookUrl: string = '/bsmservice/doubanbook/addDoubanBook';
 const updateDoubanBookUrl: string = '/bsmservice/doubanbook/updateDoubanBook';
 const deleteDouBanBookUrl: string = '/bsmservice/doubanbook/deleteDouBanBook';
 const validISBNUrl: string = '/bsmservice/doubanbook/validISBN';
+const giteeUploadUrl: string = '/bsmservice/giteeUpload/uploadFile';
 
 
 /*豆瓣图书列表查询*/
@@ -70,21 +71,21 @@ const validISBN = (paramter:any, successCallback: Function, errorCallback?: Func
 }
 
 /*上传图书封面，把图书上传到gitee上*/
-// const uploadDrive = (paramter:any, successCallback: Function, errorCallback?: Function, url?: string) => {
-//
-//     axios({
-//         headers:{
-//             'Content-Type': 'multipart/form-data'
-//         },
-//         method: 'post',
-//         url: url||uploadDriveUrl,
-//         data:paramter
-//     }).then(res => {
-//         successCallback(res.data);
-//     }).catch(err => {
-//         console.error(err)
-//     });
-// }
+const giteeUpload = (paramter:any, successCallback: Function, errorCallback?: Function, url?: string) => {
+
+    axios({
+        headers:{
+            'Content-Type': 'multipart/form-data'
+        },
+        method: 'post',
+        url: url||giteeUploadUrl,
+        data:paramter
+    }).then(res => {
+        successCallback(res.data);
+    }).catch(err => {
+        console.error(err)
+    });
+}
 
 
 export default {
@@ -94,4 +95,5 @@ export default {
     addDoubanBook,
     getDouBanBookInfo,
     validISBN,
+    giteeUpload,
 };
