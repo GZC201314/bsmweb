@@ -1,16 +1,19 @@
 import React, {FC, useEffect, useState} from 'react'
+import Moment from 'moment'
 import './style.scss'
 import {useHistory} from "react-router-dom";
 import {bookManageListNewData, tableData} from "./data";
 import {useSelector} from "../../../../hooks/hooks";
 import tsglDao from "../../../../dao/tsglDao";
 import _ from "lodash";
-import {Button, Form, Image, Input, message, Modal, Rate, Select, Upload,} from "antd";
-import {setPageNewValue, setStorage, validateISBN, validateUserName} from "../../../../utils";
+import {Button, DatePicker, Form, Image, Input, message, Modal, Rate, Upload,} from "antd";
+import {setPageNewValue, validateISBN} from "../../../../utils";
 import CButton from "../../../../components/CButton";
 import CInput from "../../../../components/CForm/CInput";
 import CTable from "../../../../components/CTable";
-import xxxgDao from "../../../../dao/xxxgDao";
+import {UploadFile} from "antd/lib/upload/interface";
+import {PlusOutlined} from '@ant-design/icons';
+import {FieldData} from "rc-field-form/es/interface";
 
 export interface TsglProps {
 
@@ -18,25 +21,26 @@ export interface TsglProps {
 
 const Tsgl: FC<TsglProps> = (props) => {
 
+    const [bookModelForm] = Form.useForm()
 
     const history = useHistory()
-    const [dataSourceForm] = Form.useForm();
     /**state  state部分**/
-    const [colums] = useState(tableData.tHead)
+    const [colums] = useState(tableData.tHead);
     const [data, setData] = useState<any>(bookManageListNewData)
-    const [editFlag, setEditFlag] = useState(false)
+    const [editFlag, setEditFlag] = useState<boolean>(false)
     const [dataSource, setDataSource] = useState(tableData.tBody)
     const [page, setPage] = useState(tableData.tPage)
-    const [driveUrl, setDriveUrl] = useState('')
+    const [fileList, setFileList] = useState([] as UploadFile[]);
+    const [previewVisible, setPreviewVisible] = useState(false)
+    const [previewImage, setPreviewImage] = useState('' as string)
+    const [previewTitle, setPreviewTitle] = useState('')
+
     const [loading, setLoading] = useState(true)
     /*记录数据源是否测试连接通过*/
-    const [pass, setPass] = useState(false)
-    const [updateType, setUpdateType] = useState<"insert" | "edit">("insert")
     const [modalVisible, setModalVisible] = useState(false)
-    const [sourceType, setSourceType] = useState("0")
     const [searchData, setSearchData] = useState({
         value: '',//搜索框筛选
-        placeholder: '请输入元数据名'
+        placeholder: '请输入图书名'
     })
     const [selectionDataIds, setSelectionDataIds] = useState([] as Array<any>)
 
@@ -46,7 +50,7 @@ const Tsgl: FC<TsglProps> = (props) => {
         return state.CommonReducer.reload;
     });
 
-    // 获取用户角色列表数据
+    // 获取豆瓣图书列表数据
     let getDouBanBookList = (page1?: any) => {
         let getData = {
             page: {
@@ -84,6 +88,29 @@ const Tsgl: FC<TsglProps> = (props) => {
             });
         })
     }
+
+    /**
+     * 处理预览取消
+     */
+    const handleCancel = () => {
+        setPreviewVisible(false)
+
+    }
+    /**
+     * 处理预览
+     * @param file
+     */
+    const handlePreview = async (file: UploadFile) => {
+        // @ts-ignore
+        setPreviewImage(file.url)
+        setPreviewVisible(true)
+        // @ts-ignore
+        setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1))
+    };
+    // @ts-ignore
+    const handleChange = ({fileList}) => {
+        setFileList(fileList)
+    };
 
     /*单独删除或者批量删除*/
     const removeHandler = () => {
@@ -134,9 +161,9 @@ const Tsgl: FC<TsglProps> = (props) => {
         setSearchData({...searchData, value: value})
     }
 
-    /*新增角色*/
+    /*新增*/
     const addHandler = () => {
-        /*TODO 这边的实现是打开一个模式窗口*/
+        /* 这边的实现是打开一个模式窗口*/
         setData(bookManageListNewData)
         setModalVisible(true)
     }
@@ -145,20 +172,43 @@ const Tsgl: FC<TsglProps> = (props) => {
     // 重置筛选项
     const resetHandler = (e: any) => {
         history.push({
-            pathname: "/sjypz"
+            pathname: "/tsgl"
         })
         setSearchData({...searchData, value: ''})
         setPage(tableData.tPage)
         // userManageList.clearFilterData();
     }
-    // 编辑当前行
+    let fieldDatas = [] as FieldData[]
+    //TODO 编辑当前行
     const editHandler = (formData: any) => {
-        setUpdateType('edit')
         setEditFlag(true)
         setModalVisible(true)
 
+        for (const formDataKey in formData) {
+            if(formDataKey === 'publishingtime'){
+                var formatTime = Moment(new Date(formData[formDataKey]));
+                fieldDatas.push({name:formDataKey,value:formatTime})
+                continue
+            }
+            if(formDataKey === 'score'){
+                fieldDatas.push({name:formDataKey,value:formData[formDataKey]/2.0})
+                continue
+            }
+            if(formDataKey === 'image'){
+                let uploadFile = {} as UploadFile
+                uploadFile.url = formData[formDataKey]
+
+                setFileList([uploadFile])
+                continue
+            }
+            fieldDatas.push({name:formDataKey,value:formData[formDataKey]})
+        }
+        // formData.forEach((value:any,key:any) =>{
+        //     console.log(value,key);
+        // });
+
         /*给每个Item的value赋值*/
-        setData(setPageNewValue(data, formData))
+        bookModelForm.setFields(fieldDatas)
         // setPageNewItem
     }
 
@@ -167,7 +217,7 @@ const Tsgl: FC<TsglProps> = (props) => {
 
         debugger
         let delData = {
-            delIds: [data.datasourceid].join(",")
+            delIds: [data.isbn].join(",")
         };
 
         tsglDao.deleteDouBanBook(delData, (res: any) => {
@@ -184,6 +234,10 @@ const Tsgl: FC<TsglProps> = (props) => {
         } else {
             method = tsglDao.addDoubanBook
         }
+        if(!_.isEmpty(fileList)){
+            data.image = fileList[0].url
+        }
+        data.score = data.score*2;
         method(data, (res: any) => {
             if (res.code === 200) {
                 message.success(res.msg)
@@ -209,32 +263,33 @@ const Tsgl: FC<TsglProps> = (props) => {
         }
         let url: string = "";
         url = await new Promise((resolve, reject) => {
-            tsglDao.editAvatar(formData, (res: any) => {
-                if (res.data.code === 200) {
-                    url = res.data.data;
+            tsglDao.giteeUpload(formData, (res: any) => {
+                if (res.code === 200) {
+                    url = res.data;
                     resolve(url)
-
-                    /*更新头像*/
                 }
             })
         })
-        if (url !== "") {
-            history.push({
-                pathname: '/xxxg',
-            })
-            return false;
-        }
 
+        file.url = url
+        setFileList([file])
+        return false
     }
 
 
+    /**
+     * 模式框关闭处理函数
+     * @param data
+     */
     function onCancel(data: any) {
         setModalVisible(false)
+        bookModelForm.resetFields()
+        /*重置上传的图书封面*/
+        setFileList([])
+        //重置editFlag
+        setEditFlag(false)
     }
 
-    function sourceTypeChange(value: any) {
-        setSourceType(value)
-    }
 
     /**styles 样式部分**/
 
@@ -245,7 +300,12 @@ const Tsgl: FC<TsglProps> = (props) => {
         wrapperCol: {span: 14},
     };
 
-
+    const uploadButton = (
+        <div>
+            <PlusOutlined/>
+            <div style={{marginTop: 8}}>Upload</div>
+        </div>
+    );
     return (
         <div className='user-manage-list'>
             <div className='flex filter-wrap'>
@@ -294,9 +354,9 @@ const Tsgl: FC<TsglProps> = (props) => {
                     // @ts-ignore
                     render={(text: any, record: any, index: any) => {
 
-                        if (_.isString(text) &&text.length>10) {
+                        if (_.isString(text) && text.length > 10) {
                             return <span title={text}>{text.substring(0, 10) + "..."}</span>;
-                        }else {
+                        } else {
                             return <span title={text}>{text}</span>;
                         }
                     }
@@ -306,9 +366,9 @@ const Tsgl: FC<TsglProps> = (props) => {
                     // @ts-ignore
                     render={(text: any, record: any, index: any) => {
 
-                        if (_.isString(text) &&text.length>10) {
+                        if (_.isString(text) && text.length > 10) {
                             return <span title={text}>{text.substring(0, 10) + "..."}</span>;
-                        }else {
+                        } else {
                             return <span title={text}>{text}</span>;
                         }
                     }
@@ -318,9 +378,9 @@ const Tsgl: FC<TsglProps> = (props) => {
                     // @ts-ignore
                     render={(text: any, record: any, index: any) => {
 
-                        if (_.isString(text) &&text.length>10) {
+                        if (_.isString(text) && text.length > 10) {
                             return <span title={text}>{text.substring(0, 10) + "..."}</span>;
-                        }else {
+                        } else {
                             return <span title={text}>{text}</span>;
                         }
                     }
@@ -330,9 +390,9 @@ const Tsgl: FC<TsglProps> = (props) => {
                     // @ts-ignore
                     render={(text: any, record: any, index: any) => {
 
-                        if (_.isString(text) &&text.length>10) {
+                        if (_.isString(text) && text.length > 10) {
                             return <span title={text}>{text.substring(0, 10) + "..."}</span>;
-                        }else {
+                        } else {
                             return <span title={text}>{text}</span>;
                         }
                     }
@@ -342,9 +402,9 @@ const Tsgl: FC<TsglProps> = (props) => {
                     // @ts-ignore
                     render={(text: any, record: any, index: any) => {
 
-                        if (_.isString(text) &&text.length>10) {
+                        if (_.isString(text) && text.length > 10) {
                             return <span title={text}>{text.substring(0, 10) + "..."}</span>;
-                        }else {
+                        } else {
                             return <span title={text}>{text}</span>;
                         }
                     }
@@ -354,9 +414,9 @@ const Tsgl: FC<TsglProps> = (props) => {
                     // @ts-ignore
                     render={(text: any, record: any, index: any) => {
 
-                        if (_.isString(text) &&text.length>10) {
+                        if (_.isString(text) && text.length > 10) {
                             return <span title={text}>{text.substring(0, 10) + "..."}</span>;
-                        }else {
+                        } else {
                             return <span title={text}>{text}</span>;
                         }
                     }
@@ -365,7 +425,7 @@ const Tsgl: FC<TsglProps> = (props) => {
                     slot='scoreRender'
                     // @ts-ignore
                     render={(text: any, record: any, index: any) => {
-                         return <Rate disabled defaultValue={text/2.0}/>
+                        return <Rate disabled allowHalf value={text / 2.0}/>
                     }
                     }/>
             </CTable>
@@ -380,18 +440,29 @@ const Tsgl: FC<TsglProps> = (props) => {
                             <div>
                                 <Form
                                     {...formItemLayout}
-                                    form={dataSourceForm}
+                                    form={bookModelForm}
                                     onFinish={onFinish}
+
                                 >
-                                    <Form.Item
+                                    {editFlag?                                    <Form.Item
                                         name="isbn"
                                         label="ISBN"
-                                        validateTrigger={"OnSubmit"}
+                                        validateTrigger={"onSubmit"}
                                         validateFirst={true}
-                                        rules={[{required: true, message: 'ISBN号不能为空!'},{validator: validateISBN, message: "ISBN号校验失败"}]}
+                                    >
+                                        <Input disabled placeholder={'请输入ISBN号'}/>
+                                    </Form.Item>:<Form.Item
+                                        name="isbn"
+                                        label="ISBN"
+                                        validateTrigger={"onSubmit"}
+                                        validateFirst={true}
+                                        rules={[{required: true, message: 'ISBN号不能为空!'}, {
+                                            validator: validateISBN,
+                                            message: "ISBN号校验失败"
+                                        }]}
                                     >
                                         <Input placeholder={'请输入ISBN号'}/>
-                                    </Form.Item>
+                                    </Form.Item>}
 
                                     <Form.Item
                                         name="name"
@@ -402,22 +473,105 @@ const Tsgl: FC<TsglProps> = (props) => {
                                     </Form.Item>
 
                                     <Form.Item
-                                        name="name"
-                                        label="图书名"
-                                        rules={[{required: true, message: '图书名不能为空!'}]}
+                                        name="image"
+                                        label="图书封面"
                                     >
                                         <Upload
-                                            name='file'
-                                            beforeUpload={beforeUpload}
                                             listType="picture-card"
-                                            className="avatar-uploader"
-                                            accept="image/*"
                                             fileList={fileList}
-                                            onChange={onChange}
-                                            onPreview={onPreview}
+                                            accept={'image/*'}
+                                            onPreview={handlePreview}
+                                            onChange={handleChange}
+                                            beforeUpload={beforeUpload}
                                         >
-                                            {fileList.length < 1 && '+ Upload'}
+                                            {fileList.length >= 1 ? null : uploadButton}
                                         </Upload>
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        name="englishname"
+                                        label="图书英文名"
+                                    >
+                                        <Input placeholder={'请输入图书英文名'}/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="title"
+                                        label="图书标题"
+                                    >
+                                        <Input placeholder={'请输入图书标题'}/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="seriesname"
+                                        label="丛书"
+                                    >
+                                        <Input placeholder={'请输入丛书'}/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="author"
+                                        label="作者"
+                                        rules={[{required: true, message: '作者不能为空!'}]}
+                                    >
+                                        <Input placeholder={'请输入作者'}/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="introduction"
+                                        label="介绍"
+                                    >
+                                        <Input.TextArea placeholder={'请输入图书介绍'}/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="publisher"
+                                        label="出版社"
+                                    >
+                                        <Input placeholder={'请输入出版社'}/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="publishingtime"
+                                        label="出版时间"
+                                    >
+                                        <DatePicker picker={'date'}/>
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        name="edition"
+                                        label="出版公司"
+                                    >
+                                        <Input placeholder={'请输入出版公司'}/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="score"
+                                        label="评分"
+                                        // rules={[{required: true, message: '作者不能为空!'}]}
+                                    >
+                                        <Rate defaultValue={0} allowHalf/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="translate"
+                                        label="翻译"
+                                        // rules={[{required: true, message: '作者不能为空!'}]}
+                                    >
+                                        <Input placeholder={'请输入翻译'}/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="folio"
+                                        label="页数"
+                                        // rules={[{required: true, message: '作者不能为空!'}]}
+                                    >
+                                        <Input placeholder={'请输入页数'}/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="size"
+                                        label="装订"
+                                        // rules={[{required: true, message: '作者不能为空!'}]}
+                                    >
+                                        <Input placeholder={'请输入装订'}/>
+                                    </Form.Item>
+                                    <Form.Item
+                                        name="price"
+                                        label="价格"
+                                        // rules={[{required: true, message: '作者不能为空!'}]}
+                                    >
+                                        <Input placeholder={'请输入价格'}/>
                                     </Form.Item>
 
                                     <Form.Item wrapperCol={{span: 12, offset: 6}}>
@@ -430,6 +584,17 @@ const Tsgl: FC<TsglProps> = (props) => {
                         </div>
                     </div>
                 </div>
+            </Modal>
+
+            {/*图片预览模式框*/}
+            <Modal
+                destroyOnClose
+                visible={previewVisible}
+                title={previewTitle}
+                footer={null}
+                onCancel={handleCancel}
+            >
+                <img alt="example" style={{width: '100%'}} src={previewImage}/>
             </Modal>
 
         </div>
