@@ -6,15 +6,12 @@ import {useSelector} from "../../../../hooks/hooks";
 import sjypzDao from "../../../../dao/sjypzDao";
 import _ from "lodash";
 import {Button, Form, Input, message, Modal, Select, Tag, Upload,} from "antd";
-import {setPageNewValue} from "../../../../utils";
 import CButton from "../../../../components/CButton";
 import CInput from "../../../../components/CForm/CInput";
 import CTable from "../../../../components/CTable";
-import {PlusOutlined, UploadOutlined} from '@ant-design/icons';
-import Moment from "moment";
+import {PlusOutlined} from '@ant-design/icons';
 import {UploadFile} from "antd/lib/upload/interface";
 import {FieldData} from "rc-field-form/es/interface";
-import tsglDao from "../../../../dao/tsglDao";
 
 export interface SjypzProps {
 

@@ -215,7 +215,6 @@ const Tsgl: FC<TsglProps> = (props) => {
     // 删除当前行
     const delHandler = (data: any) => {
 
-        debugger
         let delData = {
             delIds: [data.isbn].join(",")
         };
