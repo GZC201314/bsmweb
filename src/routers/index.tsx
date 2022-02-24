@@ -32,6 +32,8 @@ import cdglRouter from "./htgl/cdglRouter";
 import yhglRouter from "./htgl/yhglRouter";
 import jsglRouter from "./htgl/jsglRouter";
 import qxglRouter from "./htgl/qxglRouter";
+/*流程专区*/
+import lcsjRouter from "./lczq/lcsjRouter";
 export interface RouteConfigProps {
 
 }
@@ -66,12 +68,7 @@ const RouteConfig: FC<RouteConfigProps> = (props) => {
         tslbRouter,
         xxxgRouter,
         grzxRouter,
-        // userManageRouter,
-        // storeManageRouter,
-        // authManageRouter,
-        // goodsManageRouter,
-        // historyRecordRouter,
-        // personalRouter
+        lcsjRouter,
     ];
 
     const renderRoutes = (routers: any[]) => {
