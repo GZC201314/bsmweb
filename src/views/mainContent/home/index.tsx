@@ -212,7 +212,7 @@ const Home:FC<HomeProps> = (props) => {
                         <Card>
                             <Statistic
                                 title="操作系统"
-                                value={data.osInfo && data.osInfo.name}
+                                value={data.osInfo && data.osInfo.name+" "+data.osInfo.version}
                                 precision={2}
                                 valueStyle={{ color: '#3f8600' }}
                             />
