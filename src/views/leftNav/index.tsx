@@ -1,8 +1,6 @@
 import {Popover} from 'antd'
 import {NavLink, useHistory} from 'react-router-dom'
-// @ts-ignore
 import './index.scss'
-// import './index.css'
 import {getStorage, urlFormat} from '../../utils';
 import CScroll from "../../components/CScroll"
 import React, {FC, useEffect, useState, useRef} from 'react'
@@ -24,7 +22,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
     /*在这边获取菜单数据*/
     const menuList = getStorage('menulist', '')
     const collapse = useSelector((state) => {
-        return state.CommonReducer.collapsed;
+        return getStorage("collapse","");
     });
     const leftNavRef = useRef(null)
 

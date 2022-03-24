@@ -57,7 +57,10 @@ const Header: FC<HeaderProps> = (props) => {
     }
 
     const collapsedChange = () => {
+        debugger
         let collapse = !props.collapsed;
+        // @ts-ignore
+        setStorage('collapse', collapse, "");
         // @ts-ignore
         dispatch(props.collapsedToggle(collapse));
 
