@@ -109,6 +109,7 @@ const CPageNew: FC<CPageNewProps> = (props) => {
                                 checkData = checkArg[0];
                                 checkArg = checkArg[1];
                             }
+                            debugger
                             // @ts-ignore
                             validateStatus = validateAll[checkData](value, checkArg);
                             result.push(validateStatus.validate)
