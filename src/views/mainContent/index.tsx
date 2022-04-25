@@ -59,12 +59,12 @@ const MainContent:FC<MainContentProps> = (props) => {
     
     return(
         <div className='main-content' ref={mainContentRef} id ='mainContent'>
-          <CScroll>
+          <CScroll >
             <div className='main-content-scroll'>
-              <div className='flex main-breadcrumb'>
-                <CBreadcrumb>
+              <div className='flex main-breadcrumb' >
+                {/*<CBreadcrumb>*/}
+                {/*</CBreadcrumb>*/}
                   <CButton icon='ReloadOutlined' disabled={props.reload} type='primary' onClick={reloadFunction}/>
-                </CBreadcrumb>
               </div>
               <div className='main-content-body'>
                 <Card className='main-content-body-card'>

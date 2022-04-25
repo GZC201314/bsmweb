@@ -18,11 +18,13 @@
   }
   .main-content-body{
     padding: 10px;
-    //height: calc(100% - 40px);
     .main-content-body-card{
       .ant-card-body{
         padding: 15px;
       }
     }
+  }
+  .right{
+    float: left;
   }
 }
