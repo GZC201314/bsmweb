@@ -16,6 +16,7 @@ import 'bpmn-js/dist/assets/diagram-js.css'
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css'
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
 import 'bpmn-js-properties-panel/dist/assets/bpmn-js-properties-panel.css'
+import {Footer} from "antd/lib/layout/layout";
 
 
 const render = (Component:any) => {
@@ -24,6 +25,7 @@ const render = (Component:any) => {
             <Provider store={store}>
                 <Component/>
             </Provider>
+            <Footer style={{ textAlign: 'center',color: '#495770',background: 'center' ,position: 'absolute',top: '100%',left: '36%' }}>Copyright © BSM. All Rights Reserved. <a style={{ color: '#495770' }} target="_blank" rel="noreferrer" href='https://beian.miit.gov.cn/'>京ICP备2021027983号-1</a></Footer>
         </ConfigProvider>
         ,
         document.getElementById('root'));

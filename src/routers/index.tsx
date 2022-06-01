@@ -34,6 +34,7 @@ import jsglRouter from "./htgl/jsglRouter";
 import qxglRouter from "./htgl/qxglRouter";
 /*流程专区*/
 import lcsjRouter from "./lczq/lcsjRouter";
+import { Footer } from 'antd/lib/layout/layout';
 export interface RouteConfigProps {
 
 }
@@ -100,9 +101,11 @@ const RouteConfig: FC<RouteConfigProps> = (props) => {
                     <MainContent>
                         {renderRoutes(routers)}
                     </MainContent>
+
                 </App>
             </Switch>
         </HashRouter>
+
     );
 }
 export default RouteConfig
