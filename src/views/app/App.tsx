@@ -13,6 +13,7 @@ import { ConfigProvider } from 'antd';
 import { Location } from 'history';
 import {useSelector} from "../../hooks/hooks";
 import {useDispatch} from "react-redux";
+import { Footer } from 'antd/lib/layout/layout';
 
 moment.locale('zh-cn');
 
@@ -100,6 +101,7 @@ const App: FC<AppProps> = (props) => {
               </div>
             </div>
           </div>
+
         </ConfigProvider>
     );
 }

@@ -375,6 +375,8 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
                     </div>
                 </Form>
             </Modal>
+
+
         </div>
     );
 }
