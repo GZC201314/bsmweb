@@ -117,18 +117,19 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
     /*登录处理*/
     function handleSubmit(values: any) {
         loginDao.userLogin(values,(res : any)=>{
-            const action = {
-                type: USER_LOGIN_ACTION,
-                data: res
-            };
-            dispatch(action);
-            setStorage("userInfo",res.data.userinfo,'');
-            setStorage("menulist",JSON.parse(res.data.menulist),'');
-            /*设置面包屑数据*/
-            dispatch(setBreadcrumb([{icon:"HomeOutlined",name:"首页",href:"/yhzx"}] as breadcrumbDataType[]))
-            history.push({
-                pathname: '/home',
-            });
+            if(res.data.code && res.data.code == 403){
+                message.error(res.data.msg);
+            }else {
+                setStorage("userInfo",res.data.userinfo,'');
+                setStorage("menulist",JSON.parse(res.data.menulist),'');
+                /*设置面包屑数据*/
+                dispatch(setBreadcrumb([{icon:"HomeOutlined",name:"首页",href:"/yhzx"}] as breadcrumbDataType[]))
+                history.push({
+                    pathname: '/home',
+                });
+            }
+        },(res:any)=>{
+            console.log(res)
         })
     }
 
