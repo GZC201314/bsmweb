@@ -1,5 +1,5 @@
-import axios from "axios";
-
+// import axios from "axios";
+import axios from "../utils/MyAxios"
 
 const getGrandPagesUrl: string = '/bsmservice/authorize/getAllAuthorizePagesByRoleName';
 const updateGrandPagesUrl: string = '/bsmservice/authorize/updateAuthorizePagesByRoleName';

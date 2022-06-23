@@ -25,10 +25,10 @@ const Home:FC<HomeProps> = (props) => {
                 setData(res.data);
                 return;
             }
-            message.error("登录信息已过期,请重新登录。")
-            history.push({
-                pathname: '/login'
-            });
+            // message.error("登录信息已过期,请重新登录。")
+            // history.push({
+            //     pathname: '/login'
+            // });
         },(res:any) =>{
             console.log(res)
         })

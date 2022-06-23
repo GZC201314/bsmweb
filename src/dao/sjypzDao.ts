@@ -1,5 +1,5 @@
-import axios from "axios";
-
+// import axios from "axios";
+import axios from "../utils/MyAxios"
 
 const getDataSourceListUrl: string = '/bsmservice/datasource/getDataSourceList';
 const delDataSourceUrl: string = '/bsmservice/datasource/deleteDataSource';

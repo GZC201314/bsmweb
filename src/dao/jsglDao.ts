@@ -1,4 +1,5 @@
-import axios from "axios";
+// import axios from "axios";
+import axios from "../utils/MyAxios"
 const getRoleInfoUrl: string = '/bsmservice/role/getPageRole';
 const editActiveRoleListUrl: string = '/bsmservice/role/updateRoleStatus';
 const delRoleUrl: string = '/bsmservice/role/deleteRoles';

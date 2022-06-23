@@ -1,4 +1,5 @@
-import axios from "axios";
+// import axios from "axios";
+import axios from "../utils/MyAxios"
 const getConfigListUrl: string = '/bsmservice/config/getConfigList';
 const getConfigInfoUrl: string = '/bsmservice/config/getConfigInfo';
 const delConfigUrl: string = '/bsmservice/config/deleteConfigs';

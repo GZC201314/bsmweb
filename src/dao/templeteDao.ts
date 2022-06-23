@@ -1,5 +1,5 @@
-import axios from "axios";
-
+// import axios from "axios";
+import axios from "../utils/MyAxios"
 
 const getMethodUrl: string = '/templete/getMethod';
 const postMethodUrl: string = '/templete/postMethod';

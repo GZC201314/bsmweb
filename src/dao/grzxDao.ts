@@ -1,4 +1,5 @@
-import axios from "axios";
+// import axios from "axios";
+import axios from "../utils/MyAxios"
 
 
 const getUserInfoUrl: string = '/bsmservice/user/getUserDetailInfo';

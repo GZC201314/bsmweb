@@ -1,5 +1,5 @@
-import axios from "axios";
-
+// import axios from "axios";
+import axios from "../utils/MyAxios"
 
 const getPageDouBanBookUrl: string = '/bsmservice/doubanbook/getPageDouBanBook';
 const getDouBanBookInfoUrl: string = '/bsmservice/doubanbook/getDouBanBookInfo';

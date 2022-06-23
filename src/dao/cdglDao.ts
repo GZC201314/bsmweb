@@ -1,4 +1,5 @@
-import axios from "axios";
+// import axios from "axios";
+import axios from "../utils/MyAxios"
 import Qs from "qs";
 
 const getMenuListUrl: string = '/bsmservice/pages/getPagePages';

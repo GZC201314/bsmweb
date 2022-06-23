@@ -82,10 +82,10 @@ const Sjypz: FC<SjypzProps> = (props) => {
                 setLoading(false)
                 return;
             }
-            message.error("登录信息已过期。请重新登录。")
-            history.push({
-                pathname: '/login'
-            });
+            // message.error("登录信息已过期。请重新登录。")
+            // history.push({
+            //     pathname: '/login'
+            // });
         })
     }
 

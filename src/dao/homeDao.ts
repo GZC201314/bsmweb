@@ -1,4 +1,5 @@
-import axios from "axios";
+// import axios from "axios";
+import axios from "../utils/MyAxios"
 
 
 const getMethodUrl: string = '/bsmservice/system/getSystemDetailInfo';

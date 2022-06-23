@@ -1,4 +1,5 @@
-import axios from "axios";
+// import axios from "axios";
+import axios from "../utils/MyAxios"
 import {RLSB_LOGIN, CHECK_EMAILADDRESS, USER_LOGIN_ACTION, USER_SET_USERINFO_ACTION} from "../actionTypes";
 const defaultState = {
     userInfo:{},

@@ -60,12 +60,6 @@ const Xxxg: FC<XxxgProps> = (props) => {
                     data: res.data
                 }
                 dispatch(actionType)
-            } else {
-
-                history.push({
-                    pathname: '/login',
-                });
-
             }
         })
     }, [])

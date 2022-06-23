@@ -5,9 +5,21 @@ import {sjypzManageListNewData, tableData} from "./data";
 import {useSelector} from "../../../../hooks/hooks";
 import dsrwDao from "../../../../dao/dsrwDao";
 import _ from "lodash";
-import {Button, DatePicker, Form, Input, InputNumber, message, Modal, Select, Space, Tooltip, Typography,} from "antd";
+import {
+    Button,
+    DatePicker,
+    Form,
+    Input,
+    InputNumber,
+    message,
+    Modal,
+    Select,
+    Space,
+    Tag,
+    Tooltip,
+    Typography,
+} from "antd";
 import CButton from "../../../../components/CButton";
-import CInput from "../../../../components/CForm/CInput";
 import CTable from "../../../../components/CTable";
 import {MinusCircleOutlined, PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import {validateJobKey} from "./validate";
@@ -77,10 +89,10 @@ const Dsrw: FC<DsrwProps> = (props) => {
                 setLoading(false)
                 return;
             }
-            message.error("登录信息已过期。请重新登录。")
-            history.push({
-                pathname: '/login'
-            });
+            // message.error("登录信息已过期。请重新登录。")
+            // history.push({
+            //     pathname: '/login'
+            // });
         })
     }
 
@@ -165,6 +177,34 @@ const Dsrw: FC<DsrwProps> = (props) => {
             }
         })
 
+    }
+
+    // 启动当前任务
+    const startJobHandler = (data: any) => {
+
+        let param = {
+            jobName: data.jobName
+        };
+
+        dsrwDao.startTask(param, (res: any) => {
+            if (res.code === 200) {
+                getListData();
+            }
+        })
+    }
+
+    // 停止当前任务
+    const stopJobHandler = (data: any) => {
+
+        let param = {
+            jobName: data.jobName
+        };
+
+        dsrwDao.stopTask(param, (res: any) => {
+            if (res.code === 200) {
+                getListData();
+            }
+        })
     }
 
     /**
@@ -252,6 +292,7 @@ const Dsrw: FC<DsrwProps> = (props) => {
         dsrwDao.stopAllTasks({},(res:any) =>{
             if(res.code === 200){
                 message.success("已停止所有的定时任务。");
+                getListData();
             }else {
                 message.error("停止所有的定时任务失败！");
             }
@@ -263,6 +304,7 @@ const Dsrw: FC<DsrwProps> = (props) => {
         dsrwDao.startAllTasks({},(res:any) =>{
             if(res.code === 200){
                 message.success("已启动所有的定时任务。");
+                getListData();
             }else {
                 message.error("启动所有的定时任务失败！");
             }
@@ -283,29 +325,67 @@ const Dsrw: FC<DsrwProps> = (props) => {
                     <CButton type='danger'  onClick={stopAllTaskHandler}>停止所有任务</CButton>
 
                 </div>
-                <div className='flex filter-right'>
-                    <CInput
-                        className='search-input'
-                        type='search'
-                        value={searchData.value}
-                        placeholder={searchData.placeholder} onEnter={searchHandler} onChange={onStateChange}/>
-                    <CButton type='primary' onClick={resetHandler}>重置</CButton>
-                </div>
             </div>
             {/*// @ts-ignore*/}
             <CTable size={'middle'} scroll={true} loading={loading} columns={colums}
                     selectedRowKeys={selectionDataIds}
                     dataSource={taskList} page={page} onTableChange={onTableChange} onStateChange={onStateChange}
                     checked={true} rowKey={"jobName"}>
+
+                <div
+                    slot='state'
+                    // @ts-ignore
+                    render={(text: any, record: any, index: any) => {
+                        switch (text) {
+                            case "NORMAL":
+                                return <Tag color={'green'}>正常</Tag>;
+                            case "PAUSED":
+                                return <Tag color={'default'}>停止</Tag>;
+                            case "COMPLETE":
+                                return <Tag color={'orange'}>完成</Tag>
+                            case "ERROR":
+                                return <Tag color={'error'}>错误</Tag>
+                            case "BLOCKED":
+                                return <Tag color={'processing'}>阻塞</Tag>
+
+                        }
+                    }
+                    }/>
+
                 <div
                     slot='operate'
                     // @ts-ignore
-                    render={(text: any, record: any, index: any) => (
-                        <div className='operate'>
-                            <CButton type='text'
-                                     onClick={() => delHandler(record)}>删除</CButton>
-                        </div>
-                    )}/>
+                    render={(text: any, record: any, index: any) => {
+                        if(_.isEmpty(record)){
+                            return;
+                        }
+                        switch (record.state) {
+                            case "NORMAL":
+                                return <div className='operate'>
+                                    <CButton type='text'
+                                             onClick={() => stopJobHandler(record)}>停止</CButton>
+                                    <CButton type='text'
+                                             onClick={() => delHandler(record)}>删除</CButton>
+                                </div>;
+                            case "PAUSED":
+                                return <div className='operate'>
+                                    <CButton type='text'
+                                             onClick={() => startJobHandler(record)}>启动</CButton>
+                                    <CButton type='text'
+                                             onClick={() => delHandler(record)}>删除</CButton>
+                                </div>;
+                            default:
+                                return <div className='operate'>
+                                    <CButton type='text'
+                                             onClick={() => delHandler(record)}>删除</CButton>
+                                </div>;
+
+                        }
+                    }
+                    //     (
+
+                    // )
+                    }/>
                 <div
                     slot='taskTypeRender'
                     // @ts-ignore
