@@ -311,7 +311,6 @@ const Cdgl: FC<CdglProps> = (props) => {
         } else {
             method = cdglDao.insertPage;
         }
-        debugger
 
         /*在这边进行表单校验*/
         //如果是一级菜单

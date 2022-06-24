@@ -127,7 +127,6 @@ const LeftNav: FC<LeftNavProps> = (props) => {
         changeToggle(openOrSelectData[0]);
 
         // 找到选中的一个菜单或者二级菜单
-        debugger
         let is_children = openOrSelectData[0].children && openOrSelectData[0].children.length;
         let currentActiveId = '';
         if (is_children) {

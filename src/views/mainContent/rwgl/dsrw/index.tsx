@@ -98,7 +98,6 @@ const Dsrw: FC<DsrwProps> = (props) => {
 
     /*单独删除或者批量删除*/
     const removeHandler = () => {
-        debugger
         if (selectionDataIds.length === 0) {
             message.warning("请选择一条记录删除！")
             return;

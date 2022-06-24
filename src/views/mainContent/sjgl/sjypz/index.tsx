@@ -163,7 +163,6 @@ const Sjypz: FC<SjypzProps> = (props) => {
         /*给每个Item的value赋值 如果不使用框架，则需要手动赋值*/
         for (const formDataKey in formData) {
             if(formDataKey === 'driveurl'){
-                debugger
                 let file = {} as UploadFile
                 file.url = formData[formDataKey]
                 let split = formData[formDataKey].split('\\');
@@ -173,7 +172,6 @@ const Sjypz: FC<SjypzProps> = (props) => {
             }
             fieldDatas.push({name:formDataKey,value:formData[formDataKey]+""})
         }
-        debugger
         dataSourceForm.setFields(fieldDatas)
         // setPageNewItem
     }

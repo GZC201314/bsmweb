@@ -50,7 +50,6 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
             }
             loginDao.rlsbLogin(formData,(res:any)=>{
                 if(res.data.code===200){
-                    debugger
                     const action = {
                         type: RLSB_LOGIN,
                         data: res.data.data

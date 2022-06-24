@@ -82,7 +82,24 @@ const Pzxgl:FC<PzxglProps> = (props) => {
         })
     }
 
-    /*单独删除或者批量删除*/
+    /*批量删除*/
+    const removePatchHandler = () => {
+        if (selectionDataIds.length === 0) {
+            message.warning("请选择一条记录删除！")
+            return;
+        }
+        let delData = {
+            delIds: selectionDataIds.join(",")
+        };
+
+        pzxglDao.delConfig(delData, (res: any) => {
+            if (res.code === 200) {
+                getConfigListData();
+            }
+        })
+    }
+
+    /*单行删除*/
     const removeHandler = () => {
         if (selectionDataIds.length === 0) {
             message.warning("请选择一条记录删除！")
@@ -165,7 +182,7 @@ const Pzxgl:FC<PzxglProps> = (props) => {
     const delHandler = (data: any) => {
 
         let delData = {
-            delIds: [data.roleid].join(",")
+            delIds: [data.id].join(",")
         };
 
         pzxglDao.delConfig(delData, (res: any) => {
@@ -228,7 +245,7 @@ const Pzxgl:FC<PzxglProps> = (props) => {
                 <div className='flex filter-left'>
                     <CButton type='primary' authId='userManageListNewAdd' onClick={addHandler}>新增</CButton>
                     <CButton type='danger' authId='userManageListBatchDelete'
-                             onClick={removeHandler}>批量删除</CButton>
+                             onClick={removePatchHandler}>批量删除</CButton>
                 </div>
                 <div className='flex filter-right'>
                     <CInput
