@@ -207,6 +207,20 @@ const Dsrw: FC<DsrwProps> = (props) => {
         })
     }
 
+    // 立即执行当前任务
+    const execNowJobHandler = (data: any) => {
+
+        let param = {
+            jobName: data.jobName
+        };
+
+        dsrwDao.executeNowTask(param, (res: any) => {
+            if (res.code === 200) {
+                getListData();
+            }
+        })
+    }
+
     /**
      * 新增定时任务处理函数
      * @param data
@@ -231,19 +245,6 @@ const Dsrw: FC<DsrwProps> = (props) => {
     }
 
 
-    // const beforeUpload = async (file: any) => {
-    //     let formData = new FormData();
-    //     if (file) {
-    //         formData.append('file', file);
-    //     }
-    //     /*这边需要先把驱动包上传到FTP服务器上，返回url。根据url来装载类*/
-    //     sjypzDao.uploadDrive(formData, (res: any) => {
-    //         if (res.code === 200) {
-    //             setDriveUrl(res.data)
-    //         }
-    //     })
-    //     return false;
-    // }
 
     const onCancel = (data: any) => {
         taskForm.resetFields()
@@ -347,7 +348,6 @@ const Dsrw: FC<DsrwProps> = (props) => {
                                 return <Tag color={'error'}>错误</Tag>
                             case "BLOCKED":
                                 return <Tag color={'processing'}>阻塞</Tag>
-
                         }
                     }
                     }/>
@@ -362,6 +362,8 @@ const Dsrw: FC<DsrwProps> = (props) => {
                         switch (record.state) {
                             case "NORMAL":
                                 return <div className='operate'>
+                                    <CButton type='text'
+                                             onClick={() => execNowJobHandler(record)}>立即执行</CButton>
                                     <CButton type='text'
                                              onClick={() => stopJobHandler(record)}>停止</CButton>
                                     <CButton type='text'

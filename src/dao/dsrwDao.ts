@@ -10,6 +10,7 @@ const stopAllTasksUrl: string = '/bsmservice/task/stopAllTasks';
 const startAllTasksUrl: string = '/bsmservice/task/startAllTasks';
 const startTaskUrl: string = '/bsmservice/task/startTask';
 const stopTaskUrl: string = '/bsmservice/task/stopTask';
+const executeNowTaskUrl: string = '/bsmservice/task/executeNowTask';
 
 /*定时任务列表查询*/
 const getTaskPageList = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
@@ -132,6 +133,19 @@ const stopTask = (paramter: any, successCallback: Function, errorCallback?: Func
         }
     )
 }
+/*立即执行定时任务*/
+const executeNowTask = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
+
+    axios({
+        url: url ? url : executeNowTaskUrl,
+        method: "GET",
+        params: paramter
+    }).then(
+        (res) => {
+            successCallback(res.data);
+        }
+    )
+}
 
 export default {
     getTaskPageList,
@@ -143,4 +157,5 @@ export default {
     startAllTasks,
     startTask,
     stopTask,
+    executeNowTask,
 };
