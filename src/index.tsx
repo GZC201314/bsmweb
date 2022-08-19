@@ -25,7 +25,6 @@ const render = (Component:any) => {
             <Provider store={store}>
                 <Component/>
             </Provider>
-            <Footer style={{ textAlign: 'center',color: '#495770',background: 'center' ,position: 'absolute',top: '90%',left: '34%' }}>Copyright © BSM. All Rights Reserved. <a style={{ color: '#495770' }} target="_blank" rel="noreferrer" href='https://beian.miit.gov.cn/'>京ICP备2021027983号-1</a></Footer>
         </ConfigProvider>
         ,
         document.getElementById('root'));
