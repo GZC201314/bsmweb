@@ -2,16 +2,26 @@ import axios from "axios";
 
 import {message} from "antd";
 
+import _ from 'lodash'
+
 axios.interceptors.response.use(function (response) {
     // 登录权限验证失败
-    if (response.status && response.status === 302) {
+    debugger
+    if (response.status && response.status === 402) {
         window.history.back();
         message.error("登录信息已过期,请重新登录。")
     } else {
         return response;
     }
-}, function (error) {
-    message.error("登录信息已过期,请重新登录。")
+}, function (error:any) {
+    debugger
+    if (!_.isNull(error)){
+        if (error.response && error.response.status === 401){
+            message.error("登录信息已过期,请重新登录。").then(r => {})
+        }else if (error.response && error.response.status === 500){
+            message.error("发生业务错误,请联系管理员!").then(r => {})
+        }
+    }
     return Promise.reject(error);
 })
 
