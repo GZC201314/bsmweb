@@ -9,7 +9,9 @@ axios.interceptors.response.use(function (response) {
     debugger
     if (response.status && response.status === 402) {
         window.history.back();
-        message.error("登录信息已过期,请重新登录。")
+        message.error("登录信息已过期,请重新登录。").then(r => {
+            console.log(r)
+        })
     } else {
         return response;
     }
@@ -17,9 +19,13 @@ axios.interceptors.response.use(function (response) {
     debugger
     if (!_.isNull(error)){
         if (error.response && error.response.status === 401){
-            message.error("登录信息已过期,请重新登录。").then(r => {})
+            message.error("登录信息已过期,请重新登录。").then(r => {
+                console.log(r)
+            })
         }else if (error.response && error.response.status === 500){
-            message.error("发生业务错误,请联系管理员!").then(r => {})
+            message.error("发生业务错误,请联系管理员!").then(r => {
+                console.log(r)
+            })
         }
     }
     return Promise.reject(error);
