@@ -1,5 +1,4 @@
-import React, {FC, useEffect, useState} from 'react'
-import PropTypes from 'prop-types'
+import React, {FC} from 'react'
 import {Button} from 'antd'
 import './index.scss'
 import * as Icons from "@ant-design/icons";

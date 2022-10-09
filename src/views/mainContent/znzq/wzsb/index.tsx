@@ -84,7 +84,7 @@ const Wzsb:FC<WzsbProps> = (props) => {
             <p style={{margin:"20px"}}>{wzsbResult}</p>
             <p style={{margin:"20px"}}>文字识别结果下载：</p>
             <CButton icon={'DownloadOutlined'} disabled={exportDisabled} onClick={exportResult}>生成并导出识别结果 </CButton>
-            <a download="ocr.txt" id="createInvote" />
+            <a download="ocr.txt" id="createInvote" href={''} />
         </div>
     );
 }

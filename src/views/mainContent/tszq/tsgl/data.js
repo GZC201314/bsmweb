@@ -104,7 +104,7 @@ export const tableData = {
     pageSize: 10
   }
 };
-/*新增角色的配置信息*/
+/*新增图书配置信息*/
 export const bookManageListNewData =
   {
     id: 'baseInfo',

@@ -1,7 +1,7 @@
 import Tsgl from "../../views/mainContent/tszq/tsgl";
-
-export default{
+const tsglRouter ={
   path: '/tsgl',
   component: Tsgl,
   exact: true
 }
+export default tsglRouter

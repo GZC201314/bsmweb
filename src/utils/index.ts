@@ -340,22 +340,7 @@ export const convertImgDataToBlob = (base64Data: String) => {
 
 };
 
-/*用户名校验*/
-export const validateUserName = async (rule: any, value: any) => {
-  let params = {username: value};
-  let promise = new Promise(((resolve) => {
-    loginDao.validUsername(params, async (res: any) => {
-      resolve(res.data)
-    })
-  }))
-  /*当 Promise resolve一个之后才会执行，否则会一直阻塞在这里*/
-  let result = await promise;
-  if (result) {
-    return Promise.resolve()
-  } else {
-    return Promise.reject()
-  }
-};
+
 /*ISBN号校验，判断isbn号是否重复*/
 export const validateISBN = async (rule: any, value: any) => {
   let params = {isbn: value};
@@ -381,6 +366,39 @@ export const validatePassword = async (rule: any, value: any) => {
     })
   }))
   /*当 Promise resolve一个之后才会执行，否则会已知阻塞在这里*/
+  let result = await promise;
+  if (result) {
+    return Promise.resolve()
+  } else {
+    return Promise.reject()
+  }
+};
+
+export const validateUserEmail = async (rule:any, value:any) => {
+  let params = {emailaddress: value};
+  let promise = new Promise(((resolve) => {
+    loginDao.validEmailAddress(params, async (res: any) => {
+      resolve(res.data)
+    })
+  }))
+  /*当 Promise resolve一个之后才会执行，否则会已知阻塞在这里*/
+  let result = await promise;
+  if (result) {
+    console.log(result)
+    return Promise.resolve()
+  } else {
+    return Promise.reject()
+  }
+};
+/*用户名校验*/
+export const validateUserName = async (rule: any, value: any) => {
+  let params = {username: value};
+  let promise = new Promise(((resolve) => {
+    loginDao.validUsername(params, async (res: any) => {
+      resolve(res.data)
+    })
+  }))
+  /*当 Promise resolve一个之后才会执行，否则会一直阻塞在这里*/
   let result = await promise;
   if (result) {
     return Promise.resolve()

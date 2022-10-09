@@ -7,7 +7,7 @@ import {useSelector} from "../../../../hooks/hooks";
 import tsglDao from "../../../../dao/tsglDao";
 import _ from "lodash";
 import {Button, DatePicker, Form, Image, Input, message, Modal, Rate, Upload,} from "antd";
-import {setPageNewValue, validateISBN} from "../../../../utils";
+import {validateISBN} from "../../../../utils";
 import CButton from "../../../../components/CButton";
 import CInput from "../../../../components/CForm/CInput";
 import CTable from "../../../../components/CTable";
@@ -157,7 +157,6 @@ const Tsgl: FC<TsglProps> = (props) => {
 
     /*搜索*/
     const searchHandler = (value: any) => {
-        console.log(value)
         setSearchData({...searchData, value: value})
     }
 

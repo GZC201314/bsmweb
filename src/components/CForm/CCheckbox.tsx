@@ -1,4 +1,4 @@
-import React, {FC, ReactElement, useEffect, useState} from 'react'
+import React, {FC} from 'react'
 import {Checkbox} from 'antd'
 import './index.scss'
 

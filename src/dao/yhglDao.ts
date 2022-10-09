@@ -1,15 +1,15 @@
 // import axios from "axios";
 import axios from "../utils/MyAxios"
-const getRoleInfoUrl: string = '/bsmservice/role/getPageRole';
+const getUserInfoUrl: string = '/bsmservice/user/getAlluser';
 const getAllRoleUrl: string = '/bsmservice/role/getAllRole';
 const editActiveRoleListUrl: string = '/bsmservice/role/updateRoleStatus';
-const delRoleUrl: string = '/bsmservice/role/deleteRoles';
-const insertRoleUrl: string = '/bsmservice/role/addRole';
-const updateRoleUrl: string = '/bsmservice/role/updateRole';
+const delUserUrl: string = '/bsmservice/user/deleteUser';
+const insertUserUrl: string = '/bsmservice/user/add';
+const resetUserPasswordUrl: string = '/bsmservice/user/resetUserPassword';
 /*角色列表信息查询*/
-const getRoleListInfo = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
+const getUserListInfo = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
 
-    axios.post(url ? url : getRoleInfoUrl, paramter).then(
+    axios.post(url ? url : getUserInfoUrl, paramter).then(
         (res) => {
             successCallback(res.data);
         }
@@ -25,9 +25,9 @@ const getAllRole = (paramter: any, successCallback: Function, errorCallback?: Fu
     )
 }
 /*用户详细信息查询*/
-const delRole = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
+const delUser = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
 
-    axios.post(url ? url : delRoleUrl, paramter).then(
+    axios.post(url ? url : delUserUrl, paramter).then(
         (res) => {
             successCallback(res.data);
         }
@@ -43,18 +43,18 @@ const editActiveRoleList = (paramter: any, successCallback: Function, errorCallb
     )
 }
 
-/*新增角色*/
-const insertRole = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
-    axios.post(url ? url : insertRoleUrl, paramter).then(
+/*新增用户*/
+const insertUser = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
+    axios.post(url ? url : insertUserUrl, paramter).then(
         (res) => {
             successCallback(res.data);
         }
     )
 }
 /*更新角色*/
-const updateRole = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
+const resetUserPassword = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
 
-    axios.post(url ? url : updateRoleUrl, paramter).then(
+    axios.post(url ? url : resetUserPasswordUrl, paramter).then(
         (res) => {
             successCallback(res.data);
         }
@@ -64,10 +64,10 @@ const updateRole = (paramter: any, successCallback: Function, errorCallback?: Fu
 
 
 export default {
-    getRoleListInfo,
-    updateRole,
-    insertRole,
+    getUserListInfo,
+    resetUserPassword,
+    insertUser,
     editActiveRoleList,
-    delRole,
+    delUser,
     getAllRole,
 };

@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState } from 'react'
+import React, {FC, useEffect, useState} from 'react'
 import './style.scss'
 import {useHistory} from "react-router-dom";
 import {configManageListNewData, tableData} from "../../ywgl/pzxgl/data";
@@ -10,8 +10,8 @@ import {setPageNewValue} from "../../../../utils";
 import CButton from "../../../../components/CButton";
 import CInput from "../../../../components/CForm/CInput";
 import CTable from "../../../../components/CTable";
-import CSwitch from "../../../../components/CForm/CSwitch";
 import CPageNew from "../../../../components/CPageNew";
+
 export interface PzxglProps {
 
 }
@@ -143,7 +143,6 @@ const Pzxgl:FC<PzxglProps> = (props) => {
 
     /*搜索*/
     const searchHandler = (value: any) => {
-        console.log(value)
         setSearchData({...searchData, value: value})
     }
 
