@@ -117,7 +117,6 @@ const Header: FC<HeaderProps> = (props) => {
     /**styles 样式部分**/
     useEffect(() => {
         return () => {
-            console.log("clearTimeout time=" + timeState)
             clearTimeout(timeState);
         }
     },[timeState])

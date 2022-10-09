@@ -55,8 +55,6 @@ const userLogin = (paramter: object, successCallback: Function, errorCallback?: 
         }
     }).then(
         (res) => {
-            console.log("res")
-            console.log(res)
             successCallback(res);
         }
     ).catch((err) => {

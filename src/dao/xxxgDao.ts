@@ -26,8 +26,6 @@ const editUserName = (paramter:any, successCallback: Function, errorCallback?: F
         }
     }).then(
         (res) => {
-            console.log("res")
-            console.log(res)
             successCallback(res);
         }
     ).catch((err) => {

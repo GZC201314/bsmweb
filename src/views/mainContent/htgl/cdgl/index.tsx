@@ -190,7 +190,6 @@ const Cdgl: FC<CdglProps> = (props) => {
     }
     /*搜索*/
     const searchHandler = (value: any) => {
-        console.log(value)
         setSearchData({...searchData, value: value})
     }
 

@@ -129,7 +129,6 @@ const Jsgl: FC<JsglProps> = (props) => {
 
     /*搜索*/
     const searchHandler = (value: any) => {
-        console.log(value)
         setSearchData({...searchData, value: value})
     }
 
@@ -159,7 +158,6 @@ const Jsgl: FC<JsglProps> = (props) => {
 
         /*给每个Item的value赋值*/
         let pageNewValue = setPageNewValue(data, formData);
-        console.log(pageNewValue)
         setData(pageNewValue)
         // setPageNewItem
     }
