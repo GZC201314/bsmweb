@@ -46,7 +46,7 @@ const Xxxg: FC<XxxgProps> = (props) => {
         () => {
             if (!rlzcModelvisible && webcamRef.current) {
                 // @ts-ignore
-                webcamRef.current.stream.getTracks()[0].stop();
+                webcamRef.current.stream && webcamRef.current.stream.getTracks()[0].stop();
             }
         },
         [rlzcModelvisible]
@@ -86,7 +86,7 @@ const Xxxg: FC<XxxgProps> = (props) => {
             let res = await promise
             if(res){
                 // @ts-ignore
-                webcamRef.current.stream.getTracks()[0].stop();
+                webcamRef.current.stream && webcamRef.current.stream.getTracks()[0].stop();
             }
 
         },

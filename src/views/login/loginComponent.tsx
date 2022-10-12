@@ -59,7 +59,7 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
                     setRlsbModelLoading(false)
                     setRlsbModelvisible(false)
                     // @ts-ignore
-                    webcamRef.current.stream.getTracks()[0].stop();
+                    webcamRef.current.stream && webcamRef.current.stream.getTracks()[0].stop();
                     /*登录成功，进入首页*/
                     setStorage("userInfo",res.data.data.userinfo,'');
                     setStorage("menulist",JSON.parse(res.data.data.menulist),'');
@@ -79,7 +79,7 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
         () => {
             if (!rlsbModelvisible && webcamRef.current) {
                 // @ts-ignore
-                webcamRef.current.stream.getTracks()[0].stop();
+                webcamRef.current.stream && webcamRef.current.stream.getTracks()[0].stop();
             }
         },
         [rlsbModelvisible]
