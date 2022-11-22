@@ -140,7 +140,8 @@ const Sjypz: FC<SjypzProps> = (props) => {
 
     /*新增数据源*/
     const addHandler = () => {
-        /*TODO 这边的实现是打开一个模式窗口*/
+        /* 这边的实现是打开一个模式窗口*/
+        setEditFlag(false)
         setData(sjypzManageListNewData)
         setModalVisible(true)
     }
