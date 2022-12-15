@@ -111,6 +111,9 @@ const Header: FC<HeaderProps> = (props) => {
         setStorage('theme', data.id, "");
         dispatch(setCurrentTheme(data.id));
     }
+    const goHome = ()=>{
+        history.push('/home');
+    }
     /**effect  effect部分**/
     // @ts-ignore
     // setMenuList(getStorage("menuList",''))
@@ -166,7 +169,7 @@ const Header: FC<HeaderProps> = (props) => {
         </Menu>);
     return (
         <header className='flex text-color-white header'>
-            <div className='logo'>{config.name}</div>
+            <div className='logo' onClick={goHome}>{config.name}</div>
             <div className='flex info'>
                 {/*左侧菜单栏折叠按钮*/}
                 <div className='flex collapsed' onClick={collapsedChange}>
