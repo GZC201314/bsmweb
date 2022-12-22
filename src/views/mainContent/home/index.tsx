@@ -355,9 +355,9 @@ const Home:FC<HomeProps> = (props) => {
                 </Row>
             </div>
             <Divider>服务信息</Divider>
-            <div className="site-statistic-demo-card" style={{display:'inline-block'}}>
-                <div id={'success'} style={{flex: 1, height: '400px', width: '650px', display: 'inline-block', background: '#fff'}}/>
-                <div id={'fail'} style={{flex: 1, height: '400px', width: '650px', display: 'inline-block', background: '#fff'}}/>
+            <div className="site-statistic-demo-card">
+                <div id={'success'} style={{height: '300px', width: '50%', display: 'inline-block', background: '#fff'}}/>
+                <div id={'fail'} style={{height: '300px', width: '50%', display: 'inline-block', background: '#fff'}}/>
             </div>
         </div>
 

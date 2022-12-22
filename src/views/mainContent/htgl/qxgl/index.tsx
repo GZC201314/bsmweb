@@ -2,17 +2,13 @@ import React, {FC, Key, useEffect, useState} from 'react'
 import './style.scss'
 import {useDispatch} from "react-redux";
 import {useHistory} from "react-router-dom";
-import {roleManageListNewData, tableData} from "./data";
+import {tableData} from "./data";
 import {useSelector} from "../../../../hooks/hooks";
 import jsglDao from "../../../../dao/jsglDao";
 import _ from "lodash";
 import {message, Modal, Tree} from "antd";
-import {setPageNewValue} from "../../../../utils";
 import CButton from "../../../../components/CButton";
-import CInput from "../../../../components/CForm/CInput";
 import CTable from "../../../../components/CTable";
-import CSwitch from "../../../../components/CForm/CSwitch";
-import CPageNew from "../../../../components/CPageNew";
 import qxglDao from "../../../../dao/qxglDao";
 
 export interface QxglProps {
