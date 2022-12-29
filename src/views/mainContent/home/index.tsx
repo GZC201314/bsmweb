@@ -3,15 +3,13 @@ import React, {FC, useEffect, useState} from 'react'
 import './style.scss'
 import _ from "lodash";
 import * as echarts from 'echarts';
-import {useHistory} from "react-router-dom";
-import {EChartOption} from "echarts";
+import {EChartOption} from 'echarts';
 
 export interface HomeProps{
 
 }
 const Home:FC<HomeProps> = (props) => {
 
-    const history = useHistory()
     let websocket = null as unknown as WebSocket;
     /**state  state部分**/
     const [data,setData] = useState<any>({})
