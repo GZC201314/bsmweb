@@ -53,54 +53,62 @@ const Home:FC<HomeProps> = (props) => {
                 successSeriesData.push(topSuccessRequestElement['score'])
             }
 
-
-            // @ts-ignore
-            let successChart = echarts.init(document.getElementById('success'));
-            let successOption :EChartOption = {
-                title: {
-                    text: '成功请求TOP10',
-                    textAlign:'left'
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    }
-                },
-                xAxis: {
-                    type: 'category',
-                    data: successXAxisData,
-                    axisTick: {
-                        alignWithLabel: true
+            const successElement = document.getElementById('success');
+            if (successElement != null) {
+                // @ts-ignore
+                let successChart = echarts.init(successElement);
+                let successOption :EChartOption = {
+                    title: {
+                        text: '成功请求TOP10',
+                        textAlign:'left'
                     },
-                    show:false
-                },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: false
-                },
-                yAxis: {
-                    type: 'value',
-                    show: false,
-                },
-                toolbox: {
-                    show: true,
-                    feature: {
-                        saveAsImage: {}
-                    }
-                },
-                series: [
-                    {
-                        name: '次数',
-                        data: successSeriesData,
-                        type: 'bar'
-                    }
-                ]
-            };
-            successChart.setOption(successOption);
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: successXAxisData,
+                        axisTick: {
+                            alignWithLabel: true
+                        },
+                        show:false
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: false
+                    },
+                    yAxis: {
+                        type: 'value',
+                        show: false,
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    series: [
+                        {
+                            name: '次数',
+                            data: successSeriesData,
+                            type: 'bar'
+                        }
+                    ]
+                };
+                successChart.setOption(successOption);
 
+            }else {
+                // 关闭当前websocket
+                if (websocket) {
+                    console.log("已离开首页，websocket关闭");
+                    websocket.close();
+                }
+            }
             const topFailRequest = parse['topFailRequest'] as any[];
             let failXAxisData = []
             let failSeriesData = []
@@ -110,52 +118,61 @@ const Home:FC<HomeProps> = (props) => {
             }
 
 
-            // @ts-ignore
-            let failChart = echarts.init(document.getElementById('fail'));
-            let failOption :EChartOption = {
-                title: {
-                    text: '失败请求TOP10',
-                    textAlign:'left'
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    }
-                },
-                xAxis: {
-                    type: 'category',
-                    data: failXAxisData,
-                    axisTick: {
-                        alignWithLabel: true
+            let failElement = document.getElementById('fail');
+            if (failElement) {
+                // @ts-ignore
+                let failChart = echarts.init(failElement);
+                let failOption :EChartOption = {
+                    title: {
+                        text: '失败请求TOP10',
+                        textAlign:'left'
                     },
-                    show:false
-                },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: false
-                },
-                yAxis: {
-                    type: 'value',
-                    show: false,
-                },
-                toolbox: {
-                    show: true,
-                    feature: {
-                        saveAsImage: {}
-                    }
-                },
-                series: [
-                    {
-                        name: '次数',
-                        data: failSeriesData,
-                        type: 'bar'
-                    }
-                ]
-            };
-            failChart.setOption(failOption);
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: failXAxisData,
+                        axisTick: {
+                            alignWithLabel: true
+                        },
+                        show:false
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: false
+                    },
+                    yAxis: {
+                        type: 'value',
+                        show: false,
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    series: [
+                        {
+                            name: '次数',
+                            data: failSeriesData,
+                            type: 'bar'
+                        }
+                    ]
+                };
+                failChart.setOption(failOption);
+            }else {
+                // 关闭当前websocket
+                if (websocket) {
+                    console.log("已离开首页，websocket关闭");
+                    websocket.close();
+                }
+            }
 
             setData(parse)
         }
