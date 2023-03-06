@@ -24,6 +24,7 @@ import CTable from "../../../../components/CTable";
 import {MinusCircleOutlined, PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import {validateJobKey} from "./validate";
 import moment from "moment";
+import {handleErrorAxio} from "../../../../utils";
 
 export interface DsrwProps {
 
@@ -79,6 +80,7 @@ const Dsrw: FC<DsrwProps> = (props) => {
         setLoading(true)
 
         dsrwDao.getTaskPageList(getData, (res: any) => {
+            debugger
             if (res.code === 200) {
                 let data = res.data.records;
                 let total = res.data.total;
@@ -88,11 +90,9 @@ const Dsrw: FC<DsrwProps> = (props) => {
                 }
                 setLoading(false)
                 return;
+            }else {
+                handleErrorAxio(res,history);
             }
-            // message.error("登录信息已过期。请重新登录。")
-            // history.push({
-            //     pathname: '/login'
-            // });
         })
     }
 

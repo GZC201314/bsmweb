@@ -1,16 +1,18 @@
 import _ from 'lodash'
 import loginDao from "../dao/loginDao";
 import tsglDao from "../dao/tsglDao";
+import {message} from "antd";
+import { History } from 'history';
 
 /**
  * @param url 完整路径
  */
-export const urlFormat = (url:string, name?:any) => {
+export const urlFormat = (url: string, name?: any) => {
   let result: any = {
     hash: '',
     query: {}
   };
-  if(!url){
+  if (!url) {
     return url;
   }
 
@@ -20,10 +22,10 @@ export const urlFormat = (url:string, name?:any) => {
   let hash = hashIndex > -1 ? href.substring(hashIndex + 1, queryIndex > -1 ? queryIndex : href.length) : '';
   let queryString = queryIndex > -1 ? href.substring(queryIndex + 1) : '';
   let query = {};
-  if(queryString){
+  if (queryString) {
     let queryArr = queryString.split('&');
 
-    queryArr.forEach(item=>{
+    queryArr.forEach(item => {
       let key = item.split('=')[0];
       // @ts-ignore
       query[key] = item.split('=')[1];
@@ -33,11 +35,11 @@ export const urlFormat = (url:string, name?:any) => {
   result.hash = hash;
   result.query = query;
 
-  if(name){
+  if (name) {
     try {
       // @ts-ignore
       result = query[name];
-    }catch (e) {
+    } catch (e) {
       result = ''
     }
   }
@@ -53,12 +55,12 @@ export const urlFormat = (url:string, name?:any) => {
  *
  * 解析失败返回''
  */
-export const getObjectValue = function(obj:object, text:string) {
+export const getObjectValue = function (obj: object, text: string) {
   try {
     if ((_.isObject(obj) || _.isArray(obj)) && text) {
       let textArray = text.split('.');
       // @ts-ignore
-      let get_value = function(obj:object, textArray:any) {
+      let get_value = function (obj: object, textArray: any) {
         let key = textArray.shift();
         if (key.length < 5 && parseInt(key)) {
           key = parseInt(key);
@@ -89,20 +91,19 @@ export const getObjectValue = function(obj:object, text:string) {
  * @param {传入的jpath} text
  * @param {设置的值} value
  */
-export const setObjectValue = function(obj:object, text:string, values?:string) {
+export const setObjectValue = function (obj: object, text: string, values?: string) {
   // debugger
   try {
     if (text === '')
       return obj;
     let textArray = text.split('.');
     // @ts-ignore
-    let set_value = function(temp_obj:object, textArray:any) {
+    let set_value = function (temp_obj: object, textArray: any) {
       let key = textArray.shift();
       // @ts-ignore
-      if (!temp_obj[key])
-        { // @ts-ignore
-          temp_obj[key] = {};
-        }
+      if (!temp_obj[key]) { // @ts-ignore
+        temp_obj[key] = {};
+      }
       if (textArray.length === 0) {
         // @ts-ignore
         temp_obj[key] = values;
@@ -124,19 +125,19 @@ export const setObjectValue = function(obj:object, text:string, values?:string) 
  * @param field 对应key对象中修改的字段
  * @param value
  */
-export const setPageNewItem = (data:any, id:any, field:any, value:any) => {
+export const setPageNewItem = (data: any, id: any, field: any, value: any) => {
   // debugger
   let newData = _.cloneDeep(data);
-  newData.forEach((item: { data: any[]; })=>{
+  newData.forEach((item: { data: any[]; }) => {
     item.data && item.data.forEach(dataItem => {
-      if(_.isArray(dataItem)){
-        dataItem.forEach(_item=>{
-          if(_item.key === id){
+      if (_.isArray(dataItem)) {
+        dataItem.forEach(_item => {
+          if (_item.key === id) {
             _item[field] = value;
           }
         })
-      }else{
-        if(dataItem.id === id){
+      } else {
+        if (dataItem.id === id) {
           dataItem[field] = value;
         }
       }
@@ -151,21 +152,21 @@ export const setPageNewItem = (data:any, id:any, field:any, value:any) => {
  * @param obj 取值的数据对象
  * @returns {*}
  */
-export const setPageNewValue = function(data:any, obj: object) {
+export const setPageNewValue = function (data: any, obj: object) {
   let result = _.cloneDeep(data);
-  result.forEach((item: { data: any[]; })=>{
+  result.forEach((item: { data: any[]; }) => {
     item.data && item.data.forEach(dataItem => {
-      if(_.isArray(dataItem)){
-        dataItem.forEach(_item=>{
+      if (_.isArray(dataItem)) {
+        dataItem.forEach(_item => {
           let value = getObjectValue(obj, _item.jpath);
-          if(_item.type === 'img' && typeof value === 'object' && !(value instanceof Array)){
+          if (_item.type === 'img' && typeof value === 'object' && !(value instanceof Array)) {
             value = [value]
           }
           _item.value = typeof value === 'object' ? value : value.toString();
         })
-      }else{
+      } else {
         let value = getObjectValue(obj, dataItem.jpath);
-        if(dataItem.type === 'img' && typeof value === 'object' && !(value instanceof Array)){
+        if (dataItem.type === 'img' && typeof value === 'object' && !(value instanceof Array)) {
           value = [value]
         }
         dataItem.value = typeof value === 'object' ? value : value.toString();
@@ -181,19 +182,19 @@ export const setPageNewValue = function(data:any, obj: object) {
  * @param date
  * @param format 日期格式 YYYY-MM-DD HH:mm:ss
  */
-export const formatDate = (date:  Date, format?: string ) => {
+export const formatDate = (date: Date, format?: string) => {
   let newDate: Date;
-  if(!date){
+  if (!date) {
     newDate = new Date();
-  }else{
+  } else {
     newDate = new Date(date);
   }
 
-  if(!format){
+  if (!format) {
     format = 'YYYY-MM-DD HH:mm:ss';
   }
 
-  let addZero = function(num:number){
+  let addZero = function (num: number) {
     return num > 9 ? num : '0' + num;
   };
   let dateObj = {
@@ -211,23 +212,23 @@ export const formatDate = (date:  Date, format?: string ) => {
 
   let result = '';
   // @ts-ignore
-  if(newDateString[dateSeparationIndex]){
+  if (newDateString[dateSeparationIndex]) {
     // @ts-ignore
     newDateString.replace(/-/g, newDateString[dateSeparationIndex]);
     result = newDateString;
   }
   // @ts-ignore
-  if(newTimeString[timeSeparationIndex]){
+  if (newTimeString[timeSeparationIndex]) {
     // @ts-ignore
     newTimeString.replace(/:/g, newTimeString[timeSeparationIndex]);
-    if(result) {
+    if (result) {
       result += ` ${newTimeString}`;
-    }else{
+    } else {
       result = newTimeString;
     }
   }
   // @ts-ignore
-  if(!newDateString[dateSeparationIndex] && !newTimeString[timeSeparationIndex]){
+  if (!newDateString[dateSeparationIndex] && !newTimeString[timeSeparationIndex]) {
     result = `${newDateString} ${newTimeString}`;
   }
 
@@ -241,10 +242,10 @@ export const formatDate = (date:  Date, format?: string ) => {
  * @returns {string}
  */
 export const randomDate = (startTime: Date, endTime: Date) => {
-  if(!startTime){
+  if (!startTime) {
     return
   }
-  if(!endTime){
+  if (!endTime) {
     endTime = new Date();
   }
   let start = new Date(startTime).getTime();
@@ -260,17 +261,16 @@ export const randomDate = (startTime: Date, endTime: Date) => {
  * @returns {string}
  */
 export const getDateSeparated = (date: Date, n: number) => {
-  if(!date){
+  if (!date) {
     return
   }
-  if(!n){
+  if (!n) {
     n = 0
   }
   let resultDate = new Date();
   resultDate.setDate(new Date(date).getDate() + n);
   return formatDate(resultDate);
 };
-
 
 
 /**
@@ -285,7 +285,7 @@ export const getStorage = (key: string, type: string) => {
     if (_value != null) {
       _value = JSON.parse(_value)
     }
-  }catch (e) {
+  } catch (e) {
 
   }
   return _value;
@@ -299,7 +299,7 @@ export const getStorage = (key: string, type: string) => {
  */
 export const setStorage = (key: string, value: string, type: string) => {
   let storage = type === 'session' ? sessionStorage : localStorage;
-  if(typeof value === 'object'){
+  if (typeof value === 'object') {
     value = JSON.stringify(value);
   }
   storage.setItem(key, value);
@@ -316,13 +316,13 @@ export const removeStorage = (key: string, type: string) => {
 };
 
 export const convertImgDataToBlob = (base64Data: String) => {
-  if(base64Data.length === 0){
+  if (base64Data.length === 0) {
     return null;
   }
   let format = "image/jpeg";
   let files = base64Data.split(",")
   /*获取图片的格式*/
-  format = files[0].substring(files[0].indexOf(':')+1,files[0].indexOf(';')) !== ''?files[0].substring(files[0].indexOf(':')+1,files[0].indexOf(';')):format;
+  format = files[0].substring(files[0].indexOf(':') + 1, files[0].indexOf(';')) !== '' ? files[0].substring(files[0].indexOf(':') + 1, files[0].indexOf(';')) : format;
   let code = window.atob(files[1]);
   let aBuffer = new window.ArrayBuffer(code.length);
   let uBuffer = new window.Uint8Array(aBuffer);
@@ -374,7 +374,7 @@ export const validatePassword = async (rule: any, value: any) => {
   }
 };
 
-export const validateUserEmail = async (rule:any, value:any) => {
+export const validateUserEmail = async (rule: any, value: any) => {
   let params = {emailaddress: value};
   let promise = new Promise(((resolve) => {
     loginDao.validEmailAddress(params, async (res: any) => {
@@ -406,3 +406,14 @@ export const validateUserName = async (rule: any, value: any) => {
     return Promise.reject()
   }
 };
+
+export const handleErrorAxio = (res: any, history: History<unknown>) =>{
+  debugger
+  if (res && res.code===401){
+    history.push({
+      pathname: '/login'
+    });
+  }else {
+    message.error(res.data.msg)
+  }
+}

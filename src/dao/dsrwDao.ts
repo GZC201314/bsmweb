@@ -19,6 +19,11 @@ const getTaskPageList = (paramter: any, successCallback: Function, errorCallback
         (res) => {
             successCallback(res.data);
         }
+    ).catch(
+        (res) => {
+            // @ts-ignore
+            errorCallback(res.data);
+        }
     )
 }
 /*定时任务详细信息查询*/
