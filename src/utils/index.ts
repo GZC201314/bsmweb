@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import loginDao from "../dao/loginDao";
+import zzglDao from "../dao/zzglDao";
 import tsglDao from "../dao/tsglDao";
 import {message} from "antd";
 import { History } from 'history';
@@ -406,14 +407,27 @@ export const validateUserName = async (rule: any, value: any) => {
     return Promise.reject()
   }
 };
-
+/*用户名校验*/
+export const validateOrganizationName = async (rule: any, value: any) => {
+  let params = {name: value};
+  let promise = new Promise(((resolve) => {
+    zzglDao.validateOrganizationName(params, async (res: any) => {
+      resolve(res.data)
+    })
+  }))
+  /*当 Promise resolve一个之后才会执行，否则会一直阻塞在这里*/
+  let result = await promise;
+  if (result) {
+    return Promise.resolve()
+  } else {
+    return Promise.reject()
+  }
+};
 export const handleErrorAxio = (res: any, history: History<unknown>) =>{
-  debugger
+  // debugger
   if (res && res.code===401){
     history.push({
       pathname: '/login'
     });
-  }else {
-    message.error(res.data.msg)
   }
 }

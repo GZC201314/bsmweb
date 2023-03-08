@@ -107,6 +107,7 @@ const Yhgl: FC<YhglProps> = (props) => {
      */
     function onCancel(data: any) {
         userModelForm.resetFields()
+        setModalVisible(false)
     }
 
     useEffect(() => {

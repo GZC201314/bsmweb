@@ -80,7 +80,7 @@ const Dsrw: FC<DsrwProps> = (props) => {
         setLoading(true)
 
         dsrwDao.getTaskPageList(getData, (res: any) => {
-            debugger
+            // debugger
             if (res.code === 200) {
                 let data = res.data.records;
                 let total = res.data.total;

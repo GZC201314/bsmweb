@@ -178,7 +178,7 @@ const Tsgl: FC<TsglProps> = (props) => {
         // userManageList.clearFilterData();
     }
     let fieldDatas = [] as FieldData[]
-    //TODO 编辑当前行
+    // 编辑当前行
     const editHandler = (formData: any) => {
         setEditFlag(true)
         setModalVisible(true)
@@ -255,6 +255,7 @@ const Tsgl: FC<TsglProps> = (props) => {
 
 
     const beforeUpload = async (file: any) => {
+        debugger
         let formData = new FormData();
         if (file) {
             formData.append('file', file);

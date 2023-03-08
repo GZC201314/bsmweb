@@ -72,6 +72,7 @@ const CForm: FC<CFormProps> = (props) => {
 
 
     const onChange = async (type: any, value: any) => {
+        // debugger
         let validateResult = await validateHandler(value);
         props.onChange && props.onChange("value", {...validateResult, value: value})
     }
@@ -106,6 +107,7 @@ const CForm: FC<CFormProps> = (props) => {
         newExpand = _.cloneDeep(props.expand);
     }
 
+    // @ts-ignore
     return (
         <div className='c-form'>
 
@@ -156,9 +158,9 @@ const CForm: FC<CFormProps> = (props) => {
                             }
                             {
                                 isUpload &&
-                                // @ts-ignore
                                 <CUpload {...newExpand} type={props.type}
-                                         fileList={props.value}
+                                    // @ts-ignore
+                                         fileList={[{id:1,url:props.value}]}
                                          onChange={onChange} disabled={props.disabled}/>
                             }
                         </Form.Item>

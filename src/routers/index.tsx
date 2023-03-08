@@ -31,6 +31,7 @@ import grzxRouter from "./yhzx/grzxRouter";
 import cdglRouter from "./htgl/cdglRouter";
 import yhglRouter from "./htgl/yhglRouter";
 import jsglRouter from "./htgl/jsglRouter";
+import zzglRouter from "./htgl/zzglRouter";
 import qxglRouter from "./htgl/qxglRouter";
 /*流程专区*/
 import lcsjRouter from "./lczq/lcsjRouter";
@@ -52,6 +53,7 @@ const RouteConfig: FC<RouteConfigProps> = (props) => {
         cdglRouter,
         yhglRouter,
         jsglRouter,
+        zzglRouter,
         homeRouter,
         tsglRouter,
         sjypzRouter,
