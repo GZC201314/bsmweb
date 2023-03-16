@@ -1,17 +1,20 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import BpmnModeler from 'bpmn-js/lib/Modeler'
 import propertiesPanelModule from 'bpmn-js-properties-panel'
 import propertiesProviderModule from 'bpmn-js-properties-panel/lib/provider/camunda'
-import camundaModdleDescriptor from 'camunda-bpmn-moddle/resources/camunda.json'
 import './style.scss'
 import customTranslate from "../../../../resource/bpmnCustomTranalate/customTranslate";
 import {xmlstr} from '../../../../resource/testXml'
 import CButton from "../../../../components/CButton";
 import tokenSimulation from "bpmn-js-token-simulation";
 import flowableModdleExtension from '../../../../resource/extension-moddle/flowable/index'
+import camundaModdleDescriptor from 'camunda-bpmn-moddle/resources/camunda'
+import "bpmn-js-properties-panel/dist/assets/bpmn-js-properties-panel.css"
+import 'bpmn-js/dist/assets/diagram-js.css' // 左边工具栏以及编辑节点的样式
+import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css'
+import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css'
+import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
 // 引入json转换与高亮
-import X2JS from "x2js";
-import {Modal} from "antd";
 
 function Lcsj() {
     let size = 1;
@@ -19,7 +22,7 @@ function Lcsj() {
     let recoverable = false
     let revocable = false
     /*设置预览弹窗显示*/
-    let simulationStatus = false
+    let simulationStatus = true
     let modeling = null;
     let bpmnModeler = null;
     useEffect(() => {
@@ -34,7 +37,7 @@ function Lcsj() {
             container: '#canvas',
             height: '100vh',
             propertiesPanel: {
-                parent: '#properties-panel'
+                parent: '#js-properties-panel'
             },
             additionalModules: [
                 /*汉化*/
@@ -44,11 +47,12 @@ function Lcsj() {
                 // 左边工具栏以及节点
                 propertiesPanelModule,
                 /*flowableModdleModule 模块*/
+                // camundaModdleDescriptor,
                 flowableModdleExtension,
                 propertiesProviderModule
             ],
             moddleExtensions: {
-                // camunda: camundaModdleDescriptor,
+                camunda: camundaModdleDescriptor,
                 flowable:flowableModdleExtension,
             }
         });
@@ -182,8 +186,8 @@ function Lcsj() {
             </div>
             {/*bpmn 容器*/}
             <div id={'canvas'} className="container"/>
-            <div id={'properties-panel'} className={'properties-panel'}/>
-
+            {/*<div id={'properties-panel'} className={'properties-panel'}/>*/}
+            <div id="js-properties-panel" className="properties-panel"></div>
             {/*<Modal visible={previewModelVisible} title="流程预览" onOk={handleOk} onCancel={handleCancel}>*/}
 
             {/*    <span>{previewResult}</span>*/}
