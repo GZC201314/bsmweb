@@ -46,7 +46,7 @@ const LeftNav: FC<LeftNavProps> = (props) => {
         initCurrentActive();
         // @ts-ignore
         getRouterAndSetBreadcrumb();
-    },[getRouterAndSetBreadcrumb, initCurrentActive, initOpenAll])
+    },[])
     /**methods 方法部分**/
 
     /*展开收起事件*/

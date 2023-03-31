@@ -16,7 +16,8 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css'
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
 
 import lcglDao from "../../../../dao/lcglDao";
-import {message} from "antd";
+import {message, Upload} from "antd";
+import {UploadOutlined, VerticalAlignTopOutlined} from "@ant-design/icons";
 // 引入json转换与高亮
 
 function Lcsj() {
@@ -32,7 +33,7 @@ function Lcsj() {
         if (bpmnModeler ==null){
             initBpmn();
         }else {
-            debugger
+            // debugger
             console.log("画板已经初始化");
         }
     }, [])
@@ -86,7 +87,7 @@ function Lcsj() {
 
     }
     const createBpmnDiagram = async () => {
-        debugger
+        // debugger
         // 开始绘制bpmn图
         try {
             await bpmnModeler.importXML(xmlstr);
@@ -159,7 +160,7 @@ function Lcsj() {
             xml: xml,
             flowName: name
         };
-        debugger
+        // debugger
         lcglDao.deployFlow(data, (res) => {
             if (res.data) {
                 message.info("流程部署成功！");
@@ -184,6 +185,23 @@ function Lcsj() {
 
         document.body.removeChild(element);
     }
+
+    // @ts-ignore
+    // const props: UploadProps = {
+    //     onRemove: (file) => {
+    //         const index = fileList.indexOf(file);
+    //         const newFileList = fileList.slice();
+    //         newFileList.splice(index, 1);
+    //         setFileList(newFileList);
+    //     },
+    //     beforeUpload: (file) => {
+    //         setFileList([...fileList, file]);
+    //
+    //         return false;
+    //     },
+    //     fileList,
+    // };
+
     return (
         <div>
             <div className='flex filter-left'>
@@ -192,7 +210,11 @@ function Lcsj() {
                 <CButton icon={'PlusCircleOutlined'} onClick={doBig}>放大</CButton>
                 <CButton icon={'FullscreenExitOutlined'} onClick={doOld}>还原</CButton>
                 <CButton icon={'MinusCircleOutlined'} onClick={doSmall}>缩小</CButton>
-                <CButton icon={'VerticalAlignTopOutlined'} onClick={importFlow}>导入</CButton>
+                <Upload >
+                    <CButton icon={'VerticalAlignTopOutlined'} onClick={importFlow}>
+                    </CButton>
+                </Upload>
+
                 <CButton icon={'VerticalAlignBottomOutlined'} onClick={exportXmlFlow}>XML</CButton>
                 <CButton icon={'VerticalAlignBottomOutlined'} onClick={exportSvgFlow}>SVG</CButton>
                 <CButton icon={'DeleteOutlined'} onClick={clearFlow}>清空</CButton>

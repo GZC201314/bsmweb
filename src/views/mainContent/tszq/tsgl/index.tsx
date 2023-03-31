@@ -255,7 +255,7 @@ const Tsgl: FC<TsglProps> = (props) => {
 
 
     const beforeUpload = async (file: any) => {
-        debugger
+        // debugger
         let formData = new FormData();
         if (file) {
             formData.append('file', file);

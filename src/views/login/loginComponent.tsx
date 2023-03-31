@@ -142,7 +142,6 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
 
         //接收到消息的回调方法
         websocket.onmessage = function(event) {
-            console.log(event.data)
             let data = JSON.parse(event.data);
             let taskList = data.taskList as [];
             dispatch(setMyTask( taskList))
