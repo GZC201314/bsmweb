@@ -14,6 +14,9 @@ import 'bpmn-js/dist/assets/diagram-js.css' // 左边工具栏以及编辑节点
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css'
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css'
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
+
+import lcglDao from "../../../../dao/lcglDao";
+import {message} from "antd";
 // 引入json转换与高亮
 
 function Lcsj() {
@@ -26,7 +29,12 @@ function Lcsj() {
     let modeling = null;
     let bpmnModeler = null;
     useEffect(() => {
-        initBpmn();
+        if (bpmnModeler ==null){
+            initBpmn();
+        }else {
+            debugger
+            console.log("画板已经初始化");
+        }
     }, [])
 
     const initBpmn = () => {
@@ -57,7 +65,6 @@ function Lcsj() {
             }
         });
         createBpmnDiagram();
-        modeling = bpmnModeler.get("modeling");
         let eventBus = bpmnModeler.get('eventBus');
         /*监听流程图变化，返回要预览的XML*/
         eventBus.on("commandStack.changed", async event => {
@@ -79,6 +86,7 @@ function Lcsj() {
 
     }
     const createBpmnDiagram = async () => {
+        debugger
         // 开始绘制bpmn图
         try {
             await bpmnModeler.importXML(xmlstr);
@@ -126,9 +134,11 @@ function Lcsj() {
     const importFlow = () => {
         console.log("importFlow")
     };
-    const exportXmlFlow = () => {
+    const exportXmlFlow = async () => {
         console.log("exportXmlFlow")
-        download("dpmn20.xml", previewResult)
+        let {xml} = await bpmnModeler.saveXML({format: true});
+        let name = bpmnModeler._definitions &&bpmnModeler._definitions.rootElements&& bpmnModeler._definitions.rootElements[0].name
+        download(name+".dpmn20.xml", xml)
     };
     const exportSvgFlow = () => {
         console.log("exportSvgFlow")
@@ -140,21 +150,26 @@ function Lcsj() {
         bpmnModeler.createDiagram();
         console.log("clearFlow")
     };
-    const saveFlow = () => {
-        console.log("saveFlow")
+    const deployFlow = async () => {
+        console.log("deployFlow")
+        // 判断是否有相同name的流程
+        const {xml} = await bpmnModeler.saveXML({format: true})
+        let name = bpmnModeler._definitions &&bpmnModeler._definitions.rootElements&& bpmnModeler._definitions.rootElements[0].id
+        let data = {
+            xml: xml,
+            flowName: name
+        };
+        debugger
+        lcglDao.deployFlow(data, (res) => {
+            if (res.data) {
+                message.info("流程部署成功！");
+            } else {
+                message.error("流程部署失败！");
+            }
+        })
+
     };
 
-    const previewProcess = () => {
-        // setPreviewModelVisible(true)
-    }
-    //
-    // const handleOk = () => {
-    //     setPreviewModelVisible(false);
-    // };
-    //
-    // const handleCancel = () => {
-    //     setPreviewModelVisible(false);
-    // };
 
     //生成 npmn 配置文件
     const download = (filename, text) => {
@@ -180,9 +195,8 @@ function Lcsj() {
                 <CButton icon={'VerticalAlignTopOutlined'} onClick={importFlow}>导入</CButton>
                 <CButton icon={'VerticalAlignBottomOutlined'} onClick={exportXmlFlow}>XML</CButton>
                 <CButton icon={'VerticalAlignBottomOutlined'} onClick={exportSvgFlow}>SVG</CButton>
-                {/*<CButton icon={'FundOutlined'} onClick={previewProcess}>预览</CButton>*/}
                 <CButton icon={'DeleteOutlined'} onClick={clearFlow}>清空</CButton>
-                <CButton icon={'SaveOutlined'} onClick={saveFlow}>保存</CButton>
+                <CButton icon={'DeploymentUnitOutlined'} onClick={deployFlow}>部署</CButton>
             </div>
             {/*bpmn 容器*/}
             <div id={'canvas'} className="container"/>

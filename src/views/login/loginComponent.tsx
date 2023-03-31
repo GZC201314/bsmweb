@@ -15,11 +15,13 @@ import {useDispatch} from 'react-redux'
 import Webcam from "react-webcam";
 import {RLSB_LOGIN, USER_LOGIN_ACTION} from "../../actionTypes";
 import loginDao from "../../dao/loginDao"
-import {convertImgDataToBlob, setStorage, validateUserName} from "../../utils";
+import {convertImgDataToBlob, getStorage, setStorage, validateUserName} from "../../utils";
 import {useHistory} from "react-router-dom";
-import {setBreadcrumb} from "../../redux/common/action";
+import {setBreadcrumb, setMyTask} from "../../redux/common/action";
 import {breadcrumbDataType} from "../../redux/common/reducer";
 import {Footer} from "antd/lib/layout/layout";
+import lcglDao from "../../dao/lcglDao";
+import _ from "lodash";
 
 export interface loginComponentProps {
 
@@ -37,7 +39,7 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
     const webcamRef = React.useRef(null);
     const [registerForm] = Form.useForm();
     const history = useHistory();
-
+    let websocket = null as unknown as WebSocket;
     const [emailValidator, setEmailValidator] = useState(false)
     const capture = React.useCallback(
         () => {
@@ -63,6 +65,10 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
                     /*登录成功，进入首页*/
                     setStorage("userInfo",res.data.data.userinfo,'');
                     setStorage("menulist",JSON.parse(res.data.data.menulist),'');
+
+                    // 启动我的任务的websocket
+                    getMyTaskInfo(res.data.data.userinfo)
+
                     /*设置面包屑数据*/
                     dispatch(setBreadcrumb([{icon:"HomeOutlined",name:"首页",href:"/yhzx"}] as breadcrumbDataType[]))
                     history.push({
@@ -108,6 +114,65 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
     };
 
 
+    const getMyTaskInfo = (userInfo:any) =>{
+        //判断当前浏览器是否支持WebSocket, 主要此处要更换为自己的地址
+        if (!_.isObject(userInfo)) {
+            if (websocket!==null){
+                websocket.close();
+            }
+            return;
+        }
+        if ('WebSocket' in window) {
+            // @ts-ignore
+            websocket = new WebSocket("ws://127.0.0.1:8888/mytask/"+userInfo.username);
+        } else {
+            alert('Not support websocket')
+        }
+
+        //连接发生错误的回调方法
+        websocket.onerror = function() {
+            console.log("error")
+        };
+
+        //连接成功建立的回调方法
+        websocket.onopen = function(event) {
+            console.log("mytask open")
+            //setMessageInnerHTML("open");
+        }
+
+        //接收到消息的回调方法
+        websocket.onmessage = function(event) {
+            console.log(event.data)
+            let data = JSON.parse(event.data);
+            let taskList = data.taskList as [];
+            dispatch(setMyTask( taskList))
+        }
+
+        //连接关闭的回调方法
+        websocket.onclose = function() {
+            console.log("close");
+        }
+
+        //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+        window.onbeforeunload = function() {
+            websocket.close();
+        }
+
+
+
+        //关闭连接
+        function closeWebSocket() {
+            if(!_.isEmpty(websocket)){
+                websocket.close();
+            }
+        }
+
+        //发送消息
+        function send() {
+            // websocket.send(message);
+        }
+    }
+
     const handleRlsbCancel = () => {
         /* 关闭摄像头*/
         // @ts-ignore
@@ -124,6 +189,25 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
                 setStorage("menulist",JSON.parse(res.data.menulist),'');
                 /*设置面包屑数据*/
                 dispatch(setBreadcrumb([{icon:"HomeOutlined",name:"首页",href:"/yhzx"}] as breadcrumbDataType[]))
+
+                // 启动我的任务的websocket
+                getMyTaskInfo(res.data.userinfo)
+
+                // 开启定时任务，更新用户信息中的任务列表
+                // setInterval(()=>{
+                //     lcglDao.getUserTaskList({},(res:any)=>{
+                //         if (res.code == 200){
+                //             let userInfo  = getStorage("userInfo","");
+                //             // @ts-ignore
+                //             userInfo = {...userInfo,
+                //                 taskList:res.data
+                //             }
+                //             // @ts-ignore
+                //             setStorage("userInfo",userInfo,'');
+                //         }
+                //     })
+                // },5000);
+
                 history.push({
                     pathname: '/home',
                 });

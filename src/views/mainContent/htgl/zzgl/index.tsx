@@ -9,7 +9,7 @@ import {useSelector} from "../../../../hooks/hooks";
 import zzglDao from "../../../../dao/zzglDao";
 import {useHistory} from "react-router-dom";
 import _ from "lodash";
-import {handleErrorAxio, validateOrganizationName} from '../../../../utils';
+import {handleErrorAxis, validateOrganizationName} from '../../../../utils';
 import {UploadFile} from "antd/lib/upload/interface";
 import {FieldData} from "rc-field-form/es/interface";
 
@@ -89,7 +89,7 @@ const Jsgl: FC<JsglProps> = (props) => {
                 setLoading(false)
                 return;
             } else {
-                handleErrorAxio(res, history);
+                handleErrorAxis(res, history);
             }
             // message.error("登录信息已过期。请重新登录。")
             // history.push({
@@ -301,7 +301,7 @@ const Jsgl: FC<JsglProps> = (props) => {
                 getOrganizationListData();
                 return;
             } else {
-                handleErrorAxio(res, history);
+                handleErrorAxis(res, history);
             }
         })
     }

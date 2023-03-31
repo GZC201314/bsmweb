@@ -23,6 +23,13 @@ export const setReload = (value: any)=>{
     value
   }
 };
+// 修改myTask信息
+export const setMyTask = (value: any)=>{
+  return {
+    type: Common.MYTASK,
+    value
+  }
+};
 
 // 修改windowInfo
 export const setWindowInfo = (value: any)=>{

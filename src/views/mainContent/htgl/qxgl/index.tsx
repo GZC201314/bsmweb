@@ -10,7 +10,7 @@ import {message, Modal, Tree} from "antd";
 import CButton from "../../../../components/CButton";
 import CTable from "../../../../components/CTable";
 import qxglDao from "../../../../dao/qxglDao";
-import {handleErrorAxio} from "../../../../utils";
+import {handleErrorAxis} from "../../../../utils";
 
 export interface QxglProps {
 
@@ -65,7 +65,7 @@ const Qxgl: FC<QxglProps> = (props) => {
                 setLoading(false)
                 return;
             }else {
-                handleErrorAxio(res,history);
+                handleErrorAxis(res,history);
             }
             // message.error("登录信息已过期。请重新登录。")
             // history.push({

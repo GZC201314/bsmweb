@@ -298,7 +298,7 @@ export const getStorage = (key: string, type: string) => {
  * @param key
  * @param value
  */
-export const setStorage = (key: string, value: string, type: string) => {
+export const setStorage = (key: string, value: any, type: string) => {
   let storage = type === 'session' ? sessionStorage : localStorage;
   if (typeof value === 'object') {
     value = JSON.stringify(value);
@@ -423,7 +423,7 @@ export const validateOrganizationName = async (rule: any, value: any) => {
     return Promise.reject()
   }
 };
-export const handleErrorAxio = (res: any, history: History<unknown>) =>{
+export const handleErrorAxis = (res: any, history: History<unknown>) =>{
   // debugger
   if (res && res.code===401){
     history.push({

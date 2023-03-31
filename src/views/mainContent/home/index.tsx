@@ -4,11 +4,15 @@ import './style.scss'
 import _ from "lodash";
 import * as echarts from 'echarts';
 import {EChartOption} from 'echarts';
-
+import {getStorage} from "../../../utils";
+import {setBreadcrumb, setMyTask} from "../../../redux/common/action";
+import {breadcrumbDataType} from "../../../redux/common/reducer";
+import {useDispatch} from "react-redux";
 export interface HomeProps{
 
 }
 const Home:FC<HomeProps> = (props) => {
+    const dispatch = useDispatch()
 
     let websocket = null as unknown as WebSocket;
     /**state  state部分**/
@@ -201,6 +205,9 @@ const Home:FC<HomeProps> = (props) => {
             // websocket.send(message);
         }
     }
+
+
+
     /**styles 样式部分**/
 
     /**render**/

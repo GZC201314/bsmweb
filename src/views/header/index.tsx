@@ -1,8 +1,8 @@
 import React, {FC, useEffect, useRef, useState} from 'react'
 import CButton from '../../components/CButton';
-import {Dropdown, Menu, message} from 'antd';
+import {Badge, Avatar, Dropdown, Menu, message} from 'antd';
 import {menuList} from './data'
-import {removeStorage, setStorage} from "../../utils";
+import {getStorage, removeStorage, setStorage} from "../../utils";
 import './index.scss'
 import {setCurrentTheme, setUserInfo, setWindowInfo} from "../../redux/common/action";
 import config from '../../config'
@@ -11,11 +11,14 @@ import {useHistory} from "react-router-dom";
 import defaultAvatarUrl from '../../img/china.svg'
 import {useDispatch} from "react-redux";
 import loginDao from "../../dao/loginDao";
+import {UserOutlined} from "@ant-design/icons";
+import _ from "lodash";
 
 export interface HeaderProps {
     collapsed?: boolean,
     windowInfo?: object,
     userInfo?: any,
+    mytask?:Array<any>,
     collapsedToggle?: Function,
 }
 
@@ -48,7 +51,7 @@ const Header: FC<HeaderProps> = (props) => {
                 color: '#cc0000',
             }
         ]
-    ])
+    ]);
     /**methods 方法部分**/
 
     const renderIcon = (iconName: any) => {
@@ -83,25 +86,27 @@ const Header: FC<HeaderProps> = (props) => {
     const menuClick = (data: { id: string }) => {
         if (data.id === 'loginOut') {
             // 退出
-            removeStorage('userInfo','')
+            removeStorage('userInfo', '')
             setUserInfo(null);
             history.push('/login')
 
             /*发送到后台，清空session*/
-            loginDao.userLogOut({},(res:any)=>{
+            loginDao.userLogOut({}, (res: any) => {
                 message.success(res.msg)
             })
 
         } else if (data.id === 'personal') {
             history.push('/grzx')
-        }else {
+        } else if (data.id === 'myTask') {
+            history.push('/myTask')
+        } else {
             // 退出
-            removeStorage('userInfo','')
+            removeStorage('userInfo', '')
             setUserInfo(null);
             history.push('/login')
 
             /*发送到后台，清空session*/
-            loginDao.userLogOut({},(res:any)=>{
+            loginDao.userLogOut({}, (res: any) => {
                 message.success(res.msg)
             })
         }
@@ -111,7 +116,7 @@ const Header: FC<HeaderProps> = (props) => {
         setStorage('theme', data.id, "");
         dispatch(setCurrentTheme(data.id));
     }
-    const goHome = ()=>{
+    const goHome = () => {
         history.push('/home');
     }
     /**effect  effect部分**/
@@ -122,20 +127,21 @@ const Header: FC<HeaderProps> = (props) => {
         return () => {
             clearTimeout(timeState);
         }
-    },[timeState])
-
+    }, [timeState])
 
 
     /**render**/
     const {username, usericon} = props.userInfo || {};
+    const taskList = props.mytask;
     const url = usericon ? usericon : defaultAvatarUrl;
-
     const menu = (
         <Menu>
             {
                 menuList.map((item: any, index) =>
                     <Menu.Item key={index}>
-                        <CButton type='text' block onClick={() => menuClick(item)}>{item.name}</CButton>
+                        <CButton type='text' block
+                                 onClick={() => menuClick(item)}>{item.name}{taskList && taskList.length > 0 && item.id === 'myTask' ?
+                            <span style={{color: 'red'}}>{taskList.length}</span> : ''}</CButton>
                     </Menu.Item>
                 )
             }
@@ -151,13 +157,13 @@ const Header: FC<HeaderProps> = (props) => {
                                 item.map(i => <div className='themeItemColor' key={i.id}
                                                    style={{
                                                        backgroundColor: i.color,
-                                                       width:20,
-                                                       height:20,
-                                                       borderRadius:2,
-                                                       marginLeft:5,
-                                                       marginRight:5,
-                                                       marginTop:0,
-                                                       marginBottom:0
+                                                       width: 20,
+                                                       height: 20,
+                                                       borderRadius: 2,
+                                                       marginLeft: 5,
+                                                       marginRight: 5,
+                                                       marginTop: 0,
+                                                       marginBottom: 0
 
                                                    }}
                                                    onClick={() => themeChange(i)}/>)
@@ -190,7 +196,11 @@ const Header: FC<HeaderProps> = (props) => {
                     <div className='user-info' ref={userInfoRef}>
                         <Dropdown overlay={menu} getPopupContainer={(triggerNode) => triggerNode}>
                 <span>
-                  <img className='user-avatar' src={url} alt=""/>
+
+                    <Badge count={taskList && taskList.length}>
+                        <Avatar shape="square" icon={<UserOutlined/>} src={url} alt=""/>
+                    </Badge>
+
                   <span className='user-name'>
                     {username}</span>
                     {renderIcon('DownOutlined')}

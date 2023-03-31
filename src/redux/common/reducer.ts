@@ -10,6 +10,7 @@ let defaultState = {
   collapsed: config.collapsedDefaultOpen || true,//左侧导航状态
   breadcrumbData: [] as breadcrumbDataType[],//面包屑导航数据
   reload: false,
+  mytask:[],
   userInfo: {},//登录用户信息
   windowInfo: {
     screenHeight: window.innerHeight || document.body.clientHeight || document.documentElement.clientHeight,//浏览器高度
@@ -25,6 +26,8 @@ let CommonReducer = (state = defaultState, action:any) => {
       return {...state, ...{collapsed: action.value}};
     case Common.SETBREADCRUMB:
       return {...state, ...{breadcrumbData: action.value}};
+    case Common.MYTASK:
+      return {...state, ...{mytask: action.value}};
     case Common.RELOAD:
       return {...state, ...{reload: action.value}};
     case Common.WINDOWINFO:

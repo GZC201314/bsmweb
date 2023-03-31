@@ -53,6 +53,9 @@ const App: FC<AppProps> = (props) => {
   const collapsed = useSelector((state) => {
     return state.CommonReducer.collapsed;
   });
+  const mytask = useSelector((state) => {
+    return state.CommonReducer.mytask;
+  });
   const theme = useSelector((state) => {
     return state.CommonReducer.currentTheme;
   });
@@ -91,7 +94,7 @@ const App: FC<AppProps> = (props) => {
     return(
         <ConfigProvider locale={zhCN}>
           <div className='app' data-theme={theme}>
-            <Header userInfo={userInfo} collapsedToggle={collapsedToggle} collapsed={collapsed}  />
+            <Header userInfo={userInfo} collapsedToggle={collapsedToggle} collapsed={collapsed}  mytask={mytask}/>
 
             <div className='flex app-content'>
               <LeftNav/>

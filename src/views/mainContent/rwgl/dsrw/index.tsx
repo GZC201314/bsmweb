@@ -24,7 +24,7 @@ import CTable from "../../../../components/CTable";
 import {MinusCircleOutlined, PlusOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import {validateJobKey} from "./validate";
 import moment from "moment";
-import {handleErrorAxio} from "../../../../utils";
+import {handleErrorAxis} from "../../../../utils";
 
 export interface DsrwProps {
 
@@ -91,7 +91,7 @@ const Dsrw: FC<DsrwProps> = (props) => {
                 setLoading(false)
                 return;
             }else {
-                handleErrorAxio(res,history);
+                handleErrorAxis(res,history);
             }
         })
     }

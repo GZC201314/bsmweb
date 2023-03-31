@@ -11,3 +11,6 @@ export const RELOAD = 'RELOAD';
 export const WINDOWINFO = 'WINDOWINFO';
 // 切换主题
 export const CURRENTTHEME = 'CURRENTTHEME';
+// 我的任务
+export const MYTASK = 'MYTASK';
+
