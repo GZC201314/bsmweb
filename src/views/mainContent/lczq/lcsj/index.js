@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import BpmnModeler from 'bpmn-js/lib/Modeler'
 import propertiesPanelModule from 'bpmn-js-properties-panel'
 import propertiesProviderModule from 'bpmn-js-properties-panel/lib/provider/camunda'
@@ -14,9 +14,8 @@ import 'bpmn-js/dist/assets/diagram-js.css' // 左边工具栏以及编辑节点
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css'
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css'
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
-
 import lcglDao from "../../../../dao/lcglDao";
-import {message, Upload} from "antd";
+import {Button, message, Upload} from "antd";
 import {UploadOutlined, VerticalAlignTopOutlined} from "@ant-design/icons";
 // 引入json转换与高亮
 
@@ -29,6 +28,8 @@ function Lcsj() {
     let simulationStatus = true
     let modeling = null;
     let bpmnModeler = null;
+    const [fileList, setFileList] = useState([]);
+
     useEffect(() => {
         if (bpmnModeler ==null){
             initBpmn();
@@ -186,6 +187,21 @@ function Lcsj() {
         document.body.removeChild(element);
     }
 
+    const uploadProps = {
+        onRemove: (file) => {
+            const index = fileList.indexOf(file);
+            const newFileList = fileList.slice();
+            newFileList.splice(index, 1);
+            setFileList(newFileList);
+        },
+        beforeUpload: (file) => {
+            setFileList([...fileList, file]);
+
+            return false;
+        },
+        fileList,
+    };
+
     // @ts-ignore
     // const props: UploadProps = {
     //     onRemove: (file) => {
@@ -210,9 +226,8 @@ function Lcsj() {
                 <CButton icon={'PlusCircleOutlined'} onClick={doBig}>放大</CButton>
                 <CButton icon={'FullscreenExitOutlined'} onClick={doOld}>还原</CButton>
                 <CButton icon={'MinusCircleOutlined'} onClick={doSmall}>缩小</CButton>
-                <Upload >
-                    <CButton icon={'VerticalAlignTopOutlined'} onClick={importFlow}>
-                    </CButton>
+                <Upload {...uploadProps}>
+                    <Button className="ant-btn c-button-base c-button-default c-button-size-default  c-button-icon" icon={<VerticalAlignTopOutlined />} onClick={importFlow}>导入</Button>
                 </Upload>
 
                 <CButton icon={'VerticalAlignBottomOutlined'} onClick={exportXmlFlow}>XML</CButton>
