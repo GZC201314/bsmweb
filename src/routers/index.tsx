@@ -36,7 +36,8 @@ import zzglRouter from "./htgl/zzglRouter";
 import qxglRouter from "./htgl/qxglRouter";
 /*流程专区*/
 import lcsjRouter from "./lczq/lcsjRouter";
-import { Footer } from 'antd/lib/layout/layout';
+import LcglRouter from "./lczq/lcglRouter";
+
 export interface RouteConfigProps {
 
 }
@@ -74,6 +75,7 @@ const RouteConfig: FC<RouteConfigProps> = (props) => {
         grzxRouter,
         mytaskRouter,
         lcsjRouter,
+        LcglRouter,
     ];
 
     const renderRoutes = (routers: any[]) => {

@@ -14,7 +14,7 @@ import CButton from "../../../../components/CButton";
 export interface LcglProps {
 
 }
-const Rlkgl:FC<LcglProps> = (props) => {
+const Lcgl:FC<LcglProps> = (props) => {
     const dispatch = useDispatch()
     const history = useHistory()
     /**state  state部分**/
@@ -205,4 +205,4 @@ const Rlkgl:FC<LcglProps> = (props) => {
         </div>
     );
 }
-export default Rlkgl
+export default Lcgl

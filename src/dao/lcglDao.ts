@@ -42,7 +42,7 @@ const getOrganizationInfo = (paramter: any, successCallback: Function, errorCall
         }
     )
 }
-/*校验组织名*/
+/*校验流程名*/
 const validateOrganizationName = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
 
     axios.post(url ? url : validateFlowNameUrl, paramter).then(
@@ -95,6 +95,7 @@ const del = (paramter: any, successCallback: Function, errorCallback?: Function,
 export default {
     deployFlow,
     getOrganizationInfo,
+    getFlowList,
     validateOrganizationName,
     update,
     add,
