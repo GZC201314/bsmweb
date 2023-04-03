@@ -1,8 +1,8 @@
 import axios from "../utils/MyAxios"
 const deployFlowUrl: string = '/bsmservice/flowable/deploy';
 const getUserTaskListUrl: string = '/bsmservice/flowable/userTaskList';
-const validateOrganizationNameUrl: string = '/bsmservice/organization/validateName';
-const getListUrl: string = '/bsmservice/organization/list';
+const validateFlowNameUrl: string = '/bsmservice/flowable/validateName';
+const getFlowListUrl: string = '/bsmservice/flowable/flowableList';
 const deleteUrl: string = '/bsmservice/organization/delete';
 const insertUrl: string = '/bsmservice/organization/add';
 const updateUrl: string = '/bsmservice/organization/update';
@@ -15,10 +15,19 @@ const deployFlow = (paramter: any, successCallback: Function, errorCallback?: Fu
         }
     )
 }
-/*查询组织select信息*/
+/*查询用户任务信息*/
 const getUserTaskList = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
 
     axios.get(url ? url : getUserTaskListUrl, paramter).then(
+        (res) => {
+            successCallback(res.data);
+        }
+    )
+}
+/*查询流程列表信息*/
+const getFlowList = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
+
+    axios.post(url ? url : getFlowListUrl, paramter).then(
         (res) => {
             successCallback(res.data);
         }
@@ -36,7 +45,7 @@ const getOrganizationInfo = (paramter: any, successCallback: Function, errorCall
 /*校验组织名*/
 const validateOrganizationName = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
 
-    axios.post(url ? url : validateOrganizationNameUrl, paramter).then(
+    axios.post(url ? url : validateFlowNameUrl, paramter).then(
         (res) => {
             successCallback(res.data);
         }

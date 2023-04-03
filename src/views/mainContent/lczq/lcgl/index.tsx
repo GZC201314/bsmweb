@@ -2,7 +2,7 @@ import React, {FC, Key, useEffect, useState} from 'react'
 import './style.scss'
 import {useDispatch} from "react-redux";
 import {useHistory} from "react-router-dom";
-import {tableData} from "../../htgl/qxgl/data";
+import {tableData} from "./data";
 import {useSelector} from "../../../../hooks/hooks";
 import jsglDao from "../../../../dao/jsglDao";
 import _ from "lodash";
@@ -11,10 +11,10 @@ import {message, Modal, Tree} from "antd";
 import CTable from "../../../../components/CTable";
 import CButton from "../../../../components/CButton";
 
-export interface RlkglProps {
+export interface LcglProps {
 
 }
-const Rlkgl:FC<RlkglProps> = (props) => {
+const Rlkgl:FC<LcglProps> = (props) => {
     const dispatch = useDispatch()
     const history = useHistory()
     /**state  state部分**/
