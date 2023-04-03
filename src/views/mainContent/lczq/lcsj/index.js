@@ -135,17 +135,22 @@ function Lcsj() {
     };
     const importFlow = () => {
         console.log("importFlow")
+
     };
     const exportXmlFlow = async () => {
         console.log("exportXmlFlow")
+        debugger
         let {xml} = await bpmnModeler.saveXML({format: true});
-        let name = bpmnModeler._definitions &&bpmnModeler._definitions.rootElements&& bpmnModeler._definitions.rootElements[0].name
+        let name = bpmnModeler._definitions &&bpmnModeler._definitions.rootElements&& bpmnModeler._definitions.rootElements[0].id
         download(name+".dpmn20.xml", xml)
     };
-    const exportSvgFlow = () => {
+    const exportSvgFlow = async () => {
         console.log("exportSvgFlow")
-        bpmnModeler.saveSVG().then((res) => {
-            download("dpmn20.svg", res.svg)
+
+        await bpmnModeler.saveSVG().then((res) => {
+            let {xml} = bpmnModeler.saveXML({format: true});
+            let name = bpmnModeler._definitions &&bpmnModeler._definitions.rootElements&& bpmnModeler._definitions.rootElements[0].id
+            download(name+".dpmn20.svg", res.svg)
         })
     };
     const clearFlow = () => {
@@ -188,6 +193,7 @@ function Lcsj() {
     }
 
     const uploadProps = {
+        accept: '.xml',
         onRemove: (file) => {
             const index = fileList.indexOf(file);
             const newFileList = fileList.slice();
@@ -195,28 +201,18 @@ function Lcsj() {
             setFileList(newFileList);
         },
         beforeUpload: (file) => {
-            setFileList([...fileList, file]);
-
+            // 在这边渲染流程图
+            console.log(file);
+            let fileReader = new FileReader();
+            fileReader.onload = (e)=>{
+                bpmnModeler.importXML(e.target.result);
+            };
+            fileReader.readAsText(file);
             return false;
         },
         fileList,
     };
 
-    // @ts-ignore
-    // const props: UploadProps = {
-    //     onRemove: (file) => {
-    //         const index = fileList.indexOf(file);
-    //         const newFileList = fileList.slice();
-    //         newFileList.splice(index, 1);
-    //         setFileList(newFileList);
-    //     },
-    //     beforeUpload: (file) => {
-    //         setFileList([...fileList, file]);
-    //
-    //         return false;
-    //     },
-    //     fileList,
-    // };
 
     return (
         <div>
@@ -227,7 +223,7 @@ function Lcsj() {
                 <CButton icon={'FullscreenExitOutlined'} onClick={doOld}>还原</CButton>
                 <CButton icon={'MinusCircleOutlined'} onClick={doSmall}>缩小</CButton>
                 <Upload {...uploadProps}>
-                    <Button className="ant-btn c-button-base c-button-default c-button-size-default  c-button-icon" icon={<VerticalAlignTopOutlined />} onClick={importFlow}>导入</Button>
+                    <Button className="ant-btn c-button-base c-button-default c-button-size-default  c-button-icon" icon={<VerticalAlignTopOutlined />}>导入</Button>
                 </Upload>
 
                 <CButton icon={'VerticalAlignBottomOutlined'} onClick={exportXmlFlow}>XML</CButton>

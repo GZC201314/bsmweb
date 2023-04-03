@@ -41,9 +41,7 @@ const MyTask: FC<MytaskProps> = (props) => {
     /**render**/
 
     return (
-        <div>
-            我的任务列表
-        </div>
+        <h1 className="style">mytask Page</h1>
     );
 }
 export default MyTask
