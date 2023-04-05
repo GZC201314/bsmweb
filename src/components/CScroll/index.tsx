@@ -1,5 +1,6 @@
-import React, {FC } from 'react'
-import { Scrollbars } from 'react-custom-scrollbars';
+import React, {FC} from 'react'
+import {Scrollbars} from 'react-custom-scrollbars';
+
 export interface CScrollProps{
     onScroll?:Function
     children?:any

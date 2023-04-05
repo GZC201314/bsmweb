@@ -1,6 +1,5 @@
-
 import React, {Component} from 'react'
-import { Pagination } from 'antd';
+import {Pagination} from 'antd';
 import PropTypes from 'prop-types'
 
 import './index.scss'

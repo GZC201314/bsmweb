@@ -1,7 +1,7 @@
-
-import React, {FC, useEffect, useState,useRef } from 'react'
+import React, {FC, useEffect, useRef, useState} from 'react'
 import Echarts from 'echarts'
 import './index.scss'
+
 export interface CEchartsProps{
   options?:object
   height?:any

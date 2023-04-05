@@ -1,6 +1,3 @@
-import {FileTypes} from "../../../../components/CForm/CUpload";
-
-
 export const tableData = {
   tHead: [
     // {

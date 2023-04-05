@@ -2,7 +2,6 @@ import React, {FC, useEffect} from 'react'
 import {message, Modal, Upload} from 'antd'
 // import PropTypes from 'prop-types'
 import _ from 'lodash'
-import {PlusSquareOutlined} from "@ant-design/icons";
 
 export type FileTypes = {
     uid: string,

@@ -1,6 +1,7 @@
-import React, {FC, useEffect, useState} from 'react'
+import React, {FC} from 'react'
 import {Select, TreeSelect} from 'antd'
 import './index.scss'
+
 const { Option} = Select
 export type Item = {
     key: any;

@@ -1,12 +1,12 @@
-import React, {FC, useEffect,useRef } from 'react'
-import { Card} from 'antd'
-import CBreadcrumb from '../../components/CBreadcrumb'
+import React, {FC, useEffect, useRef} from 'react'
+import {Card} from 'antd'
 import CButton from '../../components/CButton'
 import CScroll from '../../components/CScroll'
-import { setReload, setWindowInfo} from "../../redux/common/action";
+import {setReload, setWindowInfo} from "../../redux/common/action";
 import './index.scss'
 import {useSelector} from "../../hooks/hooks";
 import {useDispatch} from "react-redux";
+
 export interface MainContentProps{
     windowInfo?:object,
     reload?:any,

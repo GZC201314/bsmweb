@@ -16,7 +16,8 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css'
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
 import lcglDao from "../../../../dao/lcglDao";
 import {Button, message, Upload} from "antd";
-import {UploadOutlined, VerticalAlignTopOutlined} from "@ant-design/icons";
+import {VerticalAlignTopOutlined} from "@ant-design/icons";
+
 // 引入json转换与高亮
 
 function Lcsj() {

@@ -2,25 +2,16 @@ import React, {FC, useState} from 'react'
 import {KeyOutlined, LockOutlined, QuestionCircleOutlined, UserOutlined} from "@ant-design/icons";
 import '../../App.less';
 import './login.scss'
-import {
-    Checkbox, Modal, Form,
-    Input,
-    Button,
-    Space,
-    Tooltip,
-    Typography,
-    message,
-} from 'antd';
+import {Button, Checkbox, Form, Input, message, Modal, Space, Tooltip, Typography,} from 'antd';
 import {useDispatch} from 'react-redux'
 import Webcam from "react-webcam";
-import {RLSB_LOGIN, USER_LOGIN_ACTION} from "../../actionTypes";
+import {RLSB_LOGIN} from "../../actionTypes";
 import loginDao from "../../dao/loginDao"
-import {convertImgDataToBlob, getStorage, setStorage, validateUserName} from "../../utils";
+import {convertImgDataToBlob, setStorage, validateUserName} from "../../utils";
 import {useHistory} from "react-router-dom";
 import {setBreadcrumb, setMyTask} from "../../redux/common/action";
 import {breadcrumbDataType} from "../../redux/common/reducer";
 import {Footer} from "antd/lib/layout/layout";
-import lcglDao from "../../dao/lcglDao";
 import _ from "lodash";
 
 export interface loginComponentProps {
@@ -124,7 +115,7 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
         }
         if ('WebSocket' in window) {
             // @ts-ignore
-            websocket = new WebSocket("ws://127.0.0.1:8888/mytask/"+userInfo.username);
+            websocket = new WebSocket("wss://www.bookstoremanager.top/wss/mytask/"+userInfo.username);
         } else {
             alert('Not support websocket')
         }

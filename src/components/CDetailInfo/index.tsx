@@ -1,4 +1,4 @@
-import React, {FC, ReactElement, useEffect, useState} from 'react'
+import React, {FC, ReactElement} from 'react'
 import _ from 'lodash'
 import CDetailInfoTitle from './detailInfoTitle'
 import CDetailInfoItem from './detailInfoItem'

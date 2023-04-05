@@ -1,4 +1,3 @@
-
 //配置本地接口地址
 import config from '../config/globalConfig'
 

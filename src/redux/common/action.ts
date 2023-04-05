@@ -1,4 +1,3 @@
-
 import * as Common from './action-type'
 // 修改left-nav状态
 export const collapsedToggle = (value: any)=>{

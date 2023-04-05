@@ -1,6 +1,7 @@
 import {Rate} from 'antd'
 import './index.scss'
 import React, {FC, useEffect, useState} from 'react'
+
 export type CAvatarType = "user"|"rate"
 
 export interface CAvatarProps{

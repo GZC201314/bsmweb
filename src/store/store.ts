@@ -1,4 +1,4 @@
-import {createStore, combineReducers, compose} from 'redux';
+import {combineReducers, compose, createStore} from 'redux';
 import reducer from '../reducer/menureducer';
 import loginReducer from "../reducer/loginReducer";
 import CommonReducer from "../redux/common/reducer";

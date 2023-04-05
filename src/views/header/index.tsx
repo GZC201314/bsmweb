@@ -1,18 +1,17 @@
 import React, {FC, useEffect, useRef, useState} from 'react'
 import CButton from '../../components/CButton';
-import {Badge, Avatar, Dropdown, Menu, message} from 'antd';
+import {Avatar, Badge, Dropdown, Menu, message} from 'antd';
 import {menuList} from './data'
-import {getStorage, removeStorage, setStorage} from "../../utils";
+import {removeStorage, setStorage} from "../../utils";
 import './index.scss'
 import {setCurrentTheme, setUserInfo, setWindowInfo} from "../../redux/common/action";
 import config from '../../config'
 import * as Icons from '@ant-design/icons';
+import {UserOutlined} from '@ant-design/icons';
 import {useHistory} from "react-router-dom";
 import defaultAvatarUrl from '../../img/china.svg'
 import {useDispatch} from "react-redux";
 import loginDao from "../../dao/loginDao";
-import {UserOutlined} from "@ant-design/icons";
-import _ from "lodash";
 
 export interface HeaderProps {
     collapsed?: boolean,

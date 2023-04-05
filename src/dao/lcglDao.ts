@@ -1,9 +1,10 @@
 import axios from "../utils/MyAxios"
+
 const deployFlowUrl: string = '/bsmservice/flowable/deploy';
 const getUserTaskListUrl: string = '/bsmservice/flowable/userTaskList';
 const validateFlowNameUrl: string = '/bsmservice/flowable/validateName';
 const getFlowListUrl: string = '/bsmservice/flowable/flowableList';
-const deleteUrl: string = '/bsmservice/organization/delete';
+const deleteUrl: string = '/bsmservice/flowable/deleteFlows';
 const insertUrl: string = '/bsmservice/organization/add';
 const updateUrl: string = '/bsmservice/organization/update';
 /*组织列表信息查询*/

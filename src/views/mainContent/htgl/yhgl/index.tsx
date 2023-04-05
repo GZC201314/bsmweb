@@ -11,8 +11,6 @@ import yhglDao from "../../../../dao/yhglDao";
 import _ from "lodash";
 import CForm from "../../../../components/CForm/CForm";
 import {validateUserEmail, validateUserName} from "../../../../utils";
-import {UploadFile} from "antd/lib/upload/interface";
-import tsglDao from "../../../../dao/tsglDao";
 import {QuestionCircleOutlined} from "@ant-design/icons";
 
 export interface YhglProps {

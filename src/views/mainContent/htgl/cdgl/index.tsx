@@ -6,14 +6,13 @@ import {cdglManageListNewData, tableData} from "./data";
 import {useSelector} from "../../../../hooks/hooks";
 import cdglDao from "../../../../dao/cdglDao";
 import _ from "lodash";
-import {message, Modal, Tag} from "antd";
+import {message, Modal} from "antd";
 import {setPageNewValue} from "../../../../utils";
 import CButton from "../../../../components/CButton";
 import CInput from "../../../../components/CForm/CInput";
 import CTable from "../../../../components/CTable";
 import CPageNew from "../../../../components/CPageNew";
 import * as Icons from '@ant-design/icons';
-import {setReload} from "../../../../redux/common/action";
 
 export interface CdglProps {
 

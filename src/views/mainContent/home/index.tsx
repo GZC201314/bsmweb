@@ -4,10 +4,8 @@ import './style.scss'
 import _ from "lodash";
 import * as echarts from 'echarts';
 import {EChartOption} from 'echarts';
-import {getStorage} from "../../../utils";
-import {setBreadcrumb, setMyTask} from "../../../redux/common/action";
-import {breadcrumbDataType} from "../../../redux/common/reducer";
 import {useDispatch} from "react-redux";
+
 export interface HomeProps{
 
 }

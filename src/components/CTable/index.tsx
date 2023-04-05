@@ -1,5 +1,5 @@
-import React, {FC, useState} from 'react'
-import {Table, Spin} from 'antd'
+import React, {FC} from 'react'
+import {Spin, Table} from 'antd'
 import {renderTableFilter} from './tableFilter'
 import FilterHead from './filterHead'
 import CPage from '../CPage'

@@ -3,12 +3,12 @@ import {NavLink, useHistory} from 'react-router-dom'
 import './index.scss'
 import {getStorage, urlFormat} from '../../utils';
 import CScroll from "../../components/CScroll"
-import React, {FC, useEffect, useState, useRef} from 'react'
-import {setBreadcrumb, collapsedToggle} from "../../redux/common/action";
+import React, {FC, useEffect, useRef, useState} from 'react'
+import {collapsedToggle, setBreadcrumb} from "../../redux/common/action";
 import * as Icons from '@ant-design/icons';
 
 import {useSelector} from "../../hooks/hooks";
-import {LocationDescriptor, Location} from 'history';
+import {Location, LocationDescriptor} from 'history';
 import {useDispatch} from "react-redux";
 import config from '../../config';
 

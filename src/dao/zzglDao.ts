@@ -1,4 +1,5 @@
 import axios from "../utils/MyAxios"
+
 const getOrganizationPageUrl: string = '/bsmservice/organization/getPage';
 const getOrganizationInfoUrl: string = '/bsmservice/organization/getDetailInfo';
 const validateOrganizationNameUrl: string = '/bsmservice/organization/validateName';

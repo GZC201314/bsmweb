@@ -1,5 +1,6 @@
-import React, {FC, useEffect, useState } from 'react'
+import React, {FC} from 'react'
 import './style.scss'
+
 export interface TpsbProps {
 
 }

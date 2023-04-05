@@ -1,8 +1,8 @@
-import {Badge, Descriptions, Image, message} from 'antd';
+import {message} from 'antd';
 import React, {FC, useState} from 'react'
 import './style.scss'
 import grzxDao from "../../../../dao/grzxDao";
-import defaultAvatarUrl from '../../../../img/china.svg'
+
 export interface MytaskProps {
 
 }

@@ -1,6 +1,3 @@
-import {Select} from "antd";
-
-
 export const tableData = {
     tHead: [
         // {

@@ -3,6 +3,7 @@ import React, {FC, useState} from 'react'
 import './style.scss'
 import grzxDao from "../../../../dao/grzxDao";
 import defaultAvatarUrl from '../../../../img/china.svg'
+
 export interface GrzxProps {
 
 }

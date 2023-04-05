@@ -1,7 +1,7 @@
 import React, {FC, useState} from 'react'
 import './style.scss'
-import { InboxOutlined} from '@ant-design/icons';
-import {Input, message, Upload} from 'antd';
+import {InboxOutlined} from '@ant-design/icons';
+import {message, Upload} from 'antd';
 import wzsbDao from "../../../../dao/wzsbDao";
 import CButton from "../../../../components/CButton";
 

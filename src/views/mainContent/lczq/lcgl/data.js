@@ -37,6 +37,7 @@ export const tableData = {
       dataIndex: 'resourceName',
       fixed: 'right',
       title: '流程资源',
+      slot: 'substr',
     },
     {
       key: 'operate',

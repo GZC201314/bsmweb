@@ -2,8 +2,7 @@ import _ from 'lodash'
 import loginDao from "../dao/loginDao";
 import zzglDao from "../dao/zzglDao";
 import tsglDao from "../dao/tsglDao";
-import {message} from "antd";
-import { History } from 'history';
+import {History} from 'history';
 
 /**
  * @param url 完整路径

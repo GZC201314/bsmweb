@@ -1,19 +1,18 @@
-import React, {FC, useEffect, useState} from 'react'
+import React, {FC, useEffect} from 'react'
 
 import {collapsedToggle, setCurrentTheme, setUserInfo} from "../../redux/common/action";
 import './App.scss'
 import Header from '../header'
 import LeftNav from '../leftNav'
-import { getStorage, setStorage} from "../../utils";
+import {getStorage, setStorage} from "../../utils";
 import zhCN from 'antd/es/locale-provider/zh_CN';
 import moment from 'moment'
 import {useHistory} from "react-router-dom";
 import 'moment/locale/zh-cn';
-import { ConfigProvider } from 'antd';
-import { Location } from 'history';
+import {ConfigProvider} from 'antd';
+import {Location} from 'history';
 import {useSelector} from "../../hooks/hooks";
 import {useDispatch} from "react-redux";
-import { Footer } from 'antd/lib/layout/layout';
 
 moment.locale('zh-cn');
 

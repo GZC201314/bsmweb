@@ -1,5 +1,6 @@
-import React, {FC } from 'react'
+import React, {FC} from 'react'
 import './style.scss'
+
 export interface DzsfwProps {
 
 }

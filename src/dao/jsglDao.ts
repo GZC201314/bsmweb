@@ -1,5 +1,6 @@
 // import axios from "axios";
 import axios from "../utils/MyAxios"
+
 const getRoleInfoUrl: string = '/bsmservice/role/getPageRole';
 const getAllRoleUrl: string = '/bsmservice/role/getAllRole';
 const editActiveRoleListUrl: string = '/bsmservice/role/updateRoleStatus';

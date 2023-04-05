@@ -1,8 +1,9 @@
-import { Breadcrumb} from 'antd'
+import {Breadcrumb} from 'antd'
 import './index.scss'
 import React, {FC} from 'react'
 import * as Icon from '@ant-design/icons'
 import {useSelector} from "../../hooks/hooks";
+
 export interface CBreadcrumbProps{
     data?:[],
     children?:React.ReactElement
