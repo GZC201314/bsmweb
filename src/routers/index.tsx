@@ -28,6 +28,7 @@ import tslbRouter from "./tszq/tslbRouter";
 import xxxgRouter from "./yhzx/xxxgRouter";
 import grzxRouter from "./yhzx/grzxRouter";
 import mytaskRouter from "./yhzx/mytaskRouter";
+import myApplicationRouter from "./yhzx/myApplicationRouter";
 /*后台管理*/
 import cdglRouter from "./htgl/cdglRouter";
 import yhglRouter from "./htgl/yhglRouter";
@@ -74,6 +75,7 @@ const RouteConfig: FC<RouteConfigProps> = (props) => {
         xxxgRouter,
         grzxRouter,
         mytaskRouter,
+        myApplicationRouter,
         lcsjRouter,
         LcglRouter,
     ];

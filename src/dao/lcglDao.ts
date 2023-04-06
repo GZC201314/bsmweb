@@ -5,8 +5,7 @@ const getUserTaskListUrl: string = '/bsmservice/flowable/userTaskList';
 const validateFlowNameUrl: string = '/bsmservice/flowable/validateName';
 const getFlowListUrl: string = '/bsmservice/flowable/flowableList';
 const deleteUrl: string = '/bsmservice/flowable/deleteFlows';
-const insertUrl: string = '/bsmservice/organization/add';
-const updateUrl: string = '/bsmservice/organization/update';
+const getAllFlowUrl: string = '/bsmservice/flowable/allFlow';
 /*组织列表信息查询*/
 const deployFlow = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
 
@@ -53,34 +52,13 @@ const validateOrganizationName = (paramter: any, successCallback: Function, erro
     )
 }
 
-/*新增组织*/
-const add = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
-    axios.post(url ? url : insertUrl, paramter).then(
+/*获取全部流程*/
+const getAllFlow = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
+    axios.post(url ? url : getAllFlowUrl, paramter).then(
         (res) => {
             successCallback(res.data);
         }
     )
-}
-/*更新组织*/
-const update = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
-    axios({
-        headers:{
-            'Content-Type': 'multipart/form-data'
-        },
-        method: 'post',
-        url: url||updateUrl,
-        data:paramter
-    }).then(res => {
-        successCallback(res.data);
-    }).catch(err => {
-        console.error(err)
-    });
-
-    // axios.post(url ? url : updateUrl, paramter).then(
-    //     (res) => {
-    //         successCallback(res.data);
-    //     }
-    // )
 }
 
 /*用户详细信息查询*/
@@ -98,8 +76,7 @@ export default {
     getOrganizationInfo,
     getFlowList,
     validateOrganizationName,
-    update,
-    add,
+    getAllFlow,
     getUserTaskList,
     del
 };
