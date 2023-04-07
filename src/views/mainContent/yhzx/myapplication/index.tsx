@@ -1,22 +1,21 @@
-import {message, Modal} from 'antd';
-import React, {FC, useEffect, useState} from 'react'
+import {message, Modal, Select, Spin} from 'antd';
+import React, {FC, useEffect, useMemo, useRef, useState} from 'react'
 import './style.scss'
-import grzxDao from "../../../../dao/grzxDao";
 import CInput from "../../../../components/CForm/CInput";
 import CButton from "../../../../components/CButton";
 import CTable from "../../../../components/CTable";
 import CSwitch from "../../../../components/CForm/CSwitch";
-import CPageNew from "../../../../components/CPageNew";
 import {useHistory} from "react-router-dom";
-import {roleManageListNewData, tableData} from "../../htgl/jsgl/data";
+import {roleManageListNewData, tableData} from "./data";
 import {useSelector} from "../../../../hooks/hooks";
 import jsglDao from "../../../../dao/jsglDao";
 import _ from "lodash";
+import debounce from 'lodash/debounce';
 import {setPageNewValue} from "../../../../utils";
+import type {SelectProps} from 'antd/es/select';
+import {debuglog, log} from "util";
+import lcglDao from "../../../../dao/lcglDao";
 
-export interface MyApplicationProps {
-
-}
 export type userInfoType = {
     username: string,
     usericon:string,
@@ -28,8 +27,19 @@ export type userInfoType = {
     roleName: string,
 }
 
-const MyApplication: FC<MyApplicationProps> = (props) => {
+export interface ParamValue {
+    label: string;
+    value: string;
+}
 
+export interface DebounceSelectProps<ValueType = any>
+    extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
+    fetchOptions: (search: string) => Promise<ValueType[]>;
+    debounceTimeout?: number;
+}
+
+const MyApplication: FC<DebounceSelectProps> = (props) => {
+    const [value, setValue] = useState<ParamValue[]>([]);
     const history = useHistory()
     /**state  state部分**/
     const [colums] = useState(tableData.tHead)
@@ -47,7 +57,6 @@ const MyApplication: FC<MyApplicationProps> = (props) => {
         placeholder: '请输入角色名'
     })
     const [selectionDataIds, setSelectionDataIds] = useState([] as Array<any>)
-
     /**effect  effect部分**/
 
     const reload = useSelector((state) => {
@@ -95,6 +104,12 @@ const MyApplication: FC<MyApplicationProps> = (props) => {
         })
     }
 
+    useEffect(()=>{
+        console.log(value)
+        lcglDao.getFlowFormByFlowId({id:value[0] && value[0].value},(res:any)=>{
+            console.log(res);
+        })
+    },[value])
     /*单独删除或者批量删除*/
     const removeHandler = () => {
         if (selectionDataIds.length === 0) {
@@ -174,7 +189,6 @@ const MyApplication: FC<MyApplicationProps> = (props) => {
 
     // 删除当前行
     const delHandler = (data: any) => {
-
         let delData = {
             delIds: [data.roleid].join(",")
         };
@@ -218,33 +232,72 @@ const MyApplication: FC<MyApplicationProps> = (props) => {
         }
 
     }
+    const selectOnChange = (type: string, data: any) => {
+        console.log("selectOnChange")
+        console.log(type)
+        console.log(data)
+    }
 
-    const onSubmit = (data: any) => {
-        let method = null;
-        if (editFlag) {
-            method = jsglDao.updateRole;
-        } else {
-            method = jsglDao.insertRole;
-        }
-        method(data.data, (res: any) => {
-            if (res.code === 200) {
-                message.success(res.msg)
-                /*关闭弹窗*/
-                setModalVisible(false)
+    function DebounceSelect<
+        ValueType extends { key?: string; label: React.ReactNode; value: string | number } = any,
+        >({ fetchOptions, debounceTimeout = 800, ...props }: DebounceSelectProps<ValueType>) {
+        const [fetching, setFetching] = useState(false);
+        const [options, setOptions] = useState<ValueType[]>([]);
+        const fetchRef = useRef(0);
 
-                getRoleListData();
-                return;
-            }
-            message.error("登录过期，请重新登录。")
-            setModalVisible(false)
-            history.push({
-                pathname: "/login"
-            })
-        })
+        const debounceFetcher = useMemo(() => {
+            const loadOptions = (value: string) => {
+                fetchRef.current += 1;
+                const fetchId = fetchRef.current;
+                setOptions([]);
+                setFetching(true);
+
+                fetchOptions(value).then((newOptions) => {
+                    if (fetchId !== fetchRef.current) {
+                        // for fetch callback order
+                        return;
+                    }
+
+                    setOptions(newOptions);
+                    setFetching(false);
+                });
+            };
+
+            return debounce(loadOptions, debounceTimeout);
+        }, [fetchOptions, debounceTimeout]);
+
+        return (
+            <Select
+                labelInValue
+                filterOption={false}
+                onSearch={debounceFetcher}
+                notFoundContent={fetching ? <Spin size="small" /> : null}
+                {...props}
+                options={options}
+            />
+        );
     }
 
     function onCancel(data: any) {
         setModalVisible(false)
+    }
+
+    async function fetchFlowList(flowKey: string): Promise<ParamValue[]> {
+        return fetch('/bsmservice/flowable/allFlow',{
+            method:'post',
+            body:JSON.stringify({key:flowKey}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response) => response.json())
+            .then((body) =>
+                body.data && body.data.map(
+                    (flow: { key:string,name?:string,id:string}) => ({
+                        label: `${flow.key} ${flow.name}`,
+                        value: flow.id,
+                    }),
+                ),
+            );
     }
 
     return (
@@ -294,9 +347,17 @@ const MyApplication: FC<MyApplicationProps> = (props) => {
 
             {/*角色新增模式框*/}
             <Modal destroyOnClose visible={modalVisible} footer={null} onCancel={onCancel}>
-                <div className='user-manage-list-new'>
-                    <CPageNew data={data} onChange={onChange} onSubmit={onSubmit} onCancel={onCancel}
-                              updateType={updateType} footerShow={true}/>
+                <div className='modal-class'>
+                    <DebounceSelect mode="tags"
+                                    value={value}
+                                    placeholder="选择流程"
+                                    fetchOptions={fetchFlowList}
+                                    onChange={(newValue) => {
+                                        setValue(newValue as ParamValue[]);
+                                    }}
+                                    style={{ width: '100%' }}/>
+                    {/*<CPageNew data={data} onChange={onChange} onSubmit={onSubmit} onCancel={onCancel}*/}
+                    {/*          updateType={updateType} footerShow={true}/>*/}
                 </div>
             </Modal>
 

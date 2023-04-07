@@ -6,6 +6,7 @@ const validateFlowNameUrl: string = '/bsmservice/flowable/validateName';
 const getFlowListUrl: string = '/bsmservice/flowable/flowableList';
 const deleteUrl: string = '/bsmservice/flowable/deleteFlows';
 const getAllFlowUrl: string = '/bsmservice/flowable/allFlow';
+const getFlowFormByFlowIdUrl: string = '/bsmservice/flowable/getFlowFormByFlowId';
 /*组织列表信息查询*/
 const deployFlow = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
 
@@ -33,7 +34,7 @@ const getFlowList = (paramter: any, successCallback: Function, errorCallback?: F
         }
     )
 }
-/*组织详细信息查询*/
+/*详细信息查询*/
 const getOrganizationInfo = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
 
     axios.post(url ? url : getUserTaskListUrl, paramter).then(
@@ -60,6 +61,14 @@ const getAllFlow = (paramter: any, successCallback: Function, errorCallback?: Fu
         }
     )
 }
+/*获取流程Form定义*/
+const getFlowFormByFlowId = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
+    axios.post(url ? url : getFlowFormByFlowIdUrl, paramter).then(
+        (res) => {
+            successCallback(res.data);
+        }
+    )
+}
 
 /*用户详细信息查询*/
 const del = (paramter: any, successCallback: Function, errorCallback?: Function, url?: string) => {
@@ -78,5 +87,6 @@ export default {
     validateOrganizationName,
     getAllFlow,
     getUserTaskList,
+    getFlowFormByFlowId,
     del
 };
