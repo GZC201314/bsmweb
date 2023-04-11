@@ -143,7 +143,7 @@ function Lcsj() {
         debugger
         let {xml} = await bpmnModeler.saveXML({format: true});
         let name = bpmnModeler._definitions &&bpmnModeler._definitions.rootElements&& bpmnModeler._definitions.rootElements[0].id
-        download(name+".dpmn20.xml", xml)
+        download(name+".bpmn20.xml", xml)
     };
     const exportSvgFlow = async () => {
         console.log("exportSvgFlow")
@@ -151,7 +151,7 @@ function Lcsj() {
         await bpmnModeler.saveSVG().then((res) => {
             let {xml} = bpmnModeler.saveXML({format: true});
             let name = bpmnModeler._definitions &&bpmnModeler._definitions.rootElements&& bpmnModeler._definitions.rootElements[0].id
-            download(name+".dpmn20.svg", res.svg)
+            download(name+".bpmn20.svg", res.svg)
         })
     };
     const clearFlow = () => {
@@ -175,7 +175,6 @@ function Lcsj() {
                 message.error("流程部署失败！");
             }
         })
-
     };
 
 
