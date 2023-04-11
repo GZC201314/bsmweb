@@ -1,4 +1,4 @@
-import {message, Modal, Select, Spin} from 'antd';
+import {Button, Descriptions, Form, Input, message, Modal, Select, Spin} from 'antd';
 import React, {FC, useEffect, useMemo, useRef, useState} from 'react'
 import './style.scss'
 import CInput from "../../../../components/CForm/CInput";
@@ -13,19 +13,9 @@ import _ from "lodash";
 import debounce from 'lodash/debounce';
 import {setPageNewValue} from "../../../../utils";
 import type {SelectProps} from 'antd/es/select';
-import {debuglog, log} from "util";
 import lcglDao from "../../../../dao/lcglDao";
+import TextArea from 'antd/lib/input/TextArea';
 
-export type userInfoType = {
-    username: string,
-    usericon:string,
-    createtime: string,
-    emailaddress: string,
-    enabled: boolean,
-    isfacevalid: boolean,
-    lastmodifytime: string,
-    roleName: string,
-}
 
 export interface ParamValue {
     label: string;
@@ -52,6 +42,7 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
     const [loading, setLoading] = useState(true)
     const [updateType, setUpdateType] = useState<"insert" | "edit">("insert")
     const [modalVisible, setModalVisible] = useState(false)
+    const [form,setForm] = useState<{type:string,label:string,name:string}[]>()
     const [searchData, setSearchData] = useState({
         value: '',//搜索框筛选
         placeholder: '请输入角色名'
@@ -106,9 +97,11 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
 
     useEffect(()=>{
         console.log(value)
-        lcglDao.getFlowFormByFlowId({id:value[0] && value[0].value},(res:any)=>{
-            console.log(res);
-        })
+        if (value[0] && !_.isNull(value[0].value)){
+            lcglDao.getFlowFormByFlowId({id:value[0] && value[0].value},(res:any)=>{
+                setForm(res.data.form);
+            })
+        }
     },[value])
     /*单独删除或者批量删除*/
     const removeHandler = () => {
@@ -223,20 +216,27 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
         })
     }
 
-    const onChange = (type: string, data1: any) => {
-        if (type === "data") {
-            if (_.isObject(data1)) {
-                // @ts-ignore
-                setData(data1)
-            }
-        }
+    const formItemLayout = {
+        labelCol: {
+            xs: { span: 24 },
+            sm: { span: 4 },
+        },
+        wrapperCol: {
+            xs: { span: 24 },
+            sm: { span: 20 },
+        },
+    };
 
-    }
-    const selectOnChange = (type: string, data: any) => {
-        console.log("selectOnChange")
-        console.log(type)
-        console.log(data)
-    }
+    const formItemLayoutWithOutLabel = {
+        wrapperCol: {
+            xs: { span: 24, offset: 0 },
+            sm: { span: 20, offset: 4 },
+        },
+    };
+
+    const onFinish = (values: any) => {
+        console.log('Received values of form:', values);
+    };
 
     function DebounceSelect<
         ValueType extends { key?: string; label: React.ReactNode; value: string | number } = any,
@@ -280,8 +280,27 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
 
     function onCancel(data: any) {
         setModalVisible(false)
+        setForm([])
+        setValue([])
     }
 
+    async function fetchUserList(username: string): Promise<ParamValue[]> {
+        return fetch('/bsmservice/flowable/allFlow',{
+            method:'post',
+            body:JSON.stringify({key:username}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((response) => response.json())
+            .then((body) =>
+                body.data && body.data.map(
+                    (flow: { key:string,name?:string,id:string}) => ({
+                        label: `${flow.key} ${flow.name}`,
+                        value: flow.id,
+                    }),
+                ),
+            );
+    }
     async function fetchFlowList(flowKey: string): Promise<ParamValue[]> {
         return fetch('/bsmservice/flowable/allFlow',{
             method:'post',
@@ -299,6 +318,7 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
                 ),
             );
     }
+
 
     return (
         <div className='user-manage-list'>
@@ -356,8 +376,36 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
                                         setValue(newValue as ParamValue[]);
                                     }}
                                     style={{ width: '100%' }}/>
-                    {/*<CPageNew data={data} onChange={onChange} onSubmit={onSubmit} onCancel={onCancel}*/}
-                    {/*          updateType={updateType} footerShow={true}/>*/}
+                    {form && form.length>0?<Descriptions className={'descriptionsClass'} title="流程表单" bordered layout={'horizontal'}/>:''}
+                    {form && form.length>0?
+                    <Form name="dynamic_form_item"
+                          labelCol={{ flex: '110px' }}
+                          labelAlign="left"
+                          wrapperCol={{ flex: 1 }}
+                          onFinish={onFinish}
+                          className={'formClass'}
+                    >
+
+                        {form?.map((field)=>(
+                            <Form.Item
+                                label={field.label}
+                                name={field.name}
+                            >
+                                {field.type==='string'?<Input/>:field.type==='long'?<Input type={'number'}/>:field.type==='date'?<Input type={'date'}/>:field.type==='text'?<TextArea/>:''}
+
+                            </Form.Item>
+                        ))}
+
+                    </Form>:''
+                    }
+                    <DebounceSelect mode="tags"
+                                    value={value}
+                                    placeholder="选择审批人"
+                                    fetchOptions={fetchFlowList}
+                                    onChange={(newValue) => {
+                                        setValue(newValue as ParamValue[]);
+                                    }}
+                                    style={{ width: '100%' }}/>
                 </div>
             </Modal>
 
