@@ -1,47 +1,68 @@
-import {message} from 'antd';
-import React, {FC, useState} from 'react'
+import {Avatar, List, Skeleton} from 'antd';
+import React, {FC, useEffect, useState} from 'react'
 import './style.scss'
-import grzxDao from "../../../../dao/grzxDao";
+import {useSelector} from "../../../../hooks/hooks";
+import CButton from "../../../../components/CButton";
 
-export interface MytaskProps {
+
+export interface MyTaskProps {
 
 }
-export type userInfoType = {
-    username: string,
-    usericon:string,
-    createtime: string,
-    emailaddress: string,
-    enabled: boolean,
-    isfacevalid: boolean,
-    lastmodifytime: string,
-    roleName: string,
-}
 
-const MyTask: FC<MytaskProps> = (props) => {
 
-    /**state  state部分**/
-    const [userinfo,setUserinfo] = useState<userInfoType>({} as userInfoType)
-    /**effect  effect部分**/
+const MyTask: FC<MyTaskProps> = (props) => {
 
-    /*用户信息加载*/
-    React.useEffect(() =>{
-        grzxDao.getUserInfo({},(res:any) => {
-            if(res.code === 200){
-                setUserinfo(res.data)
-            }else {
-                message.error(res.msg)
-            }
-        })
-    },[])
+    const listData = Array.from({length: 3}).map((_, i) => ({
+        href: 'https://ant.design',
+        title: `ant design part ${i + 1}`,
+        avatar: `https://xsgames.co/randomusers/avatar.php?g=pixel&key=${i}`,
+        description:
+            'Ant Design, a design language for background applications, is refined by Ant UED Team.',
+        content:
+            'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
+    }));
 
-    /**methods 方法部分**/
+    const mytask = useSelector((state) => {
+        return state.CommonReducer.mytask;
+    });
 
-    /**styles 样式部分**/
-
-    /**render**/
-
+    useEffect(
+        () => {
+            console.log(mytask)
+            mytask.map((item: any) => {
+                debugger
+                console.log(item)
+            })
+        }
+        , [])
+    const [loading, setLoading] = useState(false);
     return (
-        <h1 className="style">mytask Page</h1>
+        <div className='user-manage-list'>
+            <List
+                itemLayout="vertical"
+                size="small"
+                dataSource={listData}
+                renderItem={(item) => (
+                    <List.Item
+                        key={item.title}
+                        extra={
+                            !loading && (
+                                <CButton type={'danger'} className={'button-lcsp'}>审批</CButton>
+                            )
+                        }
+                    >
+                        <Skeleton loading={loading} active avatar>
+                            <List.Item.Meta
+                                avatar={<Avatar src={item.avatar}/>}
+                                title={<a href={item.href}>{item.title}</a>}
+                                description={item.description}
+                            />
+                            {item.content}
+                        </Skeleton>
+                    </List.Item>
+                )}
+            />
+        </div>
     );
 }
 export default MyTask
