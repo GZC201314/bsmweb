@@ -1,4 +1,4 @@
-import {Button, Descriptions, Form, Input, message, Modal, Select, Spin} from 'antd';
+import {Descriptions, Form, Input, message, Modal, Select, Spin} from 'antd';
 import React, {FC, useEffect, useMemo, useRef, useState} from 'react'
 import './style.scss'
 import CInput from "../../../../components/CForm/CInput";
@@ -8,10 +8,8 @@ import CSwitch from "../../../../components/CForm/CSwitch";
 import {useHistory} from "react-router-dom";
 import {roleManageListNewData, tableData} from "./data";
 import {useSelector} from "../../../../hooks/hooks";
-import jsglDao from "../../../../dao/jsglDao";
 import _ from "lodash";
 import debounce from 'lodash/debounce';
-import {setPageNewValue} from "../../../../utils";
 import type {SelectProps} from 'antd/es/select';
 import lcglDao from "../../../../dao/lcglDao";
 import TextArea from 'antd/lib/input/TextArea';
@@ -30,23 +28,21 @@ export interface DebounceSelectProps<ValueType = any>
 
 const MyApplication: FC<DebounceSelectProps> = (props) => {
     const [value, setValue] = useState<ParamValue[]>([]);
+    const [selectedUser, setSelectedUser] = useState<ParamValue[]>([]);
     const history = useHistory()
     /**state  state部分**/
     const [colums] = useState(tableData.tHead)
     const [data, setData] = useState(roleManageListNewData)
-    const [editFlag, setEditFlag] = useState(false)
     const [dataSource, setDataSource] = useState(tableData.tBody)
     const [page, setPage] = useState(tableData.tPage)
-    const [filterData, setFilterData] = useState([])
-    const [searchValue, setSearchValue] = useState('')
     const [loading, setLoading] = useState(true)
-    const [updateType, setUpdateType] = useState<"insert" | "edit">("insert")
     const [modalVisible, setModalVisible] = useState(false)
-    const [form,setForm] = useState<{type:string,label:string,name:string}[]>()
+    const [form,setForm] = useState<{type:string,label:string,id:string}[]>()
     const [searchData, setSearchData] = useState({
         value: '',//搜索框筛选
         placeholder: '请输入角色名'
     })
+    const [paramsForm] = Form.useForm();
     const [selectionDataIds, setSelectionDataIds] = useState([] as Array<any>)
     /**effect  effect部分**/
 
@@ -55,7 +51,7 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
     });
 
     // 获取用户角色列表数据
-    let getRoleListData = (page1?: any) => {
+    let getMyApplicationListData = (page1?: any) => {
         let getData = {
             page: {
                 page: page.page,
@@ -75,7 +71,7 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
         }
         setLoading(true)
 
-        jsglDao.getRoleListInfo(getData, (res: any) => {
+        lcglDao.getMyApplicationList(getData, (res: any) => {
 
             if (res.code === 200) {
                 let data = res.data.records;
@@ -113,15 +109,22 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
             delIds: selectionDataIds.join(",")
         };
 
-        jsglDao.delRole(delData, (res: any) => {
-            if (res.code === 200) {
-                getRoleListData();
+        lcglDao.delFlowInstance(delData,(res:any)=>{
+            if (res.code === 200){
+                message.info("删除流程实例成功。");
+            }else {
+                message.error(res.msg)
             }
         })
+        // jsglDao.delRole(delData, (res: any) => {
+        //     if (res.code === 200) {
+        //         getMyApplicationListData();
+        //     }
+        // })
     }
 
     useEffect(() => {
-        getRoleListData();
+        getMyApplicationListData();
     }, [reload,searchData.value])
     /**methods 方法部分**/
 
@@ -130,7 +133,7 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
     const onTableChange = (data: any) => {
         if (data.type === 'page' || data.type === 'pageSize') {
             setPage({...page, ...data.data})
-            getRoleListData({...page, ...data.data})
+            getMyApplicationListData({...page, ...data.data})
         } else if (data.type === 'selection') {
             setSelectionDataIds(data.data.ids)
         }
@@ -139,7 +142,6 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
         if (type === 'selectedRowKeys') {
             setSelectionDataIds(value)
         } else if (type === 'filterData') {
-            setFilterData(value)
         } else if (type === 'value') {
             setSearchData({...searchData,value: value})
         }
@@ -164,75 +166,30 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
             pathname: "/jsgl"
         })
         setSearchData({...searchData, value: ''})
-        setSearchValue('')
         setPage(tableData.tPage)
         // userManageList.clearFilterData();
     }
     // 编辑当前行
     const editHandler = (formData: any) => {
-        setUpdateType('edit')
-        setEditFlag(true)
         setModalVisible(true)
-
-        /*给每个Item的value赋值*/
-        let pageNewValue = setPageNewValue(data, formData);
-        setData(pageNewValue)
-        // setPageNewItem
     }
 
     // 删除当前行
     const delHandler = (data: any) => {
         let delData = {
-            delIds: [data.roleid].join(",")
+            delIds: data.id
         };
 
-        jsglDao.delRole(delData, (res: any) => {
-            if (res.code === 200) {
-                getRoleListData();
-            }
-        })
-    }
-
-    // 激活or停用用户
-    const editActiveChange = (type: any, value: any, record: { disabled?: any; roleid?: any }) => {
-        let data = {
-            roleid: record.roleid,
-            disabled: !value
-        };
-
-        jsglDao.editActiveRoleList(data, (res: any) => {
-            if (res.code === 200) {
-                dataSource.forEach((item: any) => {
-                    if (item.roleid === record.roleid) {
-                        item.disabled = !value
-                    }
-                })
-                setSearchData({...searchData, value: ''})
-                message.success(res.msg)
-            } else {
+        lcglDao.delFlowInstance(delData,(res:any)=>{
+            if (res.code === 200){
+                getMyApplicationListData();
+            }else {
                 message.error(res.msg)
             }
-            // getUserListData();
-        })
+        });
     }
 
-    const formItemLayout = {
-        labelCol: {
-            xs: { span: 24 },
-            sm: { span: 4 },
-        },
-        wrapperCol: {
-            xs: { span: 24 },
-            sm: { span: 20 },
-        },
-    };
 
-    const formItemLayoutWithOutLabel = {
-        wrapperCol: {
-            xs: { span: 24, offset: 0 },
-            sm: { span: 20, offset: 4 },
-        },
-    };
 
     const onFinish = (values: any) => {
         console.log('Received values of form:', values);
@@ -282,21 +239,33 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
         setModalVisible(false)
         setForm([])
         setValue([])
+        setSelectedUser([])
+    }
+    function commitFlow(data:any) {
+        let fieldsValue = paramsForm.getFieldsValue();
+        let params ={
+            id:value[0].value,
+            assignee:selectedUser[0].value,
+            params:fieldsValue
+        }
+        lcglDao.commitFlow(params,(res:any)=>{
+            console.log(res);
+        })
     }
 
     async function fetchUserList(username: string): Promise<ParamValue[]> {
-        return fetch('/bsmservice/flowable/allFlow',{
+        return fetch('/bsmservice/user/getUserListByUserName',{
             method:'post',
-            body:JSON.stringify({key:username}),
+            body:JSON.stringify({username:username}),
             headers: {
                 'Content-Type': 'application/json'
             }
         }).then((response) => response.json())
             .then((body) =>
                 body.data && body.data.map(
-                    (flow: { key:string,name?:string,id:string}) => ({
-                        label: `${flow.key} ${flow.name}`,
-                        value: flow.id,
+                    (user: { key:string,value?:string}) => ({
+                        label: user.value,
+                        value: user.key,
                     }),
                 ),
             );
@@ -328,27 +297,18 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
                     <CButton type='danger' authId='userManageListBatchDelete'
                              onClick={removeHandler}>批量删除</CButton>
                 </div>
-                <div className='flex filter-right'>
-                    <CInput
-                        className='search-input'
-                        type='search'
-                        value={searchData.value}
-                        placeholder={searchData.placeholder} onEnter={searchHandler} onChange={onStateChange}/>
-                    <CButton type='primary' onClick={resetHandler}>重置</CButton>
-                </div>
             </div>
 
             <CTable size={'middle'} scroll={true} loading={loading} columns={colums}
                     selectedRowKeys={selectionDataIds}
                     dataSource={dataSource} page={page} onTableChange={onTableChange} onStateChange={onStateChange}
-                    checked={true} rowKey={"roleid"}>
+                    checked={true} rowKey={"id"}>
                 <div
-                    slot='isActive'
+                    slot='isSuspended'
                     // @ts-ignore
                     render={(text: any, record: { disabled?: any; roleid?: any; }, index: any) => {
-                        return <div className='isActive'>
-                            <CSwitch value={!text}
-                                     onChange={(type: any, value: any) => editActiveChange(type, value, record)}/>
+                        return <div className='isSuspended'>
+                            <CSwitch disabled={true} value={!text}/>
                         </div>
 
                     }}/>
@@ -358,7 +318,7 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
                     render={(text: any, record: any, index: any) => (
                         <div className='operate'>
                             <CButton type='text'
-                                     onClick={() => editHandler(record)}>编辑</CButton>
+                                     onClick={() => editHandler(record)}>详情</CButton>
                             <CButton type='text'
                                      onClick={() => delHandler(record)}>删除</CButton>
                         </div>
@@ -366,8 +326,9 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
             </CTable>
 
             {/*角色新增模式框*/}
-            <Modal destroyOnClose visible={modalVisible} footer={null} onCancel={onCancel}>
+            <Modal title={'新增我的申请'} destroyOnClose visible={modalVisible} onOk={commitFlow} onCancel={onCancel}>
                 <div className='modal-class'>
+                    <Descriptions className={'descriptionsClass'} title="业务流程" bordered layout={'horizontal'}/>
                     <DebounceSelect mode="tags"
                                     value={value}
                                     placeholder="选择流程"
@@ -379,6 +340,7 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
                     {form && form.length>0?<Descriptions className={'descriptionsClass'} title="流程表单" bordered layout={'horizontal'}/>:''}
                     {form && form.length>0?
                     <Form name="dynamic_form_item"
+                          form={paramsForm}
                           labelCol={{ flex: '110px' }}
                           labelAlign="left"
                           wrapperCol={{ flex: 1 }}
@@ -389,7 +351,7 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
                         {form?.map((field)=>(
                             <Form.Item
                                 label={field.label}
-                                name={field.name}
+                                name={field.id}
                             >
                                 {field.type==='string'?<Input/>:field.type==='long'?<Input type={'number'}/>:field.type==='date'?<Input type={'date'}/>:field.type==='text'?<TextArea/>:''}
 
@@ -398,12 +360,15 @@ const MyApplication: FC<DebounceSelectProps> = (props) => {
 
                     </Form>:''
                     }
+                    <Descriptions className={'descriptionsClass'} title="审批人" bordered layout={'horizontal'}/>
+
                     <DebounceSelect mode="tags"
-                                    value={value}
+                                    className={'descriptionsClass'}
+                                    value={selectedUser}
                                     placeholder="选择审批人"
-                                    fetchOptions={fetchFlowList}
+                                    fetchOptions={fetchUserList}
                                     onChange={(newValue) => {
-                                        setValue(newValue as ParamValue[]);
+                                        setSelectedUser(newValue as ParamValue[]);
                                     }}
                                     style={{ width: '100%' }}/>
                 </div>

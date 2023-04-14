@@ -115,7 +115,7 @@ const LoginComponent: FC<loginComponentProps> = (props) => {
         }
         if ('WebSocket' in window) {
             // @ts-ignore
-            websocket = new WebSocket("wss://www.bookstoremanager.top/wss/mytask/"+userInfo.username);
+            websocket = new WebSocket("ws://127.0.0.1:8888/mytask/"+userInfo.userid);
         } else {
             alert('Not support websocket')
         }
